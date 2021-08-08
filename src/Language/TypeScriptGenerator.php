@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App;
+namespace App\Language;
 
 use App\Dto\DtoList;
 use App\Dto\DtoProperty;
@@ -10,9 +10,9 @@ use App\Dto\DtoType;
 use App\Dto\SingleType;
 use App\Dto\UnionType;
 
-class DtoToTypeScriptConverter
+class TypeScriptGenerator implements LanguageGeneratorInterface
 {
-    public function convert(DtoList $dtoList): string
+    public function generate(DtoList $dtoList): string
     {
         $string = '';
 
@@ -43,7 +43,7 @@ class DtoToTypeScriptConverter
     private function getTypeScriptTypeFromPhp(SingleType|UnionType $type): string
     {
         if ($type instanceof UnionType) {
-            $arr = array_map(fn(SingleType $type) => $this->getTypeScriptTypeFromPhp($type), $type->types);
+            $arr = array_map(fn (SingleType $type) => $this->getTypeScriptTypeFromPhp($type), $type->types);
             return implode(separator: ' | ', array: $arr);
         }
 

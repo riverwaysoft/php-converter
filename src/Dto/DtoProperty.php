@@ -9,8 +9,6 @@ class DtoProperty
     public function __construct(
         public SingleType|UnionType $type,
         public string $name,
-    )
-    {
-
+    ) {
     }
 }

@@ -1,0 +1,83 @@
+[
+    {
+        "title": "UserCreate",
+        "properties": [
+            {
+                "type": {
+                    "name": "string"
+                },
+                "name": "name"
+            },
+            {
+                "type": {
+                    "types": [
+                        {
+                            "name": "int"
+                        },
+                        {
+                            "name": "string"
+                        },
+                        {
+                            "name": "float"
+                        }
+                    ]
+                },
+                "name": "age"
+            },
+            {
+                "type": {
+                    "types": [
+                        {
+                            "name": "bool"
+                        },
+                        {
+                            "name": "null"
+                        }
+                    ]
+                },
+                "name": "isApproved"
+            },
+            {
+                "type": {
+                    "name": "float"
+                },
+                "name": "latitude"
+            },
+            {
+                "type": {
+                    "name": "float"
+                },
+                "name": "longitude"
+            },
+            {
+                "type": {
+                    "name": "array"
+                },
+                "name": "achievements"
+            },
+            {
+                "type": {
+                    "name": "mixed"
+                },
+                "name": "mixed"
+            }
+        ]
+    },
+    {
+        "title": "CloudNotify",
+        "properties": [
+            {
+                "type": {
+                    "name": "string"
+                },
+                "name": "id"
+            },
+            {
+                "type": {
+                    "name": "string"
+                },
+                "name": "fcmToken"
+            }
+        ]
+    }
+]

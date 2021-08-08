@@ -7,5 +7,4 @@ namespace App\Annotation;
 #[\Attribute]
 class Dto
 {
-
 }

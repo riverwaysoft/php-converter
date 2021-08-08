@@ -10,8 +10,6 @@ class DtoType
         public string $title,
         /** @var DtoProperty[] */
         public array $properties,
-    )
-    {
-
+    ) {
     }
 }

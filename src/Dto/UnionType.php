@@ -9,8 +9,6 @@ class UnionType
     public function __construct(
         /** @var SingleType[] $types */
         public array $types,
-    )
-    {
-
+    ) {
     }
 }

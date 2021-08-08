@@ -8,6 +8,5 @@ class SingleType
 {
     public function __construct(public string $name)
     {
-
     }
 }

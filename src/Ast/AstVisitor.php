@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App;
+namespace App\Ast;
 
+use App\Annotation\AnnotationCheckerInterface;
 use App\Dto\DtoList;
 use App\Dto\DtoProperty;
 use App\Dto\DtoType;
@@ -16,20 +17,24 @@ class AstVisitor extends NodeVisitorAbstract
 {
     public function __construct(
         private DtoList $dtoList,
-    )
-    {
+        /** @var AnnotationCheckerInterface[] $dtoAnnotationCheckers */
+        private array $dtoAnnotationCheckers,
+    ) {
     }
 
     public function leaveNode(Node $node): void
     {
         if ($node instanceof Node\Stmt\Class_) {
-            if ($this->hasTypeScriptAttribute($node)) {
-                $this->createTypeScriptType($node);
+            foreach ($this->dtoAnnotationCheckers as $dtoAnnotationChecker) {
+                if ($dtoAnnotationChecker->hasDtoAttribute($node)) {
+                    $this->createDtoType($node);
+                    break;
+                }
             }
         }
     }
 
-    private function hasTypeScriptAttribute(Node\Stmt\Class_ $node): bool
+    private function hasDtoAttribute(Node\Stmt\Class_ $node): bool
     {
         foreach ($node->attrGroups as $attributeGroup) {
             foreach ($attributeGroup->attrs as $attr) {
@@ -41,7 +46,7 @@ class AstVisitor extends NodeVisitorAbstract
         return false;
     }
 
-    private function createTypeScriptType(Node\Stmt\Class_ $node)
+    private function createDtoType(Node\Stmt\Class_ $node)
     {
         $name = $node->name->name;
 
@@ -50,8 +55,8 @@ class AstVisitor extends NodeVisitorAbstract
             if ($stmt instanceof Node\Stmt\Property) {
                 $properties[] = new DtoProperty(
                     type: $stmt->type instanceof Node\UnionType
-                    ? new UnionType(array_map(fn($type) => new SingleType($type->name), $stmt->type->types))
-                    : new SingleType($stmt->type->name),
+                        ? new UnionType(array_map(fn ($type) => new SingleType($type->name), $stmt->type->types))
+                        : new SingleType($stmt->type->name),
                     name: $stmt->props[0]->name->name,
                 );
             }
@@ -59,8 +64,8 @@ class AstVisitor extends NodeVisitorAbstract
                 foreach ($stmt->params as $param) {
                     $properties[] = new DtoProperty(
                         type: $param instanceof Node\UnionType
-                        ? new UnionType(array_map(fn($type) => new SingleType($type->name), $param->types))
-                        : new SingleType($param->type->name),
+                            ? new UnionType(array_map(fn ($type) => new SingleType($type->name), $param->types))
+                            : new SingleType($param->type->name),
                         name: $param->var->name,
                     );
                 }
