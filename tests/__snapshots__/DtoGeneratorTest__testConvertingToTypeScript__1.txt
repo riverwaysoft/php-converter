@@ -1,0 +1,15 @@
+export type UserCreate = {
+  age: number;
+  name: string;
+  isApproved: boolean;
+  latitude: number;
+  longitude: number;
+  achievements: any[];
+  mixed: any;
+};
+
+export type CloudNotify = {
+  id: string;
+  fcmToken: string;
+};
+

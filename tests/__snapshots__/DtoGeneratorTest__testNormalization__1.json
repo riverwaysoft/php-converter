@@ -1,0 +1,48 @@
+[
+    {
+        "title": "UserCreate",
+        "properties": [
+            {
+                "type": "int",
+                "name": "age"
+            },
+            {
+                "type": "string",
+                "name": "name"
+            },
+            {
+                "type": "bool",
+                "name": "isApproved"
+            },
+            {
+                "type": "float",
+                "name": "latitude"
+            },
+            {
+                "type": "float",
+                "name": "longitude"
+            },
+            {
+                "type": "array",
+                "name": "achievements"
+            },
+            {
+                "type": "mixed",
+                "name": "mixed"
+            }
+        ]
+    },
+    {
+        "title": "CloudNotify",
+        "properties": [
+            {
+                "type": "string",
+                "name": "id"
+            },
+            {
+                "type": "string",
+                "name": "fcmToken"
+            }
+        ]
+    }
+]
