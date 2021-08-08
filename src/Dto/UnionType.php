@@ -11,4 +11,9 @@ class UnionType
         public array $types,
     ) {
     }
+
+    public static function nullable(SingleType $singleType): self
+    {
+        return new self([$singleType, new SingleType('null')]);
+    }
 }

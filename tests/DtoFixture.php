@@ -6,7 +6,7 @@ class Dto {}
 #[Dto]
 class DtoFixture {
     public int $age;
-    public string $name;
+    public ?string $name;
     public float $latitude;
     public float $longitude;
     public array $achievements;

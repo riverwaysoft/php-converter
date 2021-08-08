@@ -53,19 +53,27 @@ class AstVisitor extends NodeVisitorAbstract
         $properties = [];
         foreach ($node->stmts as $stmt) {
             if ($stmt instanceof Node\Stmt\Property) {
+                $type = match (get_class($stmt->type)) {
+                    Node\UnionType::class => new UnionType(array_map(fn ($type) => new SingleType($type->name), $stmt->type->types)),
+                    Node\NullableType::class => UnionType::nullable(new SingleType($stmt->type->type->name)),
+                    default => new SingleType($stmt->type->name),
+                };
+
                 $properties[] = new DtoProperty(
-                    type: $stmt->type instanceof Node\UnionType
-                        ? new UnionType(array_map(fn ($type) => new SingleType($type->name), $stmt->type->types))
-                        : new SingleType($stmt->type->name),
+                    type: $type,
                     name: $stmt->props[0]->name->name,
                 );
             }
             if ($stmt instanceof Node\Stmt\ClassMethod) {
                 foreach ($stmt->params as $param) {
+                    $type = match (get_class($param)) {
+                        Node\UnionType::class => new UnionType(array_map(fn ($type) => new SingleType($type->name), $param->types)),
+                        Node\NullableType::class => UnionType::nullable(new SingleType($param->type->type->name)),
+                        default => new SingleType($param->type->name),
+                    };
+
                     $properties[] = new DtoProperty(
-                        type: $param instanceof Node\UnionType
-                            ? new UnionType(array_map(fn ($type) => new SingleType($type->name), $param->types))
-                            : new SingleType($param->type->name),
+                        type: $type,
                         name: $param->var->name,
                     );
                 }

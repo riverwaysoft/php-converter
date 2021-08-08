@@ -1,5 +1,5 @@
 export type UserCreate = {
-  name: string;
+  name: string | null;
   age: number | string | number;
   isApproved: boolean | null;
   latitude: number;

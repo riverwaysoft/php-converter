@@ -4,7 +4,14 @@
         "properties": [
             {
                 "type": {
-                    "name": "string"
+                    "types": [
+                        {
+                            "name": "string"
+                        },
+                        {
+                            "name": "null"
+                        }
+                    ]
                 },
                 "name": "name"
             },

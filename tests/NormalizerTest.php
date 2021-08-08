@@ -19,7 +19,7 @@ class Dto {}
 
 #[Dto]
 class UserCreate {
-  public string $name;
+  public ?string $name;
   public int|string|float $age;
   public bool|null $isApproved;
   public float $latitude;
@@ -46,7 +46,7 @@ CODE;
  * @Dto
  */
 class UserCreate {
-  public string $name;
+  public ?string $name;
   public int|string|float $age;
   public bool|null $isApproved;
   public float $latitude;
@@ -61,19 +61,19 @@ CODE;
 
     public function testNormalization(): void
     {
-        $normalized = (new Normalizer())->normalize($this->codeAttribute);
+        $normalized = (Normalizer::factory())->normalize($this->codeAttribute);
         $this->assertMatchesJsonSnapshot($normalized->getList());
     }
 
     public function testConvertingToTypeScript()
     {
-        $normalized = (new Normalizer())->normalize($this->codeAttribute);
+        $normalized = (Normalizer::factory())->normalize($this->codeAttribute);
         $this->assertMatchesTextSnapshot((new TypeScriptGenerator())->generate($normalized));
     }
 
     public function testConvertintToTypeScript(): void
     {
-        $normalized = (new Normalizer())->normalize($this->codePhpDoc);
+        $normalized = (Normalizer::factory())->normalize($this->codePhpDoc);
         $this->assertMatchesTextSnapshot((new TypeScriptGenerator())->generate($normalized));
     }
 }
