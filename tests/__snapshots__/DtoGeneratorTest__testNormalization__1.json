@@ -3,31 +3,62 @@
         "title": "UserCreate",
         "properties": [
             {
-                "type": "int",
-                "name": "age"
-            },
-            {
-                "type": "string",
+                "type": {
+                    "name": "string"
+                },
                 "name": "name"
             },
             {
-                "type": "bool",
+                "type": {
+                    "types": [
+                        {
+                            "name": "int"
+                        },
+                        {
+                            "name": "string"
+                        },
+                        {
+                            "name": "float"
+                        }
+                    ]
+                },
+                "name": "age"
+            },
+            {
+                "type": {
+                    "types": [
+                        {
+                            "name": "bool"
+                        },
+                        {
+                            "name": "null"
+                        }
+                    ]
+                },
                 "name": "isApproved"
             },
             {
-                "type": "float",
+                "type": {
+                    "name": "float"
+                },
                 "name": "latitude"
             },
             {
-                "type": "float",
+                "type": {
+                    "name": "float"
+                },
                 "name": "longitude"
             },
             {
-                "type": "array",
+                "type": {
+                    "name": "array"
+                },
                 "name": "achievements"
             },
             {
-                "type": "mixed",
+                "type": {
+                    "name": "mixed"
+                },
                 "name": "mixed"
             }
         ]
@@ -36,11 +67,15 @@
         "title": "CloudNotify",
         "properties": [
             {
-                "type": "string",
+                "type": {
+                    "name": "string"
+                },
                 "name": "id"
             },
             {
-                "type": "string",
+                "type": {
+                    "name": "string"
+                },
                 "name": "fcmToken"
             }
         ]

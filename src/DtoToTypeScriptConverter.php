@@ -4,6 +4,12 @@ declare(strict_types=1);
 
 namespace App;
 
+use App\Dto\DtoList;
+use App\Dto\DtoProperty;
+use App\Dto\DtoType;
+use App\Dto\SingleType;
+use App\Dto\UnionType;
+
 class DtoToTypeScriptConverter
 {
     public function convert(DtoList $dtoList): string
@@ -34,16 +40,22 @@ class DtoToTypeScriptConverter
         return $string;
     }
 
-    private function getTypeScriptTypeFromPhp(string $type): string
+    private function getTypeScriptTypeFromPhp(SingleType|UnionType $type): string
     {
+        if ($type instanceof UnionType) {
+            $arr = array_map(fn(SingleType $type) => $this->getTypeScriptTypeFromPhp($type), $type->types);
+            return implode(separator: ' | ', array: $arr);
+        }
+
         // https://www.php.net/manual/en/language.types.declarations.php
-        return match ($type) {
+        return match ($type->name) {
             'int', 'float' => 'number',
             'string' => 'string',
             'bool' => 'boolean',
             'mixed', 'object' => 'any',
             'array' => 'any[]',
-            default => throw new \InvalidArgumentException('PHP Type ' . $type . ' is not supported'),
+            'null' => 'null',
+            default => throw new \InvalidArgumentException('PHP Type ' . $type->name . ' is not supported'),
         };
     }
 }

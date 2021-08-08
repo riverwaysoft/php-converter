@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App;
 
+use App\Dto\DtoList;
 use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
 
@@ -13,11 +14,12 @@ class DtoGenerator
     {
         $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
         $traverser = new NodeTraverser;
-        $visitor = new AstVisitor;
+        $dtoList = new DtoList();
+        $visitor = new AstVisitor($dtoList);
         $traverser->addVisitor($visitor);
         $ast = $parser->parse($code);
         $traverser->traverse($ast);
 
-        return $visitor->getDtoList();
+        return $dtoList;
     }
 }

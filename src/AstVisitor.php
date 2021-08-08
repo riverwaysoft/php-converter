@@ -4,18 +4,21 @@ declare(strict_types=1);
 
 namespace App;
 
+use App\Dto\DtoList;
+use App\Dto\DtoProperty;
+use App\Dto\DtoType;
+use App\Dto\SingleType;
+use App\Dto\UnionType;
 use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;
 
 class AstVisitor extends NodeVisitorAbstract
 {
-    private DtoList $dtoList;
-
-    public function __construct()
+    public function __construct(
+        private DtoList $dtoList,
+    )
     {
-        $this->dtoList = new DtoList();
     }
-
 
     public function leaveNode(Node $node): void
     {
@@ -46,14 +49,18 @@ class AstVisitor extends NodeVisitorAbstract
         foreach ($node->stmts as $stmt) {
             if ($stmt instanceof Node\Stmt\Property) {
                 $properties[] = new DtoProperty(
-                    type: $stmt->type->name,
+                    type: $stmt->type instanceof Node\UnionType
+                    ? new UnionType(array_map(fn($type) => new SingleType($type->name), $stmt->type->types))
+                    : new SingleType($stmt->type->name),
                     name: $stmt->props[0]->name->name,
                 );
             }
             if ($stmt instanceof Node\Stmt\ClassMethod) {
                 foreach ($stmt->params as $param) {
                     $properties[] = new DtoProperty(
-                        type: $param->type->name,
+                        type: $param instanceof Node\UnionType
+                        ? new UnionType(array_map(fn($type) => new SingleType($type->name), $param->types))
+                        : new SingleType($param->type->name),
                         name: $param->var->name,
                     );
                 }
@@ -61,10 +68,5 @@ class AstVisitor extends NodeVisitorAbstract
         }
 
         $this->dtoList->addDto(new DtoType(title: $name, properties: $properties));
-    }
-
-    public function getDtoList(): DtoList
-    {
-        return $this->dtoList;
     }
 }

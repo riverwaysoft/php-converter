@@ -19,9 +19,9 @@ class Dto {}
 
 #[Dto]
 class UserCreate {
-  public int $age;
   public string $name;
-  public bool $isApproved;
+  public int|string|float $age;
+  public bool|null $isApproved;
   public float $latitude;
   public float $longitude;
   public array $achievements;

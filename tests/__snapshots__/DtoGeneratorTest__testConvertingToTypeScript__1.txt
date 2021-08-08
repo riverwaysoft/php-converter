@@ -1,7 +1,7 @@
 export type UserCreate = {
-  age: number;
   name: string;
-  isApproved: boolean;
+  age: number | string | number;
+  isApproved: boolean | null;
   latitude: number;
   longitude: number;
   achievements: any[];

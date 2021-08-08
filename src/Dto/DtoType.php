@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App;
+namespace App\Dto;
 
 class DtoType
 {
@@ -10,7 +10,8 @@ class DtoType
         public string $title,
         /** @var DtoProperty[] */
         public array $properties,
-    ) {
+    )
+    {
 
     }
 }
