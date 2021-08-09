@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App;
 
-use App\Annotation\PhpAttributesChecker;
-use App\Annotation\PhpDocChecker;
+use App\AnnotationChecker\PhpAttributesChecker;
+use App\AnnotationChecker\PhpDocChecker;
 use App\Ast\AstVisitor;
 use App\Dto\DtoList;
 use PhpParser\NodeTraverser;

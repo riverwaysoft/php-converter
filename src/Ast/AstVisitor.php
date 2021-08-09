@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Ast;
 
-use App\Annotation\AnnotationCheckerInterface;
+use App\AnnotationChecker\AnnotationCheckerInterface;
 use App\Dto\DtoList;
 use App\Dto\DtoProperty;
 use App\Dto\DtoType;
@@ -17,33 +17,21 @@ class AstVisitor extends NodeVisitorAbstract
 {
     public function __construct(
         private DtoList $dtoList,
-        /** @var AnnotationCheckerInterface[] $dtoAnnotationCheckers */
-        private array $dtoAnnotationCheckers,
+        /** @var AnnotationCheckerInterface[] $annotationCheckers */
+        private array $annotationCheckers,
     ) {
     }
 
     public function leaveNode(Node $node): void
     {
         if ($node instanceof Node\Stmt\Class_) {
-            foreach ($this->dtoAnnotationCheckers as $dtoAnnotationChecker) {
+            foreach ($this->annotationCheckers as $dtoAnnotationChecker) {
                 if ($dtoAnnotationChecker->hasDtoAttribute($node)) {
                     $this->createDtoType($node);
                     break;
                 }
             }
         }
-    }
-
-    private function hasDtoAttribute(Node\Stmt\Class_ $node): bool
-    {
-        foreach ($node->attrGroups as $attributeGroup) {
-            foreach ($attributeGroup->attrs as $attr) {
-                if (in_array(needle: 'Dto', haystack: $attr->name->parts)) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     private function createDtoType(Node\Stmt\Class_ $node)

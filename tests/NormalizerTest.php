@@ -65,13 +65,13 @@ CODE;
         $this->assertMatchesJsonSnapshot($normalized->getList());
     }
 
-    public function testConvertingToTypeScript()
+    public function testConvertAnnotations()
     {
         $normalized = (Normalizer::factory())->normalize($this->codeAttribute);
         $this->assertMatchesTextSnapshot((new TypeScriptGenerator())->generate($normalized));
     }
 
-    public function testConvertintToTypeScript(): void
+    public function testConvertPhpDoc(): void
     {
         $normalized = (Normalizer::factory())->normalize($this->codePhpDoc);
         $this->assertMatchesTextSnapshot((new TypeScriptGenerator())->generate($normalized));

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Annotation;
+namespace App\AnnotationChecker;
 
 use PhpParser\Node;
 

@@ -9,7 +9,7 @@
     "scripts": {
         "test": "vendor/bin/phpunit tests",
         "cs": "vendor/bin/php-cs-fixer fix src",
-        "php-parser-dump": "vendor/bin/php-parse tests/DtoFixture.php"
+        "php-parser-dump": "vendor/bin/php-parse tests/fixtures/DtoFixture.php"
     },
     "require": {
         "nikic/php-parser": "^4.12",
