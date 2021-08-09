@@ -4,7 +4,7 @@
 class Dto {}
 
 #[Dto]
-class DtoFixture {
+class UserCreate {
     public int $age;
     public ?string $name;
     public float $latitude;

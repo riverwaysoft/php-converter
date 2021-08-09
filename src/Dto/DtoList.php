@@ -21,4 +21,11 @@ class DtoList
     {
         return array_values($this->dtoList);
     }
+
+    public function merge(self $list)
+    {
+        foreach ($list->dtoList as $dto) {
+            $this->dtoList[$dto->title] = $dto;
+        }
+    }
 }
