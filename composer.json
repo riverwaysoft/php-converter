@@ -1,5 +1,6 @@
 {
     "name": "egor/php-converter",
+    "description": "PHP DTO converter to TypeScript / Dart",
     "authors": [
         {
             "name": "Egor Gorbachev",
@@ -16,6 +17,7 @@
         "symfony/var-dumper": "^5.3",
         "friendsofphp/php-cs-fixer": "^3.0"
     },
+    "license": "GPL-3.0-or-later",
     "autoload": {
         "psr-4": {"App\\": "src/"},
         "classmap": [
