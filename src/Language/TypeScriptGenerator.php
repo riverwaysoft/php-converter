@@ -17,33 +17,33 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
         $string = '';
 
         foreach ($dtoList->getList() as $dto) {
-            $string .= $this->convertToTypeScriptType($dto) . "\n\n";
+            $string .= $this->convertToTypeScriptType($dto, $dtoList) . "\n\n";
         }
 
         return $string;
     }
 
-    private function convertToTypeScriptType(DtoType $dto): string
+    private function convertToTypeScriptType(DtoType $dto, DtoList $dtoList): string
     {
-        return sprintf("export type %s = {%s\n};", $dto->title, $this->convertToTypeScriptProperties($dto->properties));
+        return sprintf("export type %s = {%s\n};", $dto->name, $this->convertToTypeScriptProperties($dto->properties, $dtoList));
     }
 
     /** @param DtoProperty[] $properties */
-    private function convertToTypeScriptProperties(array $properties): string
+    private function convertToTypeScriptProperties(array $properties, DtoList $dtoList): string
     {
         $string = '';
 
         foreach ($properties as $property) {
-            $string .= sprintf("\n  %s: %s;", $property->name, $this->getTypeScriptTypeFromPhp($property->type));
+            $string .= sprintf("\n  %s: %s;", $property->name, $this->getTypeScriptTypeFromPhp($property->type, $dtoList));
         }
 
         return $string;
     }
 
-    private function getTypeScriptTypeFromPhp(SingleType|UnionType $type): string
+    private function getTypeScriptTypeFromPhp(SingleType|UnionType $type, DtoList $dtoList): string
     {
         if ($type instanceof UnionType) {
-            $arr = array_map(fn (SingleType $type) => $this->getTypeScriptTypeFromPhp($type), $type->types);
+            $arr = array_map(fn (SingleType $type) => $this->getTypeScriptTypeFromPhp($type, $dtoList), $type->types);
             return implode(separator: ' | ', array: $arr);
         }
 
@@ -55,7 +55,16 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
             'mixed', 'object' => 'any',
             'array' => 'any[]',
             'null' => 'null',
-            default => throw new \InvalidArgumentException('PHP Type ' . $type->name . ' is not supported'),
+            default => $this->handleUnknownType($type, $dtoList),
         };
+    }
+
+    private function handleUnknownType(SingleType $type, DtoList $dtoList): string
+    {
+        if ($dtoList->hasDtoWithType($type->name)) {
+            return $type->name;
+        }
+
+        throw new \InvalidArgumentException('PHP Type ' . $type->name . ' is not supported');
     }
 }

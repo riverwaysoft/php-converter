@@ -10,7 +10,9 @@
     "scripts": {
         "test": "vendor/bin/phpunit tests",
         "cs": "vendor/bin/php-cs-fixer fix src",
-        "php-parser-dump": "vendor/bin/php-parse tests/fixtures/UserCreate.php"
+        "cs:src": "vendor/bin/php-cs-fixer fix src",
+        "cs:tests": "vendor/bin/php-cs-fixer fix tests",
+        "php-parser-dump": "vendor/bin/php-parse tests/fixtures/NestedDto.php"
     },
     "require": {
         "nikic/php-parser": "^4.12",

@@ -1,6 +1,23 @@
 [
     {
-        "title": "UserCreate",
+        "name": "CloudNotify",
+        "properties": [
+            {
+                "type": {
+                    "name": "string"
+                },
+                "name": "id"
+            },
+            {
+                "type": {
+                    "name": "string"
+                },
+                "name": "fcmToken"
+            }
+        ]
+    },
+    {
+        "name": "UserCreate",
         "properties": [
             {
                 "type": {
@@ -67,23 +84,6 @@
                     "name": "mixed"
                 },
                 "name": "mixed"
-            }
-        ]
-    },
-    {
-        "title": "CloudNotify",
-        "properties": [
-            {
-                "type": {
-                    "name": "string"
-                },
-                "name": "id"
-            },
-            {
-                "type": {
-                    "name": "string"
-                },
-                "name": "fcmToken"
             }
         ]
     }

@@ -7,7 +7,7 @@ namespace App\Dto;
 class DtoType
 {
     public function __construct(
-        public string $title,
+        public string $name,
         /** @var DtoProperty[] */
         public array $properties,
     ) {

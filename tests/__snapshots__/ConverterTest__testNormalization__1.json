@@ -1,6 +1,6 @@
 [
     {
-        "title": "CloudNotify",
+        "name": "CloudNotify",
         "properties": [
             {
                 "type": {
@@ -17,7 +17,48 @@
         ]
     },
     {
-        "title": "UserCreate",
+        "name": "FullName",
+        "properties": [
+            {
+                "type": {
+                    "name": "string"
+                },
+                "name": "firstName"
+            },
+            {
+                "type": {
+                    "name": "string"
+                },
+                "name": "lastName"
+            }
+        ]
+    },
+    {
+        "name": "Profile",
+        "properties": [
+            {
+                "type": {
+                    "types": [
+                        {
+                            "name": "FullName"
+                        },
+                        {
+                            "name": "null"
+                        }
+                    ]
+                },
+                "name": "name"
+            },
+            {
+                "type": {
+                    "name": "int"
+                },
+                "name": "age"
+            }
+        ]
+    },
+    {
+        "name": "TestCreate",
         "properties": [
             {
                 "type": {
@@ -74,6 +115,30 @@
                     ]
                 },
                 "name": "isApproved"
+            }
+        ]
+    },
+    {
+        "name": "UserCreate",
+        "properties": [
+            {
+                "type": {
+                    "name": "string"
+                },
+                "name": "id"
+            },
+            {
+                "type": {
+                    "types": [
+                        {
+                            "name": "Profile"
+                        },
+                        {
+                            "name": "null"
+                        }
+                    ]
+                },
+                "name": "profile"
             }
         ]
     }

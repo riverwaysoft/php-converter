@@ -36,15 +36,17 @@ class AstVisitor extends NodeVisitorAbstract
 
     private function createDtoType(Node\Stmt\Class_ $node)
     {
-        $name = $node->name->name;
+        $createSingleType = function (Node\Name|Node\Identifier $param) {
+            return new SingleType(get_class($param) === Node\Name::class ? $param->parts[0] : $param->name);
+        };
 
         $properties = [];
         foreach ($node->stmts as $stmt) {
             if ($stmt instanceof Node\Stmt\Property) {
                 $type = match (get_class($stmt->type)) {
-                    Node\UnionType::class => new UnionType(array_map(fn ($type) => new SingleType($type->name), $stmt->type->types)),
-                    Node\NullableType::class => UnionType::nullable(new SingleType($stmt->type->type->name)),
-                    default => new SingleType($stmt->type->name),
+                    Node\UnionType::class => new UnionType(array_map($createSingleType, $stmt->type->types)),
+                    Node\NullableType::class => UnionType::nullable($createSingleType($stmt->type->type)),
+                    default => $createSingleType($stmt->type),
                 };
 
                 $properties[] = new DtoProperty(
@@ -52,12 +54,13 @@ class AstVisitor extends NodeVisitorAbstract
                     name: $stmt->props[0]->name->name,
                 );
             }
+
             if ($stmt instanceof Node\Stmt\ClassMethod) {
                 foreach ($stmt->params as $param) {
                     $type = match (get_class($param)) {
-                        Node\UnionType::class => new UnionType(array_map(fn ($type) => new SingleType($type->name), $param->types)),
-                        Node\NullableType::class => UnionType::nullable(new SingleType($param->type->type->name)),
-                        default => new SingleType($param->type->name),
+                        Node\UnionType::class => new UnionType(array_map($createSingleType, $param->types)),
+                        Node\NullableType::class => UnionType::nullable($createSingleType($param->type->type)),
+                        default => $createSingleType($param->type),
                     };
 
                     $properties[] = new DtoProperty(
@@ -68,6 +71,6 @@ class AstVisitor extends NodeVisitorAbstract
             }
         }
 
-        $this->dtoList->addDto(new DtoType(title: $name, properties: $properties));
+        $this->dtoList->addDto(new DtoType(name: $node->name->name, properties: $properties));
     }
 }

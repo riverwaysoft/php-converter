@@ -1,10 +1,13 @@
 <?php
 
 #[\Attribute]
-class Dto {}
+class Dto
+{
+}
 
 #[Dto]
-class CloudNotify {
+class CloudNotify
+{
     public function __construct(public string $id, public string $fcmToken)
     {
     }

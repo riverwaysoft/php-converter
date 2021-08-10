@@ -1,10 +1,13 @@
 <?php
 
 #[\Attribute]
-class Dto {}
+class Dto
+{
+}
 
 #[Dto]
-class UserCreate {
+class TestCreate
+{
     public int $age;
     public ?string $name;
     public float $latitude;
