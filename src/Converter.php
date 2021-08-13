@@ -18,6 +18,7 @@ class Converter
     public function convert(): DtoList
     {
         $dtoList = new DtoList();
+
         foreach ($this->codeProvider->getListings() as $listing) {
             $dtoList->merge($this->normalizer->normalize($listing));
         }

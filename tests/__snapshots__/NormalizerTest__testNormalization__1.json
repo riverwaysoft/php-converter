@@ -1,6 +1,9 @@
 [
     {
         "name": "CloudNotify",
+        "expressionType": {
+            "type": "class"
+        },
         "properties": [
             {
                 "type": {
@@ -18,6 +21,9 @@
     },
     {
         "name": "UserCreate",
+        "expressionType": {
+            "type": "class"
+        },
         "properties": [
             {
                 "type": {

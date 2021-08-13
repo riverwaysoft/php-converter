@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace App\Ast;
 
-use App\AnnotationChecker\AnnotationCheckerInterface;
+use App\Dto\DtoEnumProperty;
 use App\Dto\DtoList;
-use App\Dto\DtoProperty;
+use App\Dto\DtoClassProperty;
 use App\Dto\DtoType;
+use App\Dto\ExpressionType;
 use App\Dto\SingleType;
 use App\Dto\UnionType;
 use PhpParser\Node;
@@ -17,24 +18,17 @@ class AstVisitor extends NodeVisitorAbstract
 {
     public function __construct(
         private DtoList $dtoList,
-        /** @var AnnotationCheckerInterface[] $annotationCheckers */
-        private array $annotationCheckers,
     ) {
     }
 
     public function leaveNode(Node $node): void
     {
         if ($node instanceof Node\Stmt\Class_) {
-            foreach ($this->annotationCheckers as $dtoAnnotationChecker) {
-                if ($dtoAnnotationChecker->hasDtoAttribute($node)) {
-                    $this->createDtoType($node);
-                    break;
-                }
-            }
+            $this->createDtoType($node);
         }
     }
 
-    private function createDtoType(Node\Stmt\Class_ $node)
+    private function createDtoType(Node\Stmt\Class_ $node): void
     {
         $createSingleType = function (Node\Name|Node\Identifier $param) {
             return new SingleType(get_class($param) === Node\Name::class ? $param->parts[0] : $param->name);
@@ -42,6 +36,13 @@ class AstVisitor extends NodeVisitorAbstract
 
         $properties = [];
         foreach ($node->stmts as $stmt) {
+            if ($stmt instanceof Node\Stmt\ClassConst) {
+                $properties[] = new DtoEnumProperty(
+                    name: $stmt->consts[0]->name->name,
+                    value: $stmt->consts[0]->value->value,
+                );
+            }
+
             if ($stmt instanceof Node\Stmt\Property) {
                 $type = match (get_class($stmt->type)) {
                     Node\UnionType::class => new UnionType(array_map($createSingleType, $stmt->type->types)),
@@ -49,7 +50,7 @@ class AstVisitor extends NodeVisitorAbstract
                     default => $createSingleType($stmt->type),
                 };
 
-                $properties[] = new DtoProperty(
+                $properties[] = new DtoClassProperty(
                     type: $type,
                     name: $stmt->props[0]->name->name,
                 );
@@ -63,7 +64,7 @@ class AstVisitor extends NodeVisitorAbstract
                         default => $createSingleType($param->type),
                     };
 
-                    $properties[] = new DtoProperty(
+                    $properties[] = new DtoClassProperty(
                         type: $type,
                         name: $param->var->name,
                     );
@@ -71,6 +72,17 @@ class AstVisitor extends NodeVisitorAbstract
             }
         }
 
-        $this->dtoList->addDto(new DtoType(name: $node->name->name, properties: $properties));
+        $this->dtoList->addDto(new DtoType(
+            name: $node->name->name,
+            expressionType: $this->resolveExpressionType($node),
+            properties: $properties,
+        ));
+    }
+
+    public function resolveExpressionType(Node\Stmt\Class_ $node): ExpressionType
+    {
+        return ($node->extends?->parts[0] === 'Enum')
+            ? ExpressionType::enum()
+            : ExpressionType::class();
     }
 }

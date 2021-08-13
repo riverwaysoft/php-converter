@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Language;
 
+use App\Dto\DtoEnumProperty;
 use App\Dto\DtoList;
-use App\Dto\DtoProperty;
+use App\Dto\DtoClassProperty;
 use App\Dto\DtoType;
+use App\Dto\ExpressionType;
 use App\Dto\SingleType;
 use App\Dto\UnionType;
 
@@ -25,16 +27,38 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
 
     private function convertToTypeScriptType(DtoType $dto, DtoList $dtoList): string
     {
-        return sprintf("export type %s = {%s\n};", $dto->name, $this->convertToTypeScriptProperties($dto->properties, $dtoList));
+        if ($dto->expressionType->equals(ExpressionType::class())) {
+            return sprintf("export type %s = {%s\n};", $dto->name, $this->convertToTypeScriptProperties($dto->properties, $dtoList));
+        }
+        if ($dto->expressionType->equals(ExpressionType::enum())) {
+            return sprintf("export enum %s {%s\n}", $dto->name, $this->convertEnumToTypeScriptProperties($dto->properties));
+        }
+        throw new \Exception('Unknown expression type '.$dto->expressionType->jsonSerialize());
     }
 
-    /** @param DtoProperty[] $properties */
+    /** @param DtoClassProperty[] $properties */
     private function convertToTypeScriptProperties(array $properties, DtoList $dtoList): string
     {
         $string = '';
 
         foreach ($properties as $property) {
             $string .= sprintf("\n  %s: %s;", $property->name, $this->getTypeScriptTypeFromPhp($property->type, $dtoList));
+        }
+
+        return $string;
+    }
+
+    /** @param DtoEnumProperty[] $properties */
+    private function convertEnumToTypeScriptProperties(array $properties): string
+    {
+        $string = '';
+
+        foreach ($properties as $property) {
+            $propertyValue = is_numeric($property->value)
+                ? $property->value
+                : sprintf("'%s'", $property->value);
+
+            $string .= sprintf("\n  %s = %s,", $property->name, $propertyValue);
         }
 
         return $string;

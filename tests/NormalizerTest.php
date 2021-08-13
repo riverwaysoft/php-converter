@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Normalizer;
 use App\Language\TypeScriptGenerator;
 use PHPUnit\Framework\TestCase;
+use App\Testing\TypeScriptSnapshotComparator;
 use Spatie\Snapshots\MatchesSnapshots;
 
 class NormalizerTest extends TestCase
@@ -14,10 +15,6 @@ class NormalizerTest extends TestCase
     private $codeAttribute = <<<'CODE'
 <?php
 
-#[\Attribute]
-class Dto {}
-
-#[Dto]
 class UserCreate {
     public ?string $name;
     public int|string|float $age;
@@ -28,9 +25,6 @@ class UserCreate {
     public mixed $mixed;
 }
 
-class NoAttr {}
-
-#[Dto]
 class CloudNotify {
     public function __construct(public string $id, public string $fcmToken)
     {
@@ -38,47 +32,19 @@ class CloudNotify {
 }
 CODE;
 
-
-    private $codePhpDoc = <<<'CODE'
-<?php
-
-/**
- * @Dto
- */
-class UserCreate {
-    public ?string $name;
-    public int|string|float $age;
-    public bool|null $isApproved;
-    public float $latitude;
-    public float $longitude;
-    public array $achievements;
-    public mixed $mixed;
-}
-
-class Test {}
-CODE;
-
-
     private $codeRecursiveDto = <<<'CODE'
 <?php
 
-#[\Attribute]
-class Dto {}
-
-
-#[Dto]
 class UserCreate {
     public string $id;
     public ?Profile $profile;
 }
 
-#[Dto]
 class FullName {
     public string $firstName;
     public string $lastName;
 }
 
-#[Dto]
 class Profile {
     public FullName|null|string $name;
     public int $age;
@@ -95,13 +61,7 @@ CODE;
     public function testConvertAnnotations()
     {
         $normalized = (Normalizer::factory())->normalize($this->codeAttribute);
-        $this->assertMatchesTextSnapshot((new TypeScriptGenerator())->generate($normalized));
-    }
-
-    public function testConvertPhpDoc(): void
-    {
-        $normalized = (Normalizer::factory())->normalize($this->codePhpDoc);
-        $this->assertMatchesTextSnapshot((new TypeScriptGenerator())->generate($normalized));
+        $this->assertMatchesSnapshot((new TypeScriptGenerator())->generate($normalized), new TypeScriptSnapshotComparator());
     }
 
     public function testNestedDtoNormalize(): void
@@ -113,6 +73,6 @@ CODE;
     public function testNestedDtoConvert(): void
     {
         $normalized = (Normalizer::factory())->normalize($this->codeRecursiveDto);
-        $this->assertMatchesTextSnapshot((new TypeScriptGenerator())->generate($normalized));
+        $this->assertMatchesSnapshot((new TypeScriptGenerator())->generate($normalized), new TypeScriptSnapshotComparator());
     }
 }
