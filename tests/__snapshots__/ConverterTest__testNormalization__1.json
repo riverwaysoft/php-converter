@@ -1,25 +1,5 @@
 [
     {
-        "name": "CloudNotify",
-        "expressionType": {
-            "type": "class"
-        },
-        "properties": [
-            {
-                "type": {
-                    "name": "string"
-                },
-                "name": "id"
-            },
-            {
-                "type": {
-                    "name": "string"
-                },
-                "name": "fcmToken"
-            }
-        ]
-    },
-    {
         "name": "FullName",
         "expressionType": {
             "type": "class"
@@ -60,6 +40,22 @@
         ]
     },
     {
+        "name": "PermissionsEnum",
+        "expressionType": {
+            "type": "enum"
+        },
+        "properties": [
+            {
+                "name": "VIEW",
+                "value": "view"
+            },
+            {
+                "name": "EDIT",
+                "value": "edit"
+            }
+        ]
+    },
+    {
         "name": "Profile",
         "expressionType": {
             "type": "class"
@@ -87,27 +83,36 @@
         ]
     },
     {
-        "name": "StringEnum",
-        "expressionType": {
-            "type": "enum"
-        },
-        "properties": [
-            {
-                "name": "VIEW",
-                "value": "view"
-            },
-            {
-                "name": "EDIT",
-                "value": "edit"
-            }
-        ]
-    },
-    {
-        "name": "TestCreateDto",
+        "name": "UserCreate",
         "expressionType": {
             "type": "class"
         },
         "properties": [
+            {
+                "type": {
+                    "name": "string"
+                },
+                "name": "id"
+            },
+            {
+                "type": {
+                    "name": "PermissionsEnum"
+                },
+                "name": "permissions"
+            },
+            {
+                "type": {
+                    "types": [
+                        {
+                            "name": "Profile"
+                        },
+                        {
+                            "name": "null"
+                        }
+                    ]
+                },
+                "name": "profile"
+            },
             {
                 "type": {
                     "name": "int"
@@ -163,33 +168,6 @@
                     ]
                 },
                 "name": "isApproved"
-            }
-        ]
-    },
-    {
-        "name": "UserCreate",
-        "expressionType": {
-            "type": "class"
-        },
-        "properties": [
-            {
-                "type": {
-                    "name": "string"
-                },
-                "name": "id"
-            },
-            {
-                "type": {
-                    "types": [
-                        {
-                            "name": "Profile"
-                        },
-                        {
-                            "name": "null"
-                        }
-                    ]
-                },
-                "name": "profile"
             }
         ]
     }
