@@ -1,6 +1,9 @@
 [
     {
         "name": "CloudNotify",
+        "expressionType": {
+            "type": "class"
+        },
         "properties": [
             {
                 "type": {
@@ -18,6 +21,9 @@
     },
     {
         "name": "FullName",
+        "expressionType": {
+            "type": "class"
+        },
         "properties": [
             {
                 "type": {
@@ -34,7 +40,30 @@
         ]
     },
     {
+        "name": "NumberEnum",
+        "expressionType": {
+            "type": "enum"
+        },
+        "properties": [
+            {
+                "name": "VIEW",
+                "value": 0
+            },
+            {
+                "name": "EDIT",
+                "value": 1
+            },
+            {
+                "name": "CREATE",
+                "value": 2
+            }
+        ]
+    },
+    {
         "name": "Profile",
+        "expressionType": {
+            "type": "class"
+        },
         "properties": [
             {
                 "type": {
@@ -58,7 +87,26 @@
         ]
     },
     {
-        "name": "TestCreate",
+        "name": "StringEnum",
+        "expressionType": {
+            "type": "enum"
+        },
+        "properties": [
+            {
+                "name": "VIEW",
+                "value": "view"
+            },
+            {
+                "name": "EDIT",
+                "value": "edit"
+            }
+        ]
+    },
+    {
+        "name": "TestCreateDto",
+        "expressionType": {
+            "type": "class"
+        },
         "properties": [
             {
                 "type": {
@@ -120,6 +168,9 @@
     },
     {
         "name": "UserCreate",
+        "expressionType": {
+            "type": "class"
+        },
         "properties": [
             {
                 "type": {

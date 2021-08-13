@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Dto;
 
-class DtoProperty
+class DtoClassProperty
 {
     public function __construct(
         public SingleType|UnionType $type,

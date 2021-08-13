@@ -8,7 +8,8 @@ class DtoType
 {
     public function __construct(
         public string $name,
-        /** @var DtoProperty[] */
+        public ExpressionType $expressionType,
+        /** @var DtoClassProperty[]|DtoEnumProperty[] */
         public array $properties,
     ) {
     }

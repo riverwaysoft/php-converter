@@ -1,12 +1,6 @@
 <?php
 
-#[\Attribute]
-class Dto
-{
-}
-
-#[Dto]
-class TestCreate
+class TestCreateDto
 {
     public int $age;
     public ?string $name;

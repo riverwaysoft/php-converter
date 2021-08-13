@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App;
 
-use App\AnnotationChecker\PhpAttributesChecker;
-use App\AnnotationChecker\PhpDocChecker;
 use App\Ast\AstVisitor;
 use App\Dto\DtoList;
 use PhpParser\NodeTraverser;
@@ -30,7 +28,7 @@ class Normalizer
     {
         $traverser = new NodeTraverser();
         $dtoList = new DtoList();
-        $visitor = new AstVisitor($dtoList, [new PhpAttributesChecker(), new PhpDocChecker()]);
+        $visitor = new AstVisitor($dtoList);
         $traverser->addVisitor($visitor);
         $ast = $this->parser->parse($code);
         $traverser->traverse($ast);
