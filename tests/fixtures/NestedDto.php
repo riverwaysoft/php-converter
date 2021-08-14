@@ -20,6 +20,12 @@ class Profile
     public int $age;
 }
 
+class Activity
+{
+    public string $id;
+    public string $createdAt;
+}
+
 class UserCreate
 {
     public string $id;
@@ -30,6 +36,10 @@ class UserCreate
     public float $latitude;
     public float $longitude;
     public array $achievements;
+    /** @var string[] */
+    public array $tags;
+    /** @var Activity[] */
+    public array $activities;
     public mixed $mixed;
     public bool|null $isApproved;
 }

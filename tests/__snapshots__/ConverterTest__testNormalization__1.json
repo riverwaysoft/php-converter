@@ -1,5 +1,27 @@
 [
     {
+        "name": "Activity",
+        "expressionType": {
+            "type": "class"
+        },
+        "properties": [
+            {
+                "type": {
+                    "name": "string",
+                    "isArray": false
+                },
+                "name": "id"
+            },
+            {
+                "type": {
+                    "name": "string",
+                    "isArray": false
+                },
+                "name": "createdAt"
+            }
+        ]
+    },
+    {
         "name": "FullName",
         "expressionType": {
             "type": "class"
@@ -7,13 +29,15 @@
         "properties": [
             {
                 "type": {
-                    "name": "string"
+                    "name": "string",
+                    "isArray": false
                 },
                 "name": "firstName"
             },
             {
                 "type": {
-                    "name": "string"
+                    "name": "string",
+                    "isArray": false
                 },
                 "name": "lastName"
             }
@@ -65,10 +89,12 @@
                 "type": {
                     "types": [
                         {
-                            "name": "FullName"
+                            "name": "FullName",
+                            "isArray": false
                         },
                         {
-                            "name": "null"
+                            "name": "null",
+                            "isArray": false
                         }
                     ]
                 },
@@ -76,9 +102,47 @@
             },
             {
                 "type": {
-                    "name": "int"
+                    "name": "int",
+                    "isArray": false
                 },
                 "name": "age"
+            }
+        ]
+    },
+    {
+        "name": "User",
+        "expressionType": {
+            "type": "class"
+        },
+        "properties": [
+            {
+                "type": {
+                    "name": "string",
+                    "isArray": false
+                },
+                "name": "id"
+            },
+            {
+                "type": {
+                    "types": [
+                        {
+                            "name": "User",
+                            "isArray": false
+                        },
+                        {
+                            "name": "null",
+                            "isArray": false
+                        }
+                    ]
+                },
+                "name": "bestFriend"
+            },
+            {
+                "type": {
+                    "name": "User",
+                    "isArray": true
+                },
+                "name": "friends"
             }
         ]
     },
@@ -90,13 +154,15 @@
         "properties": [
             {
                 "type": {
-                    "name": "string"
+                    "name": "string",
+                    "isArray": false
                 },
                 "name": "id"
             },
             {
                 "type": {
-                    "name": "PermissionsEnum"
+                    "name": "PermissionsEnum",
+                    "isArray": false
                 },
                 "name": "permissions"
             },
@@ -104,10 +170,12 @@
                 "type": {
                     "types": [
                         {
-                            "name": "Profile"
+                            "name": "Profile",
+                            "isArray": false
                         },
                         {
-                            "name": "null"
+                            "name": "null",
+                            "isArray": false
                         }
                     ]
                 },
@@ -115,7 +183,8 @@
             },
             {
                 "type": {
-                    "name": "int"
+                    "name": "int",
+                    "isArray": false
                 },
                 "name": "age"
             },
@@ -123,10 +192,12 @@
                 "type": {
                     "types": [
                         {
-                            "name": "string"
+                            "name": "string",
+                            "isArray": false
                         },
                         {
-                            "name": "null"
+                            "name": "null",
+                            "isArray": false
                         }
                     ]
                 },
@@ -134,25 +205,43 @@
             },
             {
                 "type": {
-                    "name": "float"
+                    "name": "float",
+                    "isArray": false
                 },
                 "name": "latitude"
             },
             {
                 "type": {
-                    "name": "float"
+                    "name": "float",
+                    "isArray": false
                 },
                 "name": "longitude"
             },
             {
                 "type": {
-                    "name": "array"
+                    "name": "array",
+                    "isArray": false
                 },
                 "name": "achievements"
             },
             {
                 "type": {
-                    "name": "mixed"
+                    "name": "string",
+                    "isArray": true
+                },
+                "name": "tags"
+            },
+            {
+                "type": {
+                    "name": "Activity",
+                    "isArray": true
+                },
+                "name": "activities"
+            },
+            {
+                "type": {
+                    "name": "mixed",
+                    "isArray": false
                 },
                 "name": "mixed"
             },
@@ -160,10 +249,12 @@
                 "type": {
                     "types": [
                         {
-                            "name": "bool"
+                            "name": "bool",
+                            "isArray": false
                         },
                         {
-                            "name": "null"
+                            "name": "null",
+                            "isArray": false
                         }
                     ]
                 },

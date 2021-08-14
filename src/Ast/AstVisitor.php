@@ -30,8 +30,12 @@ class AstVisitor extends NodeVisitorAbstract
 
     private function createDtoType(Node\Stmt\Class_ $node): void
     {
-        $createSingleType = function (Node\Name|Node\Identifier $param) {
-            return new SingleType(get_class($param) === Node\Name::class ? $param->parts[0] : $param->name);
+        $createSingleType = function (Node\Name|Node\Identifier $param, ?string $docComment = null) {
+            $typeName = get_class($param) === Node\Name::class ? $param->parts[0] : $param->name;
+            if ($typeName === 'array' && $docComment) {
+                return SingleType::array($this->parseArrayType($docComment));
+            }
+            return new SingleType($typeName);
         };
 
         $properties = [];
@@ -47,7 +51,7 @@ class AstVisitor extends NodeVisitorAbstract
                 $type = match (get_class($stmt->type)) {
                     Node\UnionType::class => new UnionType(array_map($createSingleType, $stmt->type->types)),
                     Node\NullableType::class => UnionType::nullable($createSingleType($stmt->type->type)),
-                    default => $createSingleType($stmt->type),
+                    default => $createSingleType($stmt->type, $stmt->getDocComment()?->getText()),
                 };
 
                 $properties[] = new DtoClassProperty(
@@ -84,5 +88,12 @@ class AstVisitor extends NodeVisitorAbstract
         return ($node->extends?->parts[0] === 'Enum')
             ? ExpressionType::enum()
             : ExpressionType::class();
+    }
+
+    private function parseArrayType(string $docComment): string
+    {
+        preg_match('/var (.+)\[]/', $docComment, $matches);
+
+        return $matches[1];
     }
 }
