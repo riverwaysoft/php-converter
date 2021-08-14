@@ -16,12 +16,13 @@ class NormalizerTest extends TestCase
 <?php
 
 class UserCreate {
+    /** @var string[] */
+    public array $achievements;
     public ?string $name;
     public int|string|float $age;
     public bool|null $isApproved;
     public float $latitude;
     public float $longitude;
-    public array $achievements;
     public mixed $mixed;
 }
 

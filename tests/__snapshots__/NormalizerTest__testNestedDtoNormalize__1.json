@@ -7,13 +7,15 @@
         "properties": [
             {
                 "type": {
-                    "name": "string"
+                    "name": "string",
+                    "isArray": false
                 },
                 "name": "firstName"
             },
             {
                 "type": {
-                    "name": "string"
+                    "name": "string",
+                    "isArray": false
                 },
                 "name": "lastName"
             }
@@ -29,13 +31,16 @@
                 "type": {
                     "types": [
                         {
-                            "name": "FullName"
+                            "name": "FullName",
+                            "isArray": false
                         },
                         {
-                            "name": "null"
+                            "name": "null",
+                            "isArray": false
                         },
                         {
-                            "name": "string"
+                            "name": "string",
+                            "isArray": false
                         }
                     ]
                 },
@@ -43,7 +48,8 @@
             },
             {
                 "type": {
-                    "name": "int"
+                    "name": "int",
+                    "isArray": false
                 },
                 "name": "age"
             }
@@ -57,7 +63,8 @@
         "properties": [
             {
                 "type": {
-                    "name": "string"
+                    "name": "string",
+                    "isArray": false
                 },
                 "name": "id"
             },
@@ -65,10 +72,12 @@
                 "type": {
                     "types": [
                         {
-                            "name": "Profile"
+                            "name": "Profile",
+                            "isArray": false
                         },
                         {
-                            "name": "null"
+                            "name": "null",
+                            "isArray": false
                         }
                     ]
                 },

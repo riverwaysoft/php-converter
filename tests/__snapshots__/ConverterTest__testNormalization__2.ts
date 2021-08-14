@@ -1,3 +1,8 @@
+export type Activity = {
+  id: string;
+  createdAt: string;
+};
+
 export type FullName = {
   firstName: string;
   lastName: string;
@@ -19,6 +24,12 @@ export type Profile = {
   age: number;
 };
 
+export type User = {
+  id: string;
+  bestFriend: User | null;
+  friends: User[];
+};
+
 export type UserCreate = {
   id: string;
   permissions: PermissionsEnum;
@@ -28,6 +39,8 @@ export type UserCreate = {
   latitude: number;
   longitude: number;
   achievements: any[];
+  tags: string[];
+  activities: Activity[];
   mixed: any;
   isApproved: boolean | null;
 };

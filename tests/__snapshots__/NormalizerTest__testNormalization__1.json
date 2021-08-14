@@ -7,13 +7,15 @@
         "properties": [
             {
                 "type": {
-                    "name": "string"
+                    "name": "string",
+                    "isArray": false
                 },
                 "name": "id"
             },
             {
                 "type": {
-                    "name": "string"
+                    "name": "string",
+                    "isArray": false
                 },
                 "name": "fcmToken"
             }
@@ -27,12 +29,21 @@
         "properties": [
             {
                 "type": {
+                    "name": "string",
+                    "isArray": true
+                },
+                "name": "achievements"
+            },
+            {
+                "type": {
                     "types": [
                         {
-                            "name": "string"
+                            "name": "string",
+                            "isArray": false
                         },
                         {
-                            "name": "null"
+                            "name": "null",
+                            "isArray": false
                         }
                     ]
                 },
@@ -42,13 +53,16 @@
                 "type": {
                     "types": [
                         {
-                            "name": "int"
+                            "name": "int",
+                            "isArray": false
                         },
                         {
-                            "name": "string"
+                            "name": "string",
+                            "isArray": false
                         },
                         {
-                            "name": "float"
+                            "name": "float",
+                            "isArray": false
                         }
                     ]
                 },
@@ -58,10 +72,12 @@
                 "type": {
                     "types": [
                         {
-                            "name": "bool"
+                            "name": "bool",
+                            "isArray": false
                         },
                         {
-                            "name": "null"
+                            "name": "null",
+                            "isArray": false
                         }
                     ]
                 },
@@ -69,25 +85,22 @@
             },
             {
                 "type": {
-                    "name": "float"
+                    "name": "float",
+                    "isArray": false
                 },
                 "name": "latitude"
             },
             {
                 "type": {
-                    "name": "float"
+                    "name": "float",
+                    "isArray": false
                 },
                 "name": "longitude"
             },
             {
                 "type": {
-                    "name": "array"
-                },
-                "name": "achievements"
-            },
-            {
-                "type": {
-                    "name": "mixed"
+                    "name": "mixed",
+                    "isArray": false
                 },
                 "name": "mixed"
             }

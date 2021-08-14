@@ -71,6 +71,10 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
             return implode(separator: ' | ', array: $arr);
         }
 
+        if ($type->isArray) {
+            return sprintf('%s[]', $this->getTypeScriptTypeFromPhp(new SingleType($type->name), $dtoList));
+        }
+
         // https://www.php.net/manual/en/language.types.declarations.php
         return match ($type->name) {
             'int', 'float' => 'number',
@@ -89,6 +93,6 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
             return $type->name;
         }
 
-        throw new \InvalidArgumentException('PHP Type ' . $type->name . ' is not supported');
+        throw new \InvalidArgumentException(sprintf("PHP Type %s is not supported", $type->name));
     }
 }
