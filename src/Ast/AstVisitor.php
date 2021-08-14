@@ -18,7 +18,8 @@ class AstVisitor extends NodeVisitorAbstract
 {
     public function __construct(
         private DtoList $dtoList,
-    ) {
+    )
+    {
     }
 
     public function leaveNode(Node $node): void
@@ -28,16 +29,25 @@ class AstVisitor extends NodeVisitorAbstract
         }
     }
 
+    private function createSingleType(Node\Name|Node\Identifier|Node\NullableType $param, ?string $docComment = null): SingleType|UnionType
+    {
+        if ($param instanceof Node\NullableType) {
+            return UnionType::nullable($this->createSingleType($param->type));
+        }
+
+        $typeName = get_class($param) === Node\Name::class || get_class($param) === Node\Name\FullyQualified::class
+            ? $param->parts[0]
+            : $param->name;
+
+        if ($typeName === 'array' && $docComment) {
+            return SingleType::array($this->parseArrayType($docComment));
+        }
+
+        return new SingleType($typeName);
+    }
+
     private function createDtoType(Node\Stmt\Class_ $node): void
     {
-        $createSingleType = function (Node\Name|Node\Identifier $param, ?string $docComment = null) {
-            $typeName = get_class($param) === Node\Name::class ? $param->parts[0] : $param->name;
-            if ($typeName === 'array' && $docComment) {
-                return SingleType::array($this->parseArrayType($docComment));
-            }
-            return new SingleType($typeName);
-        };
-
         $properties = [];
         foreach ($node->stmts as $stmt) {
             if ($stmt instanceof Node\Stmt\ClassConst) {
@@ -49,9 +59,8 @@ class AstVisitor extends NodeVisitorAbstract
 
             if ($stmt instanceof Node\Stmt\Property) {
                 $type = match (get_class($stmt->type)) {
-                    Node\UnionType::class => new UnionType(array_map($createSingleType, $stmt->type->types)),
-                    Node\NullableType::class => UnionType::nullable($createSingleType($stmt->type->type)),
-                    default => $createSingleType($stmt->type, $stmt->getDocComment()?->getText()),
+                    Node\UnionType::class => new UnionType(array_map([$this, 'createSingleType'], $stmt->type->types)),
+                    default => $this->createSingleType($stmt->type, $stmt->getDocComment()?->getText()),
                 };
 
                 $properties[] = new DtoClassProperty(
@@ -63,9 +72,8 @@ class AstVisitor extends NodeVisitorAbstract
             if ($stmt instanceof Node\Stmt\ClassMethod) {
                 foreach ($stmt->params as $param) {
                     $type = match (get_class($param)) {
-                        Node\UnionType::class => new UnionType(array_map($createSingleType, $param->types)),
-                        Node\NullableType::class => UnionType::nullable($createSingleType($param->type->type)),
-                        default => $createSingleType($param->type),
+                        Node\UnionType::class => new UnionType(array_map([$this, 'createSingleType'], $param->types)),
+                        default => $this->createSingleType($param->type, $param->getDocComment()),
                     };
 
                     $properties[] = new DtoClassProperty(
