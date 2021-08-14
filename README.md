@@ -9,6 +9,7 @@ Work-in-progress PHP DTO to TypeScript & Dart converter. See unit tests for deta
 - Enums (myclabs/enum)
 - Nested DTO
 - Recursive DTO
+- Custom type converting (like `DateTimeImmutable`)
 
 ### Scripts
 - `composer test` - Run tests
