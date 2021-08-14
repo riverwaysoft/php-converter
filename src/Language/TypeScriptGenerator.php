@@ -14,6 +14,14 @@ use App\Dto\UnionType;
 
 class TypeScriptGenerator implements LanguageGeneratorInterface
 {
+    public function __construct(
+        /** @var UnknownTypeResolverInterface[] */
+        private array $unknownTypeResolvers = [],
+    )
+    {
+    }
+
+
     public function generate(DtoList $dtoList): string
     {
         $string = '';
@@ -91,6 +99,12 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
     {
         if ($dtoList->hasDtoWithType($type->name)) {
             return $type->name;
+        }
+
+        foreach ($this->unknownTypeResolvers as $unknownTypeResolver) {
+            if ($unknownTypeResolver->supports($type)) {
+                return $unknownTypeResolver->resolve($type);
+            }
         }
 
         throw new \InvalidArgumentException(sprintf("PHP Type %s is not supported", $type->name));

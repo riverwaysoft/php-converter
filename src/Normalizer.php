@@ -26,11 +26,13 @@ class Normalizer
 
     public function normalize(string $code): DtoList
     {
-        $traverser = new NodeTraverser();
+        $ast = $this->parser->parse($code);
+
         $dtoList = new DtoList();
         $visitor = new AstVisitor($dtoList);
+
+        $traverser = new NodeTraverser();
         $traverser->addVisitor($visitor);
-        $ast = $this->parser->parse($code);
         $traverser->traverse($ast);
 
         return $dtoList;
