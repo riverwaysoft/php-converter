@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Tests;
 
 use Riverwaysoft\DtoConverter\CodeProvider\FileSystemCodeProvider;
-use Riverwaysoft\DtoConverter\CodeProvider\InlineCodeProvider;
 use Riverwaysoft\DtoConverter\Converter;
 use Riverwaysoft\DtoConverter\Language\TypeScript\DateTimeTypeResolver;
 use Riverwaysoft\DtoConverter\Language\TypeScript\TypeScriptGenerator;
@@ -43,16 +42,17 @@ CODE;
 
     public function testNormalization(): void
     {
-        $converter = new Converter(Normalizer::factory(), new FileSystemCodeProvider(__DIR__ . '/fixtures'));
-        $result = $converter->convert();
+        $converter = new Converter(Normalizer::factory());
+        $fileProvider = new FileSystemCodeProvider('/\.php$/');
+        $result = $converter->convert($fileProvider->getListings(__DIR__ . '/fixtures'));
         $this->assertMatchesJsonSnapshot($result->getList());
         $this->assertMatchesSnapshot((new TypeScriptGenerator())->generate($result), new TypeScriptSnapshotComparator());
     }
 
     public function testNormalizationWithCustomTypeResolvers(): void
     {
-        $converter = new Converter(Normalizer::factory(), new InlineCodeProvider([$this->codeWithDateTime]));
-        $result = $converter->convert();
+        $converter = new Converter(Normalizer::factory());
+        $result = $converter->convert([$this->codeWithDateTime]);
         $typeScriptGenerator = new TypeScriptGenerator([new DateTimeTypeResolver()]);
         $this->assertMatchesSnapshot(($typeScriptGenerator)->generate($result), new TypeScriptSnapshotComparator());
     }

@@ -104,7 +104,7 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
 
         foreach ($this->unknownTypeResolvers as $unknownTypeResolver) {
             if ($unknownTypeResolver->supports($type)) {
-                return $unknownTypeResolver->resolve($type);
+                return $unknownTypeResolver->resolve($type, $dtoList);
             }
         }
 

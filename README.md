@@ -17,6 +17,9 @@ Work-in-progress PHP DTO to TypeScript & Dart converter. See unit tests for deta
   - Enums (myclabs/enum)
   - Nested DTO
   - Recursive DTO
+  
+### Usage
+- `php bin/php-generator.php dto-generator:typescript --from=/path/to/project --to=/path/to/out.ts`
 
 ### Scripts
 - `composer test` - Run tests

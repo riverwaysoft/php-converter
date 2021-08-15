@@ -48,7 +48,10 @@ class AstVisitor extends NodeVisitorAbstract
             : $param->name;
 
         if ($typeName === 'array' && $docComment) {
-            return SingleType::list($this->parseArrayType($docComment));
+            $docBlockType = $this->parseArrayType($docComment);
+            if ($docBlockType) {
+                return SingleType::list($docBlockType);
+            }
         }
 
         return new SingleType($typeName);
@@ -77,6 +80,9 @@ class AstVisitor extends NodeVisitorAbstract
 
             if ($stmt instanceof Node\Stmt\ClassMethod) {
                 foreach ($stmt->params as $param) {
+                    if ($param->type === null) {
+                        throw new \Exception(sprintf("Property %s of class %s has no type. Please add PHP type", $param->var->name, $node->name->name));
+                    }
                     $type = $this->createSingleType($param->type, $param->getDocComment()?->getText());
 
                     $properties[] = new DtoClassProperty(
@@ -101,10 +107,10 @@ class AstVisitor extends NodeVisitorAbstract
             : ExpressionType::class();
     }
 
-    private function parseArrayType(string $docComment): string
+    private function parseArrayType(string $docComment): ?string
     {
         preg_match('/var (.+)\[]/', $docComment, $matches);
 
-        return $matches[1];
+        return $matches[1] ?? null;
     }
 }

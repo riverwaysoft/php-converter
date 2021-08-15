@@ -4,20 +4,18 @@ declare(strict_types=1);
 
 namespace Riverwaysoft\DtoConverter\CodeProvider;
 
-use Webmozart\Assert\Assert;
-
-class FileSystemCodeProvider implements CodeProviderInterface
+class FileSystemCodeProvider
 {
-    public function __construct(private string $directory)
-    {
-        Assert::directory($directory);
+    public function __construct(
+        private string $pattern,
+    ) {
     }
 
-    /** @return string[]|iterable */
-    public function getListings(): iterable
+    /** @return string[] */
+    public function getListings(string $directory): iterable
     {
-        $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->directory));
-        $files = new \RegexIterator($files, '/\.php$/');
+        $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($directory));
+        $files = new \RegexIterator($files, $this->pattern);
 
         foreach ($files as $file) {
             yield file_get_contents($file->getPathName());
