@@ -9,7 +9,7 @@ namespace App\Dto;
  */
 class ExpressionType implements \JsonSerializable
 {
-    public function __construct(private string $type)
+    private function __construct(private string $type)
     {
     }
 

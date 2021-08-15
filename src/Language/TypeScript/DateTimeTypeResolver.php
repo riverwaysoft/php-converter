@@ -11,7 +11,7 @@ class DateTimeTypeResolver implements UnknownTypeResolverInterface
 {
     public function supports(SingleType $type): bool
     {
-        return $type->name === 'DateTime' || $type->name === 'DateTimeImmutable';
+        return $type->getName() === 'DateTime' || $type->getName() === 'DateTimeImmutable';
     }
 
     public function resolve(SingleType $type): string

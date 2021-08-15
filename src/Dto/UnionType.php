@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Dto;
 
-class UnionType
+class UnionType implements \JsonSerializable
 {
     public function __construct(
         /** @var SingleType[] $types */
-        public array $types,
+        private array $types,
     ) {
     }
 
@@ -32,5 +32,12 @@ class UnionType
     public function getTypes(): array
     {
         return $this->types;
+    }
+
+    public function jsonSerialize()
+    {
+        return [
+            'types' => $this->types,
+        ];
     }
 }

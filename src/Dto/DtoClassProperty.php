@@ -4,11 +4,29 @@ declare(strict_types=1);
 
 namespace App\Dto;
 
-class DtoClassProperty
+class DtoClassProperty implements \JsonSerializable
 {
     public function __construct(
-        public SingleType|UnionType $type,
-        public string $name,
+        private SingleType|UnionType $type,
+        private string $name,
     ) {
+    }
+
+    public function getType(): UnionType|SingleType
+    {
+        return $this->type;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function jsonSerialize()
+    {
+        return [
+            'type' =>$this->type,
+            'name' => $this->name
+        ];
     }
 }

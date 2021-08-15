@@ -36,13 +36,13 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
 
     private function convertToTypeScriptType(DtoType $dto, DtoList $dtoList): string
     {
-        if ($dto->expressionType->equals(ExpressionType::class())) {
-            return sprintf("export type %s = {%s\n};", $dto->name, $this->convertToTypeScriptProperties($dto->properties, $dtoList));
+        if ($dto->getExpressionType()->equals(ExpressionType::class())) {
+            return sprintf("export type %s = {%s\n};", $dto->getName(), $this->convertToTypeScriptProperties($dto->getProperties(), $dtoList));
         }
-        if ($dto->expressionType->equals(ExpressionType::enum())) {
-            return sprintf("export enum %s {%s\n}", $dto->name, $this->convertEnumToTypeScriptProperties($dto->properties));
+        if ($dto->getExpressionType()->equals(ExpressionType::enum())) {
+            return sprintf("export enum %s {%s\n}", $dto->getName(), $this->convertEnumToTypeScriptProperties($dto->getProperties()));
         }
-        throw new \Exception('Unknown expression type '.$dto->expressionType->jsonSerialize());
+        throw new \Exception('Unknown expression type '.$dto->getExpressionType()->jsonSerialize());
     }
 
     /** @param DtoClassProperty[] $properties */
@@ -51,7 +51,7 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
         $string = '';
 
         foreach ($properties as $property) {
-            $string .= sprintf("\n  %s: %s;", $property->name, $this->getTypeScriptTypeFromPhp($property->type, $dtoList));
+            $string .= sprintf("\n  %s: %s;", $property->getName(), $this->getTypeScriptTypeFromPhp($property->getType(), $dtoList));
         }
 
         return $string;
@@ -63,11 +63,11 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
         $string = '';
 
         foreach ($properties as $property) {
-            $propertyValue = is_numeric($property->value)
-                ? $property->value
-                : sprintf("'%s'", $property->value);
+            $propertyValue = $property->isNumeric()
+                ? $property->getValue()
+                : sprintf("'%s'", $property->getValue());
 
-            $string .= sprintf("\n  %s = %s,", $property->name, $propertyValue);
+            $string .= sprintf("\n  %s = %s,", $property->getName(), $propertyValue);
         }
 
         return $string;
@@ -76,16 +76,16 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
     private function getTypeScriptTypeFromPhp(SingleType|UnionType $type, DtoList $dtoList): string
     {
         if ($type instanceof UnionType) {
-            $arr = array_map(fn (SingleType $type) => $this->getTypeScriptTypeFromPhp($type, $dtoList), $type->types);
+            $arr = array_map(fn (SingleType $type) => $this->getTypeScriptTypeFromPhp($type, $dtoList), $type->getTypes());
             return implode(separator: ' | ', array: $arr);
         }
 
-        if ($type->isList) {
-            return sprintf('%s[]', $this->getTypeScriptTypeFromPhp(new SingleType($type->name), $dtoList));
+        if ($type->isList()) {
+            return sprintf('%s[]', $this->getTypeScriptTypeFromPhp(new SingleType($type->getName()), $dtoList));
         }
 
         // https://www.php.net/manual/en/language.types.declarations.php
-        return match ($type->name) {
+        return match ($type->getName()) {
             'int', 'float' => 'number',
             'string' => 'string',
             'bool' => 'boolean',
@@ -98,8 +98,8 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
 
     private function handleUnknownType(SingleType $type, DtoList $dtoList): string
     {
-        if ($dtoList->hasDtoWithType($type->name)) {
-            return $type->name;
+        if ($dtoList->hasDtoWithType($type->getName())) {
+            return $type->getName();
         }
 
         foreach ($this->unknownTypeResolvers as $unknownTypeResolver) {
@@ -108,6 +108,6 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
             }
         }
 
-        throw new \InvalidArgumentException(sprintf("PHP Type %s is not supported", $type->name));
+        throw new \InvalidArgumentException(sprintf("PHP Type %s is not supported", $type->getName()));
     }
 }

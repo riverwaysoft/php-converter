@@ -11,10 +11,10 @@ class DtoList
 
     public function addDto(DtoType $dto): void
     {
-        if (!empty($this->dtoList[$dto->name])) {
-            throw new \Exception(sprintf("Non-unique class name %s ", $dto->name));
+        if (!empty($this->dtoList[$dto->getName()])) {
+            throw new \Exception(sprintf("Non-unique class name %s ", $dto->getName()));
         }
-        $this->dtoList[$dto->name] = $dto;
+        $this->dtoList[$dto->getName()] = $dto;
     }
 
     /** @return DtoType[] */
@@ -36,7 +36,7 @@ class DtoList
     public function hasDtoWithType(string $type): bool
     {
         foreach ($this->dtoList as $dto) {
-            if ($dto->name === $type) {
+            if ($dto->getName() === $type) {
                 return true;
             }
         }

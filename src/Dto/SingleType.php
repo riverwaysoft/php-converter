@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Dto;
 
-class SingleType
+class SingleType implements \JsonSerializable
 {
     public function __construct(
-        public string $name,
-        public bool $isList = false,
+        private string $name,
+        private bool $isList = false,
     ) {
     }
 
@@ -25,5 +25,23 @@ class SingleType
     public function isNull(): bool
     {
         return $this->name === 'null';
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function isList(): bool
+    {
+        return $this->isList;
+    }
+
+    public function jsonSerialize()
+    {
+        return [
+            'name' => $this->name,
+            'isList' => $this->isList,
+        ];
     }
 }

@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Dto;
 
-class DtoType
+class DtoType implements \JsonSerializable
 {
     public function __construct(
-        public string $name,
-        public ExpressionType $expressionType,
-        /** @var DtoClassProperty[]|DtoEnumProperty[] */
-        public array $properties,
+        private string $name,
+        private ExpressionType $expressionType,
+        /** @var DtoClassProperty[]|DtoEnumProperty[] $properties */
+        private array $properties,
     ) {
     }
 
@@ -18,9 +18,34 @@ class DtoType
     {
         $numericEnums = array_filter(
             $this->properties,
-            fn (DtoClassProperty|DtoEnumProperty $property) => $property instanceof DtoEnumProperty && is_numeric($property->value)
+            fn (DtoClassProperty|DtoEnumProperty $property) => $property instanceof DtoEnumProperty && $property->isNumeric()
         );
 
         return count($numericEnums) === count($this->properties);
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function getExpressionType(): ExpressionType
+    {
+        return $this->expressionType;
+    }
+
+    /** @return DtoClassProperty[]|DtoEnumProperty[] */
+    public function getProperties(): array
+    {
+        return $this->properties;
+    }
+
+    public function jsonSerialize()
+    {
+        return [
+            'name' => $this->name,
+            'expressionType' => $this->expressionType,
+            'properties' => $this->properties,
+        ];
     }
 }

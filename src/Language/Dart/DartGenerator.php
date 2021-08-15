@@ -36,26 +36,26 @@ class DartGenerator implements LanguageGeneratorInterface
 
     private function convertToDartType(DtoType $dto, DtoList $dtoList): string
     {
-        if ($dto->expressionType->equals(ExpressionType::class())) {
+        if ($dto->getExpressionType()->equals(ExpressionType::class())) {
             return sprintf(
                 "class %s {%s\n\n  %s({%s\n  })\n}",
-                $dto->name,
-                $this->convertToDartProperties($dto->properties, $dtoList),
-                $dto->name,
-                $this->generateConstructor($dto->properties),
+                $dto->getName(),
+                $this->convertToDartProperties($dto->getProperties(), $dtoList),
+                $dto->getName(),
+                $this->generateConstructor($dto->getProperties()),
             );
         }
 
-        if ($dto->expressionType->equals(ExpressionType::enum())) {
+        if ($dto->getExpressionType()->equals(ExpressionType::enum())) {
             Assert::true(
                 $dto->isNumericEnum(),
-                sprintf("Dart only supports only numeric enum. Enum %s is not supported", $dto->name)
+                sprintf("Dart only supports only numeric enum. Enum %s is not supported", $dto->getName())
             );
 
-            return sprintf("enum %s {%s\n}", $dto->name, $this->convertEnumToTypeScriptProperties($dto->properties));
+            return sprintf("enum %s {%s\n}", $dto->getName(), $this->convertEnumToTypeScriptProperties($dto->getProperties()));
         }
 
-        throw new \Exception('Unknown expression type '.$dto->expressionType->jsonSerialize());
+        throw new \Exception('Unknown expression type '.$dto->getExpressionType()->jsonSerialize());
     }
 
     /** @param DtoClassProperty[] $properties */
@@ -64,7 +64,7 @@ class DartGenerator implements LanguageGeneratorInterface
         $string = '';
 
         foreach ($properties as $property) {
-            $string .= sprintf("\n  final %s %s;", $this->getDartTypeFromPhp($property->type, $dtoList), $property->name);
+            $string .= sprintf("\n  final %s %s;", $this->getDartTypeFromPhp($property->getType(), $dtoList), $property->getName());
         }
 
         return $string;
@@ -76,7 +76,7 @@ class DartGenerator implements LanguageGeneratorInterface
         $string = '';
 
         foreach ($properties as $property) {
-            $string .= sprintf("\n    required this.%s,", $property->name);
+            $string .= sprintf("\n    required this.%s,", $property->getName());
         }
 
         return $string;
@@ -85,7 +85,7 @@ class DartGenerator implements LanguageGeneratorInterface
     private function getDartTypeFromPhp(UnionType|SingleType $type, DtoList $dtoList)
     {
         if ($type instanceof UnionType) {
-            Assert::greaterThan($type->types, 2, "Dart does not support union types");
+            Assert::greaterThan($type->getTypes(), 2, "Dart does not support union types");
             Assert::true($type->isNullable());
             /** @var SingleType|null $notNullType */
             $notNullType = null;
@@ -98,11 +98,11 @@ class DartGenerator implements LanguageGeneratorInterface
             return sprintf('%s?', $this->getDartTypeFromPhp($notNullType, $dtoList));
         }
 
-        if ($type->isList) {
-            return sprintf('List<%s>', $this->getDartTypeFromPhp(new SingleType($type->name), $dtoList));
+        if ($type->isList()) {
+            return sprintf('List<%s>', $this->getDartTypeFromPhp(new SingleType($type->getName()), $dtoList));
         }
 
-        return match ($type->name) {
+        return match ($type->getName()) {
             'int' => 'int',
             'float' => 'double',
             'string' => 'String',
@@ -115,8 +115,8 @@ class DartGenerator implements LanguageGeneratorInterface
 
     private function handleUnknownType(SingleType $type, DtoList $dtoList): string
     {
-        if ($dtoList->hasDtoWithType($type->name)) {
-            return $type->name;
+        if ($dtoList->hasDtoWithType($type->getName())) {
+            return $type->getName();
         }
 
         foreach ($this->unknownTypeResolvers as $unknownTypeResolver) {
@@ -125,7 +125,7 @@ class DartGenerator implements LanguageGeneratorInterface
             }
         }
 
-        throw new \InvalidArgumentException(sprintf("PHP Type %s is not supported", $type->name));
+        throw new \InvalidArgumentException(sprintf("PHP Type %s is not supported", $type->getName()));
     }
 
     /** @param DtoEnumProperty[] $properties */
@@ -134,7 +134,7 @@ class DartGenerator implements LanguageGeneratorInterface
         $string = '';
 
         foreach ($properties as $property) {
-            $string .= sprintf("\n  %s,", $property->name);
+            $string .= sprintf("\n  %s,", $property->getName());
         }
 
         return $string;
