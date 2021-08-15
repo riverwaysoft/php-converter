@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Language;
+namespace App\Language\TypeScript;
 
 use App\Dto\DtoEnumProperty;
 use App\Dto\DtoList;
@@ -11,14 +11,15 @@ use App\Dto\DtoType;
 use App\Dto\ExpressionType;
 use App\Dto\SingleType;
 use App\Dto\UnionType;
+use App\Language\LanguageGeneratorInterface;
+use App\Language\UnknownTypeResolverInterface;
 
 class TypeScriptGenerator implements LanguageGeneratorInterface
 {
     public function __construct(
         /** @var UnknownTypeResolverInterface[] */
         private array $unknownTypeResolvers = [],
-    )
-    {
+    ) {
     }
 
 
@@ -79,7 +80,7 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
             return implode(separator: ' | ', array: $arr);
         }
 
-        if ($type->isArray) {
+        if ($type->isList) {
             return sprintf('%s[]', $this->getTypeScriptTypeFromPhp(new SingleType($type->name), $dtoList));
         }
 

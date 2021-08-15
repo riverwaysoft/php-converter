@@ -6,12 +6,24 @@ namespace App\Dto;
 
 class SingleType
 {
-    public function __construct(public string $name, public bool $isArray = false)
-    {
+    public function __construct(
+        public string $name,
+        public bool $isList = false,
+    ) {
     }
 
-    public static function array(string $name)
+    public static function list(string $name): self
     {
-        return new self(name: $name, isArray: true);
+        return new self(name: $name, isList: true);
+    }
+
+    public static function null(): self
+    {
+        return new self(name: 'null');
+    }
+
+    public function isNull(): bool
+    {
+        return $this->name === 'null';
     }
 }

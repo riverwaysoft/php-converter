@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Language;
+namespace App\Language\TypeScript;
 
 use App\Dto\SingleType;
+use App\Language\UnknownTypeResolverInterface;
 
 class DateTimeTypeResolver implements UnknownTypeResolverInterface
 {

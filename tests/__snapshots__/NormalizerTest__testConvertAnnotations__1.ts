@@ -1,6 +1,6 @@
 export type CloudNotify = {
   id: string;
-  fcmToken: string;
+  fcmToken: string | null;
 };
 
 export type UserCreate = {

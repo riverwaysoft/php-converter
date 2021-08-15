@@ -14,6 +14,23 @@ class UnionType
 
     public static function nullable(SingleType $singleType): self
     {
-        return new self([$singleType, new SingleType('null')]);
+        return new self([$singleType, SingleType::null()]);
+    }
+
+    public function isNullable(): bool
+    {
+        foreach ($this->getTypes() as $type) {
+            if ($type->isNull()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /** @return SingleType[] */
+    public function getTypes(): array
+    {
+        return $this->types;
     }
 }

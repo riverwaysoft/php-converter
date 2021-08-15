@@ -13,4 +13,14 @@ class DtoType
         public array $properties,
     ) {
     }
+
+    public function isNumericEnum(): bool
+    {
+        $numericEnums = array_filter(
+            $this->properties,
+            fn (DtoClassProperty|DtoEnumProperty $property) => $property instanceof DtoEnumProperty && is_numeric($property->value)
+        );
+
+        return count($numericEnums) === count($this->properties);
+    }
 }

@@ -8,14 +8,22 @@
             {
                 "type": {
                     "name": "string",
-                    "isArray": false
+                    "isList": false
                 },
                 "name": "id"
             },
             {
                 "type": {
-                    "name": "string",
-                    "isArray": false
+                    "types": [
+                        {
+                            "name": "string",
+                            "isList": false
+                        },
+                        {
+                            "name": "null",
+                            "isList": false
+                        }
+                    ]
                 },
                 "name": "fcmToken"
             }
@@ -30,7 +38,7 @@
             {
                 "type": {
                     "name": "string",
-                    "isArray": true
+                    "isList": true
                 },
                 "name": "achievements"
             },
@@ -39,11 +47,11 @@
                     "types": [
                         {
                             "name": "string",
-                            "isArray": false
+                            "isList": false
                         },
                         {
                             "name": "null",
-                            "isArray": false
+                            "isList": false
                         }
                     ]
                 },
@@ -54,15 +62,15 @@
                     "types": [
                         {
                             "name": "int",
-                            "isArray": false
+                            "isList": false
                         },
                         {
                             "name": "string",
-                            "isArray": false
+                            "isList": false
                         },
                         {
                             "name": "float",
-                            "isArray": false
+                            "isList": false
                         }
                     ]
                 },
@@ -73,11 +81,11 @@
                     "types": [
                         {
                             "name": "bool",
-                            "isArray": false
+                            "isList": false
                         },
                         {
                             "name": "null",
-                            "isArray": false
+                            "isList": false
                         }
                     ]
                 },
@@ -86,21 +94,21 @@
             {
                 "type": {
                     "name": "float",
-                    "isArray": false
+                    "isList": false
                 },
                 "name": "latitude"
             },
             {
                 "type": {
                     "name": "float",
-                    "isArray": false
+                    "isList": false
                 },
                 "name": "longitude"
             },
             {
                 "type": {
                     "name": "mixed",
-                    "isArray": false
+                    "isList": false
                 },
                 "name": "mixed"
             }

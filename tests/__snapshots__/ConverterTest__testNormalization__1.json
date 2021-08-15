@@ -8,14 +8,14 @@
             {
                 "type": {
                     "name": "string",
-                    "isArray": false
+                    "isList": false
                 },
                 "name": "id"
             },
             {
                 "type": {
                     "name": "string",
-                    "isArray": false
+                    "isList": false
                 },
                 "name": "createdAt"
             }
@@ -30,14 +30,14 @@
             {
                 "type": {
                     "name": "string",
-                    "isArray": false
+                    "isList": false
                 },
                 "name": "firstName"
             },
             {
                 "type": {
                     "name": "string",
-                    "isArray": false
+                    "isList": false
                 },
                 "name": "lastName"
             }
@@ -90,11 +90,11 @@
                     "types": [
                         {
                             "name": "FullName",
-                            "isArray": false
+                            "isList": false
                         },
                         {
                             "name": "null",
-                            "isArray": false
+                            "isList": false
                         }
                     ]
                 },
@@ -103,7 +103,7 @@
             {
                 "type": {
                     "name": "int",
-                    "isArray": false
+                    "isList": false
                 },
                 "name": "age"
             }
@@ -118,7 +118,7 @@
             {
                 "type": {
                     "name": "string",
-                    "isArray": false
+                    "isList": false
                 },
                 "name": "id"
             },
@@ -127,11 +127,11 @@
                     "types": [
                         {
                             "name": "User",
-                            "isArray": false
+                            "isList": false
                         },
                         {
                             "name": "null",
-                            "isArray": false
+                            "isList": false
                         }
                     ]
                 },
@@ -140,7 +140,7 @@
             {
                 "type": {
                     "name": "User",
-                    "isArray": true
+                    "isList": true
                 },
                 "name": "friends"
             }
@@ -155,14 +155,14 @@
             {
                 "type": {
                     "name": "string",
-                    "isArray": false
+                    "isList": false
                 },
                 "name": "id"
             },
             {
                 "type": {
                     "name": "PermissionsEnum",
-                    "isArray": false
+                    "isList": false
                 },
                 "name": "permissions"
             },
@@ -171,11 +171,11 @@
                     "types": [
                         {
                             "name": "Profile",
-                            "isArray": false
+                            "isList": false
                         },
                         {
                             "name": "null",
-                            "isArray": false
+                            "isList": false
                         }
                     ]
                 },
@@ -184,7 +184,7 @@
             {
                 "type": {
                     "name": "int",
-                    "isArray": false
+                    "isList": false
                 },
                 "name": "age"
             },
@@ -193,11 +193,11 @@
                     "types": [
                         {
                             "name": "string",
-                            "isArray": false
+                            "isList": false
                         },
                         {
                             "name": "null",
-                            "isArray": false
+                            "isList": false
                         }
                     ]
                 },
@@ -206,42 +206,42 @@
             {
                 "type": {
                     "name": "float",
-                    "isArray": false
+                    "isList": false
                 },
                 "name": "latitude"
             },
             {
                 "type": {
                     "name": "float",
-                    "isArray": false
+                    "isList": false
                 },
                 "name": "longitude"
             },
             {
                 "type": {
                     "name": "array",
-                    "isArray": false
+                    "isList": false
                 },
                 "name": "achievements"
             },
             {
                 "type": {
                     "name": "string",
-                    "isArray": true
+                    "isList": true
                 },
                 "name": "tags"
             },
             {
                 "type": {
                     "name": "Activity",
-                    "isArray": true
+                    "isList": true
                 },
                 "name": "activities"
             },
             {
                 "type": {
                     "name": "mixed",
-                    "isArray": false
+                    "isList": false
                 },
                 "name": "mixed"
             },
@@ -250,11 +250,11 @@
                     "types": [
                         {
                             "name": "bool",
-                            "isArray": false
+                            "isList": false
                         },
                         {
                             "name": "null",
-                            "isArray": false
+                            "isList": false
                         }
                     ]
                 },

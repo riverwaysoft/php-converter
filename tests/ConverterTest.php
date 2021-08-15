@@ -3,8 +3,8 @@
 use App\CodeProvider\FileSystemCodeProvider;
 use App\CodeProvider\InlineCodeProvider;
 use App\Converter;
-use App\Language\DateTimeTypeResolver;
-use App\Language\TypeScriptGenerator;
+use App\Language\TypeScript\DateTimeTypeResolver;
+use App\Language\TypeScript\TypeScriptGenerator;
 use App\Normalizer;
 use App\Testing\TypeScriptSnapshotComparator;
 use PHPUnit\Framework\TestCase;

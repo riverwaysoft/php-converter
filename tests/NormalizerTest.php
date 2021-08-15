@@ -2,8 +2,10 @@
 
 declare(strict_types=1);
 
+use App\Language\Dart\DartGenerator;
+use App\Language\TypeScript\TypeScriptGenerator;
 use App\Normalizer;
-use App\Language\TypeScriptGenerator;
+use App\Testing\DartSnapshotComparator;
 use PHPUnit\Framework\TestCase;
 use App\Testing\TypeScriptSnapshotComparator;
 use Spatie\Snapshots\MatchesSnapshots;
@@ -27,7 +29,7 @@ class UserCreate {
 }
 
 class CloudNotify {
-    public function __construct(public string $id, public string $fcmToken)
+    public function __construct(public string $id, public string|null $fcmToken)
     {
     }
 }
@@ -52,6 +54,47 @@ class Profile {
 }
 CODE;
 
+    private $codeDart = <<<'CODE'
+<?php
+
+use MyCLabs\Enum\Enum;
+
+final class ColorEnum extends Enum
+{
+    private const RED = 0;
+    private const GREEN = 1;
+    private const BLUE = 2;
+}
+
+class Category
+{
+    public string $id;
+    public string $title;
+    public int $rating;
+    /** @var Recipe[] */
+    public array $recipes;
+}
+
+class Recipe
+{
+    public string $id;
+    public ?string $imageUrl;
+    public string|null $url;
+    public bool $isCooked;
+    public float $weight;
+}
+
+class User
+{
+    public string $id;
+    public ?User $bestFriend;
+    /** @var User[] */
+    public array $friends;
+    public ColorEnum $themeColor;
+}
+CODE;
+
+
 
     public function testNormalization(): void
     {
@@ -75,5 +118,11 @@ CODE;
     {
         $normalized = (Normalizer::factory())->normalize($this->codeRecursiveDto);
         $this->assertMatchesSnapshot((new TypeScriptGenerator())->generate($normalized), new TypeScriptSnapshotComparator());
+    }
+
+    public function testDart()
+    {
+        $normalized = (Normalizer::factory())->normalize($this->codeDart);
+        $this->assertMatchesSnapshot((new DartGenerator())->generate($normalized), new DartSnapshotComparator());
     }
 }
