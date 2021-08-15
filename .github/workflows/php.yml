@@ -31,3 +31,6 @@ jobs:
 
     - name: Run test suite
       run: composer run-script test
+
+    - name: Run ci
+      run: composer run-script ci

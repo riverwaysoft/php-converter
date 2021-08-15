@@ -12,6 +12,7 @@
         "cs": "vendor/bin/php-cs-fixer fix src",
         "cs:src": "vendor/bin/php-cs-fixer fix src",
         "cs:tests": "vendor/bin/php-cs-fixer fix tests",
+        "ci": "vendor/bin/phpstan analyse src",
         "php-parser-dump": "vendor/bin/php-parse tests/fixtures/NestedDto.php"
     },
     "require": {
@@ -30,6 +31,7 @@
         "spatie/phpunit-snapshot-assertions": "^4.2",
         "myclabs/php-enum": "^1.8",
         "friendsofphp/php-cs-fixer": "^3.0",
-        "symfony/var-dumper": "^5.3"
+        "symfony/var-dumper": "^5.3",
+        "phpstan/phpstan": "^0.12.94"
     }
 }
