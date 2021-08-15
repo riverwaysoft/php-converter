@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App;
+namespace Riverwaysoft\DtoConverter;
 
-use App\CodeProvider\CodeProviderInterface;
-use App\Dto\DtoList;
+use Riverwaysoft\DtoConverter\CodeProvider\CodeProviderInterface;
+use Riverwaysoft\DtoConverter\Dto\DtoList;
 
 class Converter
 {

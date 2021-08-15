@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Testing;
+namespace Riverwaysoft\DtoConverter\Testing;
 
 use Spatie\Snapshots\Drivers\TextDriver;
 

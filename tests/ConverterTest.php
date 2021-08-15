@@ -1,12 +1,16 @@
 <?php
 
-use App\CodeProvider\FileSystemCodeProvider;
-use App\CodeProvider\InlineCodeProvider;
-use App\Converter;
-use App\Language\TypeScript\DateTimeTypeResolver;
-use App\Language\TypeScript\TypeScriptGenerator;
-use App\Normalizer;
-use App\Testing\TypeScriptSnapshotComparator;
+declare(strict_types=1);
+
+namespace App\Tests;
+
+use Riverwaysoft\DtoConverter\CodeProvider\FileSystemCodeProvider;
+use Riverwaysoft\DtoConverter\CodeProvider\InlineCodeProvider;
+use Riverwaysoft\DtoConverter\Converter;
+use Riverwaysoft\DtoConverter\Language\TypeScript\DateTimeTypeResolver;
+use Riverwaysoft\DtoConverter\Language\TypeScript\TypeScriptGenerator;
+use Riverwaysoft\DtoConverter\Normalizer;
+use Riverwaysoft\DtoConverter\Testing\TypeScriptSnapshotComparator;
 use PHPUnit\Framework\TestCase;
 use Spatie\Snapshots\MatchesSnapshots;
 

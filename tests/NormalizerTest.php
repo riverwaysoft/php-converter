@@ -2,12 +2,14 @@
 
 declare(strict_types=1);
 
-use App\Language\Dart\DartGenerator;
-use App\Language\TypeScript\TypeScriptGenerator;
-use App\Normalizer;
-use App\Testing\DartSnapshotComparator;
+namespace App\Tests;
+
+use Riverwaysoft\DtoConverter\Language\Dart\DartGenerator;
+use Riverwaysoft\DtoConverter\Language\TypeScript\TypeScriptGenerator;
+use Riverwaysoft\DtoConverter\Normalizer;
+use Riverwaysoft\DtoConverter\Testing\DartSnapshotComparator;
 use PHPUnit\Framework\TestCase;
-use App\Testing\TypeScriptSnapshotComparator;
+use Riverwaysoft\DtoConverter\Testing\TypeScriptSnapshotComparator;
 use Spatie\Snapshots\MatchesSnapshots;
 
 class NormalizerTest extends TestCase

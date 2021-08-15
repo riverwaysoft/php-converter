@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace App\Language\Dart;
+namespace Riverwaysoft\DtoConverter\Language\Dart;
 
-use App\Dto\DtoClassProperty;
-use App\Dto\DtoEnumProperty;
-use App\Dto\DtoList;
-use App\Dto\DtoType;
-use App\Dto\ExpressionType;
-use App\Dto\SingleType;
-use App\Dto\UnionType;
-use App\Language\LanguageGeneratorInterface;
-use App\Language\UnknownTypeResolverInterface;
+use Riverwaysoft\DtoConverter\Dto\DtoClassProperty;
+use Riverwaysoft\DtoConverter\Dto\DtoEnumProperty;
+use Riverwaysoft\DtoConverter\Dto\DtoList;
+use Riverwaysoft\DtoConverter\Dto\DtoType;
+use Riverwaysoft\DtoConverter\Dto\ExpressionType;
+use Riverwaysoft\DtoConverter\Dto\SingleType;
+use Riverwaysoft\DtoConverter\Dto\UnionType;
+use Riverwaysoft\DtoConverter\Language\LanguageGeneratorInterface;
+use Riverwaysoft\DtoConverter\Language\UnknownTypeResolverInterface;
 use Webmozart\Assert\Assert;
 
 class DartGenerator implements LanguageGeneratorInterface

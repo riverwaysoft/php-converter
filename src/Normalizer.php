@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App;
+namespace Riverwaysoft\DtoConverter;
 
-use App\Ast\AstVisitor;
-use App\Dto\DtoList;
+use Riverwaysoft\DtoConverter\Ast\AstVisitor;
+use Riverwaysoft\DtoConverter\Dto\DtoList;
 use PhpParser\NodeTraverser;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;

@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Ast;
+namespace Riverwaysoft\DtoConverter\Ast;
 
-use App\Dto\DtoEnumProperty;
-use App\Dto\DtoList;
-use App\Dto\DtoClassProperty;
-use App\Dto\DtoType;
-use App\Dto\ExpressionType;
-use App\Dto\SingleType;
-use App\Dto\UnionType;
+use Riverwaysoft\DtoConverter\Dto\DtoEnumProperty;
+use Riverwaysoft\DtoConverter\Dto\DtoList;
+use Riverwaysoft\DtoConverter\Dto\DtoClassProperty;
+use Riverwaysoft\DtoConverter\Dto\DtoType;
+use Riverwaysoft\DtoConverter\Dto\ExpressionType;
+use Riverwaysoft\DtoConverter\Dto\SingleType;
+use Riverwaysoft\DtoConverter\Dto\UnionType;
 use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;
 

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Language\TypeScript;
+namespace Riverwaysoft\DtoConverter\Language\TypeScript;
 
-use App\Dto\SingleType;
-use App\Language\UnknownTypeResolverInterface;
+use Riverwaysoft\DtoConverter\Dto\SingleType;
+use Riverwaysoft\DtoConverter\Language\UnknownTypeResolverInterface;
 
 class DateTimeTypeResolver implements UnknownTypeResolverInterface
 {

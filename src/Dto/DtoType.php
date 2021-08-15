@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Dto;
+namespace Riverwaysoft\DtoConverter\Dto;
 
 class DtoType implements \JsonSerializable
 {

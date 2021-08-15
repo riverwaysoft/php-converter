@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\CodeProvider;
+namespace Riverwaysoft\DtoConverter\CodeProvider;
 
 interface CodeProviderInterface
 {

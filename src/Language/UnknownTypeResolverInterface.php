@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Language;
+namespace Riverwaysoft\DtoConverter\Language;
 
-use App\Dto\SingleType;
+use Riverwaysoft\DtoConverter\Dto\SingleType;
 
 interface UnknownTypeResolverInterface
 {
