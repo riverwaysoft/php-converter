@@ -22,7 +22,6 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
     ) {
     }
 
-
     public function generate(DtoList $dtoList): string
     {
         $string = '';

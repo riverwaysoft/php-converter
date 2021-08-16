@@ -31,7 +31,7 @@ class UserCreate {
 }
 
 class CloudNotify {
-    public function __construct(public string $id, public string|null $fcmToken)
+    public function __construct(public string $id, public string|null $fcmToken, string $notPublicIgnoreMe)
     {
     }
 }
@@ -102,11 +102,6 @@ CODE;
     {
         $normalized = (Normalizer::factory())->normalize($this->codeAttribute);
         $this->assertMatchesJsonSnapshot($normalized->getList());
-    }
-
-    public function testConvertAnnotations()
-    {
-        $normalized = (Normalizer::factory())->normalize($this->codeAttribute);
         $this->assertMatchesSnapshot((new TypeScriptGenerator())->generate($normalized), new TypeScriptSnapshotComparator());
     }
 

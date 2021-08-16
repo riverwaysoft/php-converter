@@ -80,6 +80,10 @@ class AstVisitor extends NodeVisitorAbstract
 
             if ($stmt instanceof Node\Stmt\ClassMethod) {
                 foreach ($stmt->params as $param) {
+                    if ($param->flags !== Node\Stmt\Class_::MODIFIER_PUBLIC) {
+                        continue;
+                    }
+
                     if ($param->type === null) {
                         throw new \Exception(sprintf("Property %s of class %s has no type. Please add PHP type", $param->var->name, $node->name->name));
                     }
