@@ -12,7 +12,6 @@ class AssociativeArrayUnknownTypeResolver implements UnknownTypeResolverInterfac
 {
     public function __construct(private array $map)
     {
-
     }
 
     public function supports(SingleType $type): bool

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Riverwaysoft\DtoConverter;
 
 use Riverwaysoft\DtoConverter\Ast\AstVisitor;
+use Riverwaysoft\DtoConverter\ClassFilter\ClassFilterInterface;
 use Riverwaysoft\DtoConverter\Dto\DtoList;
 use PhpParser\NodeTraverser;
 use PhpParser\Parser;
@@ -15,13 +16,13 @@ use PhpParser\ParserFactory;
  */
 class Normalizer
 {
-    public function __construct(private Parser $parser)
+    public function __construct(private Parser $parser, private ?ClassFilterInterface $classFilter = null)
     {
     }
 
-    public static function factory(): self
+    public static function factory(?ClassFilterInterface $classFilter = null): self
     {
-        return new self((new ParserFactory())->create(ParserFactory::PREFER_PHP7));
+        return new self((new ParserFactory())->create(ParserFactory::PREFER_PHP7), $classFilter);
     }
 
     public function normalize(string $code): DtoList
@@ -29,7 +30,7 @@ class Normalizer
         $ast = $this->parser->parse($code);
 
         $dtoList = new DtoList();
-        $visitor = new AstVisitor($dtoList);
+        $visitor = new AstVisitor($dtoList, $this->classFilter);
 
         $traverser = new NodeTraverser();
         $traverser->addVisitor($visitor);
