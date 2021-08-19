@@ -220,14 +220,14 @@ class User
 
 CODE;
 
-        $converter = new Converter(Normalizer::factory(), new DocBlockCommentFilter('@DTO'));
+        $converter = new Converter(Normalizer::factory(new DocBlockCommentFilter('@DTO')));
         $result = $converter->convert([$codeWithDateTime]);
 
         $this->assertTrue($result->hasDtoWithType('User'));
         $this->assertTrue($result->hasDtoWithType('Recipe'));
         $this->assertTrue($result->hasDtoWithType('Category'));
         $this->assertTrue($result->hasDtoWithType('ColorEnum'));
-        $this->assertFalse($result->hasDtoWithType('ColorIgnoreMeEnum'));
+        $this->assertFalse($result->hasDtoWithType('IgnoreMe'));
     }
 
     public function testExcludeFilterClassesByDocBlock(): void
@@ -287,14 +287,14 @@ CODE;
             }
         };
 
-        $converter = new Converter(Normalizer::factory(), $classesWithoutIgnoreFilter);
+        $converter = new Converter(Normalizer::factory($classesWithoutIgnoreFilter));
         $result = $converter->convert([$codeWithDateTime]);
 
         $this->assertTrue($result->hasDtoWithType('User'));
         $this->assertTrue($result->hasDtoWithType('Recipe'));
         $this->assertTrue($result->hasDtoWithType('Category'));
         $this->assertTrue($result->hasDtoWithType('ColorEnum'));
-        $this->assertFalse($result->hasDtoWithType('ColorIgnoreMeEnum'));
+        $this->assertFalse($result->hasDtoWithType('IgnoreMe'));
     }
 
 
@@ -354,13 +354,13 @@ class User
 
 CODE;
 
-        $converter = new Converter(Normalizer::factory(), new PhpAttributeFilter('Dto'));
+        $converter = new Converter(Normalizer::factory(new PhpAttributeFilter('Dto')));
         $result = $converter->convert([$codeWithDateTime]);
 
         $this->assertTrue($result->hasDtoWithType('User'));
         $this->assertTrue($result->hasDtoWithType('Recipe'));
         $this->assertTrue($result->hasDtoWithType('Category'));
         $this->assertTrue($result->hasDtoWithType('ColorEnum'));
-        $this->assertFalse($result->hasDtoWithType('ColorIgnoreMeEnum'));
+        $this->assertFalse($result->hasDtoWithType('IgnoreMe'));
     }
 }
