@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Riverwaysoft\DtoConverter\Ast;
 
+use Riverwaysoft\DtoConverter\ClassFilter\ClassFilterInterface;
 use Riverwaysoft\DtoConverter\Dto\DtoEnumProperty;
 use Riverwaysoft\DtoConverter\Dto\DtoList;
 use Riverwaysoft\DtoConverter\Dto\DtoClassProperty;
@@ -18,6 +19,7 @@ class AstVisitor extends NodeVisitorAbstract
 {
     public function __construct(
         private DtoList $dtoList,
+        private ?ClassFilterInterface $classFilter = null
     ) {
     }
 
@@ -25,6 +27,9 @@ class AstVisitor extends NodeVisitorAbstract
     public function leaveNode(Node $node)
     {
         if ($node instanceof Node\Stmt\Class_) {
+            if ($this->classFilter && !$this->classFilter->isMatch($node)) {
+                return null;
+            }
             $this->createDtoType($node);
         }
 
