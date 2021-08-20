@@ -1,8 +1,8 @@
-### DTO converter
+# DTO converter
 
 Work-in-progress PHP DTO to TypeScript & Dart converter. See unit tests for details.
 
-### Features
+## Features
 - Converting PHP DTO to TypeScript & Dart
 - TypeScript
   - Union types / Nullable types
@@ -18,10 +18,18 @@ Work-in-progress PHP DTO to TypeScript & Dart converter. See unit tests for deta
   - Nested DTO
   - Recursive DTO
   
-### Usage
-- `php bin/php-generator.php dto-generator:typescript --from=/path/to/project --to=/path/to/out.ts`
+## Usage
+```bash
+php bin/php-generator.php dto-generator:typescript --from=/path/to/project --to=/path/to/out.ts
+```
 
-### Scripts
-- `composer test` - Run tests
-- `composer php-parser-dump` - Obtain a node dump for a DTO fixture class
-- `composer cs` - Fix code style
+## Testing
+
+``` bash
+composer test
+```
+
+## Contributing
+
+Please see [CONTRIBUTING](./CONTRIBUTING.md) for details.
+
