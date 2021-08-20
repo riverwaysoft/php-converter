@@ -7,6 +7,7 @@ namespace App\Tests;
 use PhpParser\Node\Stmt\Class_;
 use Riverwaysoft\DtoConverter\ClassFilter\ClassFilterInterface;
 use Riverwaysoft\DtoConverter\ClassFilter\DocBlockCommentFilter;
+use Riverwaysoft\DtoConverter\ClassFilter\NegationFilter;
 use Riverwaysoft\DtoConverter\ClassFilter\PhpAttributeFilter;
 use Riverwaysoft\DtoConverter\CodeProvider\FileSystemCodeProvider;
 use Riverwaysoft\DtoConverter\Converter;
@@ -276,17 +277,7 @@ class User
 
 CODE;
 
-        $classesWithoutIgnoreFilter = new class(new DocBlockCommentFilter('@ignore')) implements ClassFilterInterface {
-            public function __construct(private ClassFilterInterface $filter)
-            {
-            }
-
-            public function isMatch(Class_ $class): bool
-            {
-                return !$this->filter->isMatch($class);
-            }
-        };
-
+        $classesWithoutIgnoreFilter = new NegationFilter(new DocBlockCommentFilter('@ignore'));
         $converter = new Converter(Normalizer::factory($classesWithoutIgnoreFilter));
         $result = $converter->convert([$codeWithDateTime]);
 
