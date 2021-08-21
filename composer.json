@@ -1,5 +1,5 @@
 {
-    "name": "egor/php-converter",
+    "name": "riverwaysoft/php-converter",
     "description": "PHP DTO converter to TypeScript / Dart",
     "authors": [
         {
