@@ -4,19 +4,12 @@ Work-in-progress PHP DTO to TypeScript & Dart converter. See unit tests for deta
 
 ## Features
 - Converting PHP DTO to TypeScript & Dart
-- TypeScript
-  - Union types / Nullable types
-  - Array types with PHP DocBlock support e.g. `User[]`
-  - Enums (myclabs/enum)
-  - Nested DTO
-  - Recursive DTO
-  - Custom type converting (like `DateTimeImmutable`)
-- Dart
-  - Nullable types
-  - Dart List types
-  - Enums (myclabs/enum)
-  - Nested DTO
-  - Recursive DTO
+- Union types / Nullable types
+- Array types with PHP DocBlock support e.g. `User[]`
+- Enums (myclabs/enum)
+- Nested DTO
+- Recursive DTO
+- Custom type converting (like `DateTimeImmutable`)
   
 ## Usage
 ```bash
