@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests;
 
-use PhpParser\Node\Stmt\Class_;
-use Riverwaysoft\DtoConverter\ClassFilter\ClassFilterInterface;
 use Riverwaysoft\DtoConverter\ClassFilter\DocBlockCommentFilter;
 use Riverwaysoft\DtoConverter\ClassFilter\NegationFilter;
 use Riverwaysoft\DtoConverter\ClassFilter\PhpAttributeFilter;
@@ -15,6 +13,7 @@ use Riverwaysoft\DtoConverter\Language\Dart\DartGenerator;
 use Riverwaysoft\DtoConverter\Language\TypeScript\DateTimeTypeResolver;
 use Riverwaysoft\DtoConverter\Language\TypeScript\TypeScriptGenerator;
 use Riverwaysoft\DtoConverter\Normalizer;
+use Riverwaysoft\DtoConverter\OutputWriter\SingleFileOutputWriter;
 use Riverwaysoft\DtoConverter\Testing\DartSnapshotComparator;
 use PHPUnit\Framework\TestCase;
 use Riverwaysoft\DtoConverter\Testing\TypeScriptSnapshotComparator;
@@ -109,7 +108,9 @@ CODE;
     {
         $normalized = (Normalizer::factory())->normalize($this->codeAttribute);
         $this->assertMatchesJsonSnapshot($normalized->getList());
-        $this->assertMatchesSnapshot((new TypeScriptGenerator())->generate($normalized), new TypeScriptSnapshotComparator());
+        $results = (new TypeScriptGenerator(new SingleFileOutputWriter('generated.ts')))->generate($normalized);
+        $this->assertCount(1, $results);
+        $this->assertMatchesSnapshot($results[0]->getContent(), new TypeScriptSnapshotComparator());
     }
 
     public function testNestedDtoNormalize(): void
@@ -121,13 +122,17 @@ CODE;
     public function testNestedDtoConvert(): void
     {
         $normalized = (Normalizer::factory())->normalize($this->codeRecursiveDto);
-        $this->assertMatchesSnapshot((new TypeScriptGenerator())->generate($normalized), new TypeScriptSnapshotComparator());
+        $results = (new TypeScriptGenerator(new SingleFileOutputWriter('generated.ts')))->generate($normalized);
+        $this->assertCount(1, $results);
+        $this->assertMatchesSnapshot($results[0]->getContent(), new TypeScriptSnapshotComparator());
     }
 
     public function testDart()
     {
         $normalized = (Normalizer::factory())->normalize($this->codeDart);
-        $this->assertMatchesSnapshot((new DartGenerator())->generate($normalized), new DartSnapshotComparator());
+        $results = (new DartGenerator(new SingleFileOutputWriter('generated.dart')))->generate($normalized);
+        $this->assertCount(1, $results);
+        $this->assertMatchesSnapshot($results[0]->getContent(), new DartSnapshotComparator());
     }
 
 
@@ -137,7 +142,9 @@ CODE;
         $fileProvider = new FileSystemCodeProvider('/\.php$/');
         $result = $converter->convert($fileProvider->getListings(__DIR__ . '/fixtures'));
         $this->assertMatchesJsonSnapshot($result->getList());
-        $this->assertMatchesSnapshot((new TypeScriptGenerator())->generate($result), new TypeScriptSnapshotComparator());
+        $results = (new TypeScriptGenerator(new SingleFileOutputWriter('generated.ts')))->generate($result);
+        $this->assertCount(1, $results);
+        $this->assertMatchesSnapshot($results[0]->getContent(), new TypeScriptSnapshotComparator());
     }
 
     public function testNormalizationWithCustomTypeResolvers(): void
@@ -167,8 +174,10 @@ CODE;
 
         $converter = new Converter(Normalizer::factory());
         $result = $converter->convert([$codeWithDateTime]);
-        $typeScriptGenerator = new TypeScriptGenerator([new DateTimeTypeResolver()]);
-        $this->assertMatchesSnapshot(($typeScriptGenerator)->generate($result), new TypeScriptSnapshotComparator());
+        $typeScriptGenerator = new TypeScriptGenerator(new SingleFileOutputWriter('generated.ts'), [new DateTimeTypeResolver()]);
+        $results = ($typeScriptGenerator)->generate($result);
+        $this->assertCount(1, $results);
+        $this->assertMatchesSnapshot($results[0]->getContent(), new TypeScriptSnapshotComparator());
     }
 
     public function testFilterClassesByDocBlock(): void

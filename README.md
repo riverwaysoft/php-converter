@@ -13,7 +13,7 @@ Work-in-progress PHP DTO to TypeScript & Dart converter. See unit tests for deta
   
 ## Usage
 ```bash
-php bin/php-generator.php dto-generator:typescript --from=/path/to/project --to=/path/to/out.ts
+php bin/php-generator.php dto-generator:generate --from=/path/to/project --to=/path/to
 ```
 
 ## Testing

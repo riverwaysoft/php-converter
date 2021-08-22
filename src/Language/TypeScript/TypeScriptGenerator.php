@@ -13,24 +13,28 @@ use Riverwaysoft\DtoConverter\Dto\SingleType;
 use Riverwaysoft\DtoConverter\Dto\UnionType;
 use Riverwaysoft\DtoConverter\Language\LanguageGeneratorInterface;
 use Riverwaysoft\DtoConverter\Language\UnknownTypeResolverInterface;
+use Riverwaysoft\DtoConverter\OutputWriter\OutputFile;
+use Riverwaysoft\DtoConverter\OutputWriter\OutputWriterInterface;
 
 class TypeScriptGenerator implements LanguageGeneratorInterface
 {
     public function __construct(
+        private OutputWriterInterface $outputWriter,
         /** @var UnknownTypeResolverInterface[] */
         private array $unknownTypeResolvers = [],
     ) {
     }
 
-    public function generate(DtoList $dtoList): string
+    /** @return OutputFile[] */
+    public function generate(DtoList $dtoList): array
     {
-        $string = '';
+        $this->outputWriter->reset();
 
         foreach ($dtoList->getList() as $dto) {
-            $string .= $this->convertToTypeScriptType($dto, $dtoList) . "\n\n";
+            $this->outputWriter->writeType($this->convertToTypeScriptType($dto, $dtoList));
         }
 
-        return $string;
+        return $this->outputWriter->getTypes();
     }
 
     private function convertToTypeScriptType(DtoType $dto, DtoList $dtoList): string

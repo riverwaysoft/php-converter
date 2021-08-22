@@ -12,10 +12,11 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Webmozart\Assert\Assert;
 
 class ConvertToTypeScriptCommand extends Command
 {
-    protected static $defaultName = 'dto-generator:typescript';
+    protected static $defaultName = 'dto-generator:generate';
 
     public function __construct(
         private Converter $converter,
@@ -39,15 +40,23 @@ class ConvertToTypeScriptCommand extends Command
         $from = $input->getOption('from');
         $to = $input->getOption('to');
 
+        Assert::directory($from);
+        Assert::directory($to);
+
         $files = $this->codeProvider->getListings($from);
         $normalized = $this->converter->convert($files);
-        $result = $this->typeScriptGenerator->generate($normalized);
+        $outputFiles = $this->typeScriptGenerator->generate($normalized);
 
-        if ($this->fileSystem->exists($to)) {
-            $this->fileSystem->remove($to);
+        foreach ($outputFiles as $outputFile) {
+            $outputAbsolutePath = rtrim($to, '/') . '/' . $outputFile->getRelativeName();
+            if ($this->fileSystem->exists($outputAbsolutePath)) {
+                $this->fileSystem->remove($outputAbsolutePath);
+            }
+            $this->fileSystem->touch($outputAbsolutePath);
+            $this->fileSystem->appendToFile($outputAbsolutePath, $outputFile->getContent());
         }
-        $this->fileSystem->touch($to);
-        $this->fileSystem->appendToFile($to, $result);
+
+        $output->writeln(sprintf("Successfully written %s file(s)", count($outputFiles)));
 
         return Command::SUCCESS;
     }

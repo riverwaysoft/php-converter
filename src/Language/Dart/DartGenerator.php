@@ -13,25 +13,28 @@ use Riverwaysoft\DtoConverter\Dto\SingleType;
 use Riverwaysoft\DtoConverter\Dto\UnionType;
 use Riverwaysoft\DtoConverter\Language\LanguageGeneratorInterface;
 use Riverwaysoft\DtoConverter\Language\UnknownTypeResolverInterface;
+use Riverwaysoft\DtoConverter\OutputWriter\OutputWriterInterface;
 use Webmozart\Assert\Assert;
 
 class DartGenerator implements LanguageGeneratorInterface
 {
     public function __construct(
+        private OutputWriterInterface $outputWriter,
         /** @var UnknownTypeResolverInterface[] */
         private array $unknownTypeResolvers = [],
     ) {
     }
 
-    public function generate(DtoList $dtoList): string
+    /** @inheritDoc */
+    public function generate(DtoList $dtoList): array
     {
-        $string = '';
+        $this->outputWriter->reset();
 
         foreach ($dtoList->getList() as $dto) {
-            $string .= $this->convertToDartType($dto, $dtoList) . "\n\n";
+            $this->outputWriter->writeType($this->convertToDartType($dto, $dtoList));
         }
 
-        return $string;
+        return $this->outputWriter->getTypes();
     }
 
     private function convertToDartType(DtoType $dto, DtoList $dtoList): string
