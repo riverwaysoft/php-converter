@@ -12,4 +12,3 @@ export type UserCreate = {
   id: string;
   profile: Profile | null;
 };
-

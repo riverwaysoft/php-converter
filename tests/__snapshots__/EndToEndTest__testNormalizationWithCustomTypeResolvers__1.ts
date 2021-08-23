@@ -9,4 +9,3 @@ export type UserCreateConstructor = {
   updatedAt: string;
   promotedAt: string | null;
 };
-

@@ -47,4 +47,3 @@ class User {
     required this.themeColor,
   })
 }
-

@@ -24,4 +24,9 @@ class OutputFile
     {
         $this->content .= $content;
     }
+
+    public function isEmpty(): bool
+    {
+        return empty($this->content);
+    }
 }

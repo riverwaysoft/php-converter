@@ -44,4 +44,3 @@ export type UserCreate = {
   mixed: any;
   isApproved: boolean | null;
 };
-

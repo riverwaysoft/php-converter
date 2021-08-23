@@ -15,7 +15,8 @@ class SingleFileOutputWriter implements OutputWriterInterface
 
     public function writeType(string $languageType): void
     {
-        $this->outputFile->appendContent($languageType . "\n\n");
+        $content = sprintf("%s%s\n", $this->outputFile->isEmpty() ? '' : "\n", $languageType);
+        $this->outputFile->appendContent($content);
     }
 
     /** @return OutputFile[] */
