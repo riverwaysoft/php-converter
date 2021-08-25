@@ -6,6 +6,7 @@ namespace Riverwaysoft\DtoConverter\Cli;
 
 use Riverwaysoft\DtoConverter\CodeProvider\FileSystemCodeProvider;
 use Riverwaysoft\DtoConverter\Converter;
+use Riverwaysoft\DtoConverter\OutputDiffCalculator\OutputDiffCalculator;
 use Riverwaysoft\DtoConverter\Language\TypeScript\TypeScriptGenerator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -23,6 +24,7 @@ class ConvertToTypeScriptCommand extends Command
         private TypeScriptGenerator $typeScriptGenerator,
         private Filesystem $fileSystem,
         private FileSystemCodeProvider $codeProvider,
+        private OutputDiffCalculator $diffWriter
     ) {
         parent::__construct();
     }
@@ -50,13 +52,19 @@ class ConvertToTypeScriptCommand extends Command
         foreach ($outputFiles as $outputFile) {
             $outputAbsolutePath = rtrim($to, '/') . '/' . $outputFile->getRelativeName();
             if ($this->fileSystem->exists($outputAbsolutePath)) {
+                $diff = $this->diffWriter->calculate(file_get_contents($outputAbsolutePath), $outputFile->getContent());
+                if (empty($diff)) {
+                    $output->writeln(sprintf("\nNo difference between the old generated file and the new one: %s", $outputFile->getRelativeName()));
+                } else {
+                    $output->writeln(sprintf("\nSuccessfully written file: %s", $outputFile->getRelativeName()));
+                    $output->write($diff);
+                }
+
                 $this->fileSystem->remove($outputAbsolutePath);
             }
             $this->fileSystem->touch($outputAbsolutePath);
             $this->fileSystem->appendToFile($outputAbsolutePath, $outputFile->getContent());
         }
-
-        $output->writeln(sprintf("Successfully written %s file(s)", count($outputFiles)));
 
         return Command::SUCCESS;
     }

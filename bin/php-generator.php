@@ -9,6 +9,7 @@ use Riverwaysoft\DtoConverter\Normalizer;
 use Riverwaysoft\DtoConverter\Language\TypeScript\DateTimeTypeResolver;
 use Riverwaysoft\DtoConverter\Language\TypeScript\LibPhoneNumberTypeResolver;
 use Riverwaysoft\DtoConverter\Language\TypeScript\TypeScriptGenerator;
+use Riverwaysoft\DtoConverter\OutputDiffCalculator\OutputDiffCalculator;
 use Riverwaysoft\DtoConverter\OutputWriter\SingleFileOutputWriter;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Filesystem\Filesystem;
@@ -26,7 +27,8 @@ $application->add(
             ],
         ),
         new Filesystem(),
-        new FileSystemCodeProvider('/(Output|Enum)\.php$/')
+        new FileSystemCodeProvider('/(Output|Enum)\.php$/'),
+        new OutputDiffCalculator(),
     )
 );
 
