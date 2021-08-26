@@ -2,7 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\OutputWriter;
+namespace Riverwaysoft\DtoConverter\OutputWriter\SingleFileOutputWriter;
+
+use Riverwaysoft\DtoConverter\Dto\DtoType;
+use Riverwaysoft\DtoConverter\OutputWriter\OutputFile;
+use Riverwaysoft\DtoConverter\OutputWriter\OutputWriterInterface;
 
 class SingleFileOutputWriter implements OutputWriterInterface
 {
@@ -13,7 +17,7 @@ class SingleFileOutputWriter implements OutputWriterInterface
         $this->reset();
     }
 
-    public function writeType(string $languageType): void
+    public function writeType(string $languageType, DtoType $dtoType): void
     {
         $content = sprintf("%s%s\n", $this->outputFile->isEmpty() ? '' : "\n", $languageType);
         $this->outputFile->appendContent($content);

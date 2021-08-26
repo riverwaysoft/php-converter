@@ -12,6 +12,7 @@ use Riverwaysoft\DtoConverter\Dto\ExpressionType;
 use Riverwaysoft\DtoConverter\Dto\SingleType;
 use Riverwaysoft\DtoConverter\Dto\UnionType;
 use Riverwaysoft\DtoConverter\Language\LanguageGeneratorInterface;
+use Riverwaysoft\DtoConverter\Language\TypeScript\AssociativeArrayUnknownTypeResolver;
 use Riverwaysoft\DtoConverter\Language\UnknownTypeResolverInterface;
 use Riverwaysoft\DtoConverter\OutputWriter\OutputWriterInterface;
 use Webmozart\Assert\Assert;
@@ -31,7 +32,12 @@ class DartGenerator implements LanguageGeneratorInterface
         $this->outputWriter->reset();
 
         foreach ($dtoList->getList() as $dto) {
-            $this->outputWriter->writeType($this->convertToDartType($dto, $dtoList));
+            // Dart only supports numeric enum
+            if ($dto->getExpressionType()->equals(ExpressionType::enum()) && !$dto->isNumericEnum()) {
+                continue;
+            }
+
+            $this->outputWriter->writeType($this->convertToDartType($dto, $dtoList), $dto);
         }
 
         return $this->outputWriter->getTypes();
@@ -50,11 +56,6 @@ class DartGenerator implements LanguageGeneratorInterface
         }
 
         if ($dto->getExpressionType()->equals(ExpressionType::enum())) {
-            Assert::true(
-                $dto->isNumericEnum(),
-                sprintf("Dart only supports only numeric enum. Enum %s is not supported", $dto->getName())
-            );
-
             return sprintf("enum %s {%s\n}", $dto->getName(), $this->convertEnumToTypeScriptProperties($dto->getProperties()));
         }
 

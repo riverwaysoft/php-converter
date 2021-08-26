@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Riverwaysoft\DtoConverter\OutputWriter;
 
-class OutputFile
+class OutputFile implements \JsonSerializable
 {
-    public function __construct(private string $relativeName, private string $content)
-    {
+    public function __construct(
+        private string $relativeName,
+        private string $content,
+    ) {
     }
 
     public function getRelativeName(): string
@@ -28,5 +30,13 @@ class OutputFile
     public function isEmpty(): bool
     {
         return empty($this->content);
+    }
+
+    public function jsonSerialize()
+    {
+        return [
+            'content' => $this->content,
+            'relativeName' => $this->relativeName,
+        ];
     }
 }

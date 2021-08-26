@@ -1,0 +1,10 @@
+[
+    {
+        "content": "export type FullName = { \/** skip for testing *\/ };",
+        "relativeName": "full-name.ts"
+    },
+    {
+        "content": "import { FullName } from '.\/full-name';\n\nexport type Profile = { \/** skip for testing *\/ };",
+        "relativeName": "profile.ts"
+    }
+]

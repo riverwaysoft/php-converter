@@ -13,7 +13,13 @@ use Riverwaysoft\DtoConverter\Language\Dart\DartGenerator;
 use Riverwaysoft\DtoConverter\Language\TypeScript\DateTimeTypeResolver;
 use Riverwaysoft\DtoConverter\Language\TypeScript\TypeScriptGenerator;
 use Riverwaysoft\DtoConverter\Normalizer;
-use Riverwaysoft\DtoConverter\OutputWriter\SingleFileOutputWriter;
+use Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter\DartImportGenerator;
+use Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter\DtoTypeDependencyCalculator;
+use Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter\EntityPerClassOutputWriter;
+use Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter\KebabCaseFileNameGenerator;
+use Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter\SnakeCaseFileNameGenerator;
+use Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter\TypeScriptImportGenerator;
+use Riverwaysoft\DtoConverter\OutputWriter\SingleFileOutputWriter\SingleFileOutputWriter;
 use Riverwaysoft\DtoConverter\Testing\DartSnapshotComparator;
 use PHPUnit\Framework\TestCase;
 use Riverwaysoft\DtoConverter\Testing\TypeScriptSnapshotComparator;
@@ -44,7 +50,7 @@ class CloudNotify {
 }
 CODE;
 
-    private $codeRecursiveDto = <<<'CODE'
+    private $codeNestedDto = <<<'CODE'
 <?php
 
 class UserCreate {
@@ -115,13 +121,13 @@ CODE;
 
     public function testNestedDtoNormalize(): void
     {
-        $normalized = (Normalizer::factory())->normalize($this->codeRecursiveDto);
+        $normalized = (Normalizer::factory())->normalize($this->codeNestedDto);
         $this->assertMatchesJsonSnapshot($normalized->getList());
     }
 
     public function testNestedDtoConvert(): void
     {
-        $normalized = (Normalizer::factory())->normalize($this->codeRecursiveDto);
+        $normalized = (Normalizer::factory())->normalize($this->codeNestedDto);
         $results = (new TypeScriptGenerator(new SingleFileOutputWriter('generated.ts')))->generate($normalized);
         $this->assertCount(1, $results);
         $this->assertMatchesSnapshot($results[0]->getContent(), new TypeScriptSnapshotComparator());
@@ -140,7 +146,7 @@ CODE;
     {
         $converter = new Converter(Normalizer::factory());
         $fileProvider = new FileSystemCodeProvider('/\.php$/');
-        $result = $converter->convert($fileProvider->getListings(__DIR__ . '/fixtures'));
+        $result = $converter->convert($fileProvider->getListings(__DIR__ . '/Fixtures'));
         $this->assertMatchesJsonSnapshot($result->getList());
         $results = (new TypeScriptGenerator(new SingleFileOutputWriter('generated.ts')))->generate($result);
         $this->assertCount(1, $results);
@@ -363,4 +369,102 @@ CODE;
         $this->assertTrue($result->hasDtoWithType('ColorEnum'));
         $this->assertFalse($result->hasDtoWithType('IgnoreMe'));
     }
+
+    public function testEntityPerClassOutputWriterTypeScript()
+    {
+        $normalized = (Normalizer::factory())->normalize($this->codeNestedDto);
+
+        $fileNameGenerator = new KebabCaseFileNameGenerator('.ts');
+        $typeScriptGenerator = new TypeScriptGenerator(
+            new EntityPerClassOutputWriter(
+                $fileNameGenerator,
+                new TypeScriptImportGenerator(
+                    $fileNameGenerator,
+                    new DtoTypeDependencyCalculator()
+                )
+            )
+        );
+        $results = $typeScriptGenerator->generate($normalized);
+
+        $this->assertCount(3, $results);
+
+        $this->assertEquals("export type FullName = {
+  firstName: string;
+  lastName: string;
+};", $results[0]->getContent());
+        $this->assertEquals('full-name.ts', $results[0]->getRelativeName());
+
+        $this->assertEquals("import { FullName } from './full-name';
+
+export type Profile = {
+  name: FullName | null | string;
+  age: number;
+};", $results[1]->getContent());
+        $this->assertEquals('profile.ts', $results[1]->getRelativeName());
+
+        $this->assertEquals("import { Profile } from './profile';
+
+export type UserCreate = {
+  id: string;
+  profile: Profile | null;
+};", $results[2]->getContent());
+        $this->assertEquals('user-create.ts', $results[2]->getRelativeName());
+    }
+
+    public function testEntityPerClassOutputWriterDart()
+    {
+        $normalized = (Normalizer::factory())->normalize($this->codeNestedDto);
+
+        $fileNameGenerator = new SnakeCaseFileNameGenerator('.dart');
+        $typeScriptGenerator = new DartGenerator(
+            new EntityPerClassOutputWriter(
+                $fileNameGenerator,
+                new DartImportGenerator(
+                    $fileNameGenerator,
+                    new DtoTypeDependencyCalculator()
+                )
+            )
+        );
+        $results = $typeScriptGenerator->generate($normalized);
+
+        $this->assertCount(3, $results);
+
+        $this->assertEquals("class FullName {
+  final String firstName;
+  final String lastName;
+
+  FullName({
+    required this.firstName,
+    required this.lastName,
+  })
+}", $results[0]->getContent());
+        $this->assertEquals('full_name.dart', $results[0]->getRelativeName());
+
+        $this->assertEquals("import './full_name.dart';
+
+class Profile {
+  final String? name;
+  final int age;
+
+  Profile({
+    required this.name,
+    required this.age,
+  })
+}", $results[1]->getContent());
+        $this->assertEquals('profile.dart', $results[1]->getRelativeName());
+
+        $this->assertEquals("import './profile.dart';
+
+class UserCreate {
+  final String id;
+  final Profile? profile;
+
+  UserCreate({
+    required this.id,
+    required this.profile,
+  })
+}", $results[2]->getContent());
+        $this->assertEquals('user_create.dart', $results[2]->getRelativeName());
+    }
+
 }

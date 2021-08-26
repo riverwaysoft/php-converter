@@ -21,7 +21,8 @@
         "symfony/console": "^4.0|^5.0",
         "symfony/filesystem": "^4.0|^5.0",
         "symfony/finder": "^4.0|^5.0",
-        "jfcherng/php-diff": "^6.10"
+        "jfcherng/php-diff": "^6.10",
+        "jawira/case-converter": "^3.4"
     },
     "license": "GPL-3.0-or-later",
     "autoload": {

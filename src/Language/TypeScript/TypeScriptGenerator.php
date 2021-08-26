@@ -31,7 +31,7 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
         $this->outputWriter->reset();
 
         foreach ($dtoList->getList() as $dto) {
-            $this->outputWriter->writeType($this->convertToTypeScriptType($dto, $dtoList));
+            $this->outputWriter->writeType($this->convertToTypeScriptType($dto, $dtoList), $dto);
         }
 
         return $this->outputWriter->getTypes();

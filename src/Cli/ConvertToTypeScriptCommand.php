@@ -6,8 +6,8 @@ namespace Riverwaysoft\DtoConverter\Cli;
 
 use Riverwaysoft\DtoConverter\CodeProvider\FileSystemCodeProvider;
 use Riverwaysoft\DtoConverter\Converter;
+use Riverwaysoft\DtoConverter\Language\LanguageGeneratorInterface;
 use Riverwaysoft\DtoConverter\OutputDiffCalculator\OutputDiffCalculator;
-use Riverwaysoft\DtoConverter\Language\TypeScript\TypeScriptGenerator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -21,7 +21,7 @@ class ConvertToTypeScriptCommand extends Command
 
     public function __construct(
         private Converter $converter,
-        private TypeScriptGenerator $typeScriptGenerator,
+        private LanguageGeneratorInterface $languageGenerator,
         private Filesystem $fileSystem,
         private FileSystemCodeProvider $codeProvider,
         private OutputDiffCalculator $diffWriter
@@ -47,7 +47,7 @@ class ConvertToTypeScriptCommand extends Command
 
         $files = $this->codeProvider->getListings($from);
         $normalized = $this->converter->convert($files);
-        $outputFiles = $this->typeScriptGenerator->generate($normalized);
+        $outputFiles = $this->languageGenerator->generate($normalized);
 
         foreach ($outputFiles as $outputFile) {
             $outputAbsolutePath = rtrim($to, '/') . '/' . $outputFile->getRelativeName();
@@ -61,6 +61,8 @@ class ConvertToTypeScriptCommand extends Command
                 }
 
                 $this->fileSystem->remove($outputAbsolutePath);
+            } else {
+                $output->writeln(sprintf("\nSuccessfully created file %s", $outputFile->getRelativeName()));
             }
             $this->fileSystem->touch($outputAbsolutePath);
             $this->fileSystem->appendToFile($outputAbsolutePath, $outputFile->getContent());
