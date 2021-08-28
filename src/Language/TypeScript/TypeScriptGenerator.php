@@ -13,6 +13,7 @@ use Riverwaysoft\DtoConverter\Dto\SingleType;
 use Riverwaysoft\DtoConverter\Dto\UnionType;
 use Riverwaysoft\DtoConverter\Language\LanguageGeneratorInterface;
 use Riverwaysoft\DtoConverter\Language\UnknownTypeResolverInterface;
+use Riverwaysoft\DtoConverter\Language\UnsupportedTypeException;
 use Riverwaysoft\DtoConverter\OutputWriter\OutputFile;
 use Riverwaysoft\DtoConverter\OutputWriter\OutputWriterInterface;
 
@@ -20,7 +21,7 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
 {
     public function __construct(
         private OutputWriterInterface $outputWriter,
-        /** @var UnknownTypeResolverInterface[] */
+        /** @var UnknownTypeResolverInterface[] $unknownTypeResolvers */
         private array $unknownTypeResolvers = [],
     ) {
     }
@@ -40,7 +41,7 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
     private function convertToTypeScriptType(DtoType $dto, DtoList $dtoList): string
     {
         if ($dto->getExpressionType()->equals(ExpressionType::class())) {
-            return sprintf("export type %s = {%s\n};", $dto->getName(), $this->convertToTypeScriptProperties($dto->getProperties(), $dtoList));
+            return sprintf("export type %s = {%s\n};", $dto->getName(), $this->convertToTypeScriptProperties($dto, $dtoList));
         }
         if ($dto->getExpressionType()->equals(ExpressionType::enum())) {
             return sprintf("export enum %s {%s\n}", $dto->getName(), $this->convertEnumToTypeScriptProperties($dto->getProperties()));
@@ -48,13 +49,14 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
         throw new \Exception('Unknown expression type '.$dto->getExpressionType()->jsonSerialize());
     }
 
-    /** @param DtoClassProperty[] $properties */
-    private function convertToTypeScriptProperties(array $properties, DtoList $dtoList): string
+    private function convertToTypeScriptProperties(DtoType $dto, DtoList $dtoList): string
     {
         $string = '';
 
+        /** @param DtoClassProperty[] $properties */
+        $properties = $dto->getProperties();
         foreach ($properties as $property) {
-            $string .= sprintf("\n  %s: %s;", $property->getName(), $this->getTypeScriptTypeFromPhp($property->getType(), $dtoList));
+            $string .= sprintf("\n  %s: %s;", $property->getName(), $this->getTypeScriptTypeFromPhp($property->getType(), $dto, $dtoList));
         }
 
         return $string;
@@ -76,15 +78,15 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
         return $string;
     }
 
-    private function getTypeScriptTypeFromPhp(SingleType|UnionType $type, DtoList $dtoList): string
+    private function getTypeScriptTypeFromPhp(SingleType|UnionType $type, DtoType $dto, DtoList $dtoList): string
     {
         if ($type instanceof UnionType) {
-            $arr = array_map(fn (SingleType $type) => $this->getTypeScriptTypeFromPhp($type, $dtoList), $type->getTypes());
+            $arr = array_map(fn (SingleType $type) => $this->getTypeScriptTypeFromPhp($type, $dto, $dtoList), $type->getTypes());
             return implode(separator: ' | ', array: $arr);
         }
 
         if ($type->isList()) {
-            return sprintf('%s[]', $this->getTypeScriptTypeFromPhp(new SingleType($type->getName()), $dtoList));
+            return sprintf('%s[]', $this->getTypeScriptTypeFromPhp(new SingleType($type->getName()), $dto, $dtoList));
         }
 
         // https://www.php.net/manual/en/language.types.declarations.php
@@ -95,22 +97,19 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
             'mixed', 'object' => 'any',
             'array' => 'any[]',
             'null' => 'null',
-            default => $this->handleUnknownType($type, $dtoList),
+            default => $this->handleUnknownType($type, $dto, $dtoList),
         };
     }
 
-    private function handleUnknownType(SingleType $type, DtoList $dtoList): string
+    private function handleUnknownType(SingleType $type, DtoType $dto, DtoList $dtoList): string
     {
-        if ($dtoList->hasDtoWithType($type->getName())) {
-            return $type->getName();
-        }
-
+        /** @var UnknownTypeResolverInterface $unknownTypeResolver */
         foreach ($this->unknownTypeResolvers as $unknownTypeResolver) {
-            if ($unknownTypeResolver->supports($type)) {
-                return $unknownTypeResolver->resolve($type, $dtoList);
+            if ($unknownTypeResolver->supports($type, $dto, $dtoList)) {
+                return $unknownTypeResolver->resolve($type, $dto, $dtoList);
             }
         }
 
-        throw new \InvalidArgumentException(sprintf("PHP Type %s is not supported", $type->getName()));
+        throw UnsupportedTypeException::forType($type);
     }
 }

@@ -26,7 +26,7 @@ class DtoList
         return $values;
     }
 
-    public function merge(self $list)
+    public function merge(self $list): void
     {
         foreach ($list->dtoList as $dto) {
             $this->addDto($dto);

@@ -9,15 +9,15 @@ use Riverwaysoft\DtoConverter\Dto\DtoType;
 use Riverwaysoft\DtoConverter\Dto\SingleType;
 use Riverwaysoft\DtoConverter\Language\UnknownTypeResolverInterface;
 
-class DateTimeTypeResolver implements UnknownTypeResolverInterface
+class ClassNameTypeResolver implements UnknownTypeResolverInterface
 {
     public function supports(SingleType $type, DtoType $dto, DtoList $dtoList): bool
     {
-        return $type->getName() === 'DateTime' || $type->getName() === 'DateTimeImmutable';
+        return $dtoList->hasDtoWithType($type->getName());
     }
 
-    public function resolve(SingleType $type, DtoType $dto, DtoList $dtoList): string
+    public function resolve(SingleType $type, DtoType $dto, DtoList $dtoList): mixed
     {
-        return 'string';
+        return $type->getName();
     }
 }

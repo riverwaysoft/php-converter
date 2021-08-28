@@ -15,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Webmozart\Assert\Assert;
 
-class ConvertToTypeScriptCommand extends Command
+class ConvertCommand extends Command
 {
     protected static $defaultName = 'dto-generator:generate';
 
@@ -32,7 +32,7 @@ class ConvertToTypeScriptCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription('Generate TypeScript DTO from PHP sources')
+            ->setDescription('Generate TypeScript / Dart from PHP sources')
             ->addOption('from', 'f', InputOption::VALUE_REQUIRED)
             ->addOption('to', 't', InputOption::VALUE_REQUIRED);
     }

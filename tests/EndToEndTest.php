@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Tests;
 
+use Riverwaysoft\DtoConverter\Bridge\ApiPlatform\ApiPlatformInputTypeResolver;
 use Riverwaysoft\DtoConverter\ClassFilter\DocBlockCommentFilter;
 use Riverwaysoft\DtoConverter\ClassFilter\NegationFilter;
 use Riverwaysoft\DtoConverter\ClassFilter\PhpAttributeFilter;
 use Riverwaysoft\DtoConverter\CodeProvider\FileSystemCodeProvider;
 use Riverwaysoft\DtoConverter\Converter;
 use Riverwaysoft\DtoConverter\Language\Dart\DartGenerator;
+use Riverwaysoft\DtoConverter\Language\TypeScript\ClassNameTypeResolver;
 use Riverwaysoft\DtoConverter\Language\TypeScript\DateTimeTypeResolver;
 use Riverwaysoft\DtoConverter\Language\TypeScript\TypeScriptGenerator;
 use Riverwaysoft\DtoConverter\Normalizer;
@@ -128,7 +130,7 @@ CODE;
     public function testNestedDtoConvert(): void
     {
         $normalized = (Normalizer::factory())->normalize($this->codeNestedDto);
-        $results = (new TypeScriptGenerator(new SingleFileOutputWriter('generated.ts')))->generate($normalized);
+        $results = (new TypeScriptGenerator(new SingleFileOutputWriter('generated.ts'), [new ClassNameTypeResolver()]))->generate($normalized);
         $this->assertCount(1, $results);
         $this->assertMatchesSnapshot($results[0]->getContent(), new TypeScriptSnapshotComparator());
     }
@@ -136,7 +138,7 @@ CODE;
     public function testDart()
     {
         $normalized = (Normalizer::factory())->normalize($this->codeDart);
-        $results = (new DartGenerator(new SingleFileOutputWriter('generated.dart')))->generate($normalized);
+        $results = (new DartGenerator(new SingleFileOutputWriter('generated.dart'), [new ClassNameTypeResolver()]))->generate($normalized);
         $this->assertCount(1, $results);
         $this->assertMatchesSnapshot($results[0]->getContent(), new DartSnapshotComparator());
     }
@@ -148,7 +150,7 @@ CODE;
         $fileProvider = new FileSystemCodeProvider('/\.php$/');
         $result = $converter->convert($fileProvider->getListings(__DIR__ . '/Fixtures'));
         $this->assertMatchesJsonSnapshot($result->getList());
-        $results = (new TypeScriptGenerator(new SingleFileOutputWriter('generated.ts')))->generate($result);
+        $results = (new TypeScriptGenerator(new SingleFileOutputWriter('generated.ts'), [new ClassNameTypeResolver()]))->generate($result);
         $this->assertCount(1, $results);
         $this->assertMatchesSnapshot($results[0]->getContent(), new TypeScriptSnapshotComparator());
     }
@@ -180,7 +182,7 @@ CODE;
 
         $converter = new Converter(Normalizer::factory());
         $result = $converter->convert([$codeWithDateTime]);
-        $typeScriptGenerator = new TypeScriptGenerator(new SingleFileOutputWriter('generated.ts'), [new DateTimeTypeResolver()]);
+        $typeScriptGenerator = new TypeScriptGenerator(new SingleFileOutputWriter('generated.ts'), [new ClassNameTypeResolver(), new DateTimeTypeResolver()]);
         $results = ($typeScriptGenerator)->generate($result);
         $this->assertCount(1, $results);
         $this->assertMatchesSnapshot($results[0]->getContent(), new TypeScriptSnapshotComparator());
@@ -382,7 +384,10 @@ CODE;
                     $fileNameGenerator,
                     new DtoTypeDependencyCalculator()
                 )
-            )
+            ),
+            [
+                new ClassNameTypeResolver(),
+            ]
         );
         $results = $typeScriptGenerator->generate($normalized);
 
@@ -466,5 +471,72 @@ class UserCreate {
 }", $results[2]->getContent());
         $this->assertEquals('user_create.dart', $results[2]->getRelativeName());
     }
+    public function testApiPlatformInput(): void
+    {
+        $codeWithDateTime = <<<'CODE'
+<?php
 
+use MyCLabs\Enum\Enum;
+
+#[\Attribute(\Attribute::TARGET_CLASS)]
+class Dto
+{
+
+}
+
+#[Dto]
+final class ColorEnum extends Enum
+{
+    private const RED = 0;
+    private const GREEN = 1;
+    private const BLUE = 2;
+}
+
+class Profile
+{
+    public string $firstName;
+    public string $lastName;
+}
+
+#[Dto]
+class ProfileOutput
+{
+    public string $firstName;
+    public string $lastName;
+}
+
+class LocationEmbeddable {
+  public function __construct(
+    private float $lat,
+    private $lan,
+  ) {}
+}
+
+#[Dto]
+class UserCreateInput
+{
+    public Profile $profile;
+    public ?DateTimeImmutable $promotedAt;
+    public ColorEnum $userTheme;
+    public LocationEmbeddable $location;
+}
+
+CODE;
+
+        $converter = new Converter(Normalizer::factory(new PhpAttributeFilter('Dto')));
+        $result = $converter->convert([$codeWithDateTime]);
+        $typeScriptGenerator = new TypeScriptGenerator(
+            new SingleFileOutputWriter('generated.ts'),
+            [
+                new DateTimeTypeResolver(),
+                new ApiPlatformInputTypeResolver([
+                    'LocationEmbeddable' => '{ lat: string; lan: string }',
+                ]),
+                new ClassNameTypeResolver(),
+            ]
+        );
+        $results = ($typeScriptGenerator)->generate($result);
+        $this->assertCount(1, $results);
+        $this->assertMatchesSnapshot($results[0]->getContent(), new TypeScriptSnapshotComparator());
+    }
 }

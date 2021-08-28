@@ -3,4 +3,5 @@ vendor
 .php-cs-fixer.cache
 .phpunit.result.cache
 bin/php-generator-youshka.php
+bin/php-generator-phonedo.php
 composer.lock
