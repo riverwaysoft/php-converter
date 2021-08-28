@@ -75,6 +75,10 @@ class AstVisitor extends NodeVisitorAbstract
             }
 
             if ($stmt instanceof Node\Stmt\Property) {
+                if ($stmt->type === null) {
+                    throw new \Exception(sprintf("Property %s of class %s has no type. Please add PHP type", $stmt->props[0]->name->name, $node->name->name));
+                }
+
                 $type = $this->createSingleType($stmt->type, $stmt->getDocComment()?->getText());
 
                 $properties[] = new DtoClassProperty(
