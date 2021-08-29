@@ -1,10 +1,15 @@
+#!/bin/php
 <?php
+
+declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
+use Riverwaysoft\DtoConverter\ClassFilter\PhpAttributeFilter;
 use Riverwaysoft\DtoConverter\Cli\ConvertCommand;
 use Riverwaysoft\DtoConverter\CodeProvider\FileSystemCodeProvider;
 use Riverwaysoft\DtoConverter\Converter;
+use Riverwaysoft\DtoConverter\Language\TypeScript\ClassNameTypeResolver;
 use Riverwaysoft\DtoConverter\Normalizer;
 use Riverwaysoft\DtoConverter\Language\TypeScript\DateTimeTypeResolver;
 use Riverwaysoft\DtoConverter\Language\TypeScript\TypeScriptGenerator;
@@ -17,15 +22,18 @@ $application = new Application();
 
 $application->add(
     new ConvertCommand(
-        new Converter(Normalizer::factory()),
+        new Converter(Normalizer::factory(
+            new PhpAttributeFilter('Dto'),
+        )),
         new TypeScriptGenerator(
             new SingleFileOutputWriter('generated.ts'),
             [
                 new DateTimeTypeResolver(),
+                new ClassNameTypeResolver(),
             ],
         ),
         new Filesystem(),
-        new FileSystemCodeProvider('/(Output|Enum)\.php$/'),
+        new FileSystemCodeProvider('/\.php$/'),
         new OutputDiffCalculator(),
     )
 );

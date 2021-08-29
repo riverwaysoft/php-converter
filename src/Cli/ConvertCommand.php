@@ -17,7 +17,7 @@ use Webmozart\Assert\Assert;
 
 class ConvertCommand extends Command
 {
-    protected static $defaultName = 'dto-generator:generate';
+    protected static $defaultName = 'generate';
 
     public function __construct(
         private Converter $converter,
