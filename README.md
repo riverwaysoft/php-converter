@@ -14,7 +14,7 @@ This library generates types for you so you can move faster and encounter fewer 
 composer require riverwaysoft/php-converter --dev
 ```
 
-2) Create config file
+2) Copy executable file
 ```
 cp vendor/riverwaysoft/php-converter/bin/php-generator bin/php-generator
 ```
