@@ -9,7 +9,7 @@ use Riverwaysoft\DtoConverter\Dto\DtoType;
 use Riverwaysoft\DtoConverter\Dto\SingleType;
 use Riverwaysoft\DtoConverter\Language\UnknownTypeResolverInterface;
 
-class AssociativeArrayUnknownTypeResolver implements UnknownTypeResolverInterface
+class InlineTypeResolver implements UnknownTypeResolverInterface
 {
     /** @var array<string, string> $map */
     public function __construct(private array $map)

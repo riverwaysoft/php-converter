@@ -10,10 +10,10 @@ use Riverwaysoft\DtoConverter\Dto\DtoType;
 use Riverwaysoft\DtoConverter\Dto\ExpressionType;
 use Riverwaysoft\DtoConverter\Dto\SingleType;
 use Riverwaysoft\DtoConverter\Dto\UnionType;
+use Riverwaysoft\DtoConverter\Language\TypeScript\TypeScriptImportGenerator;
 use Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter\DtoTypeDependencyCalculator;
 use Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter\EntityPerClassOutputWriter;
 use Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter\KebabCaseFileNameGenerator;
-use Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter\TypeScriptImportGenerator;
 use Spatie\Snapshots\MatchesSnapshots;
 
 class EntityPerClassOutputWriterTest extends TestCase

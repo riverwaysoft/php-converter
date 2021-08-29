@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter;
+namespace Riverwaysoft\DtoConverter\Language;
 
 use Riverwaysoft\DtoConverter\Dto\DtoType;
 

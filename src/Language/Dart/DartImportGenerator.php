@@ -2,11 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter;
+namespace Riverwaysoft\DtoConverter\Language\Dart;
 
 use Riverwaysoft\DtoConverter\Dto\DtoType;
+use Riverwaysoft\DtoConverter\Language\ImportGeneratorInterface;
+use Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter\DtoTypeDependencyCalculator;
+use Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter\FileNameGeneratorInterface;
 
-class TypeScriptImportGenerator implements ImportGeneratorInterface
+class DartImportGenerator implements ImportGeneratorInterface
 {
     public function __construct(
         private FileNameGeneratorInterface $fileNameGenerator,
@@ -25,9 +28,8 @@ class TypeScriptImportGenerator implements ImportGeneratorInterface
 
         foreach ($dependencies as $dependency) {
             $content = sprintf(
-                "import { %s } from './%s';\n",
-                $dependency->getName(),
-                $this->fileNameGenerator->generateFileName($dependency->getName())
+                "import './%s';\n",
+                $this->fileNameGenerator->generateFileNameWithExtension($dependency->getName())
             ) . $content;
         }
 
