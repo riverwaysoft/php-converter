@@ -25,20 +25,20 @@ cp vendor/riverwaysoft/php-converter/bin/dto-converter bin/dto-converter
 use Riverwaysoft\DtoConverter\ClassFilter\Dto;
 
 #[Dto]
+class UserWithFriendsDto
+{
+    public UserDto $user;
+    public ?UserDto $bestFriend;
+    /** @var UserDto[] */
+    public array $friends;
+}
+
+#[Dto]
 class UserDto
 {
     public string $id;
     public string $name;
     public int $age;
-}
-
-#[Dto]
-class UserWithFriendsDto
-{
-    public User $user;
-    public ?User $bestFriend;
-    /** @var User[] */
-    public array $friends;
 }
 
 ```
