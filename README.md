@@ -16,7 +16,7 @@ composer require riverwaysoft/php-converter --dev
 
 2) Copy executable file
 ```
-cp vendor/riverwaysoft/php-converter/bin/php-generator bin/php-generator
+cp vendor/riverwaysoft/php-converter/bin/dto-converter bin/dto-converter
 ```
 
 3) Mark a few classes with `#[Dto]` annotation to convert them into TypeScript or Dart
@@ -45,7 +45,7 @@ class UserWithFriendsDto
 
 4) Run CLI command to generate TypeScript or Dart
 ```bash
-bin/php-generator generate --from=/path/to/project/src --to=.
+bin/dto-converter generate --from=/path/to/project/src --to=.
 ```
 
 You'll get file `generated.ts` with the following contents:
