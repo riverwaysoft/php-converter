@@ -25,20 +25,13 @@ cp vendor/riverwaysoft/php-converter/bin/dto-converter bin/dto-converter
 use Riverwaysoft\DtoConverter\ClassFilter\Dto;
 
 #[Dto]
-class UserWithFriendsDto
-{
-    public UserDto $user;
-    public ?UserDto $bestFriend;
-    /** @var UserDto[] */
-    public array $friends;
-}
-
-#[Dto]
-class UserDto
+class User
 {
     public string $id;
-    public string $name;
     public int $age;
+    public ?User $bestFriend;
+    /** @var User[] */
+    public array $friends;
 }
 
 ```
@@ -51,16 +44,12 @@ bin/dto-converter generate --from=/path/to/project/src --to=.
 You'll get file `generated.ts` with the following contents:
 
 ```typescript
-type UserDto = { 
-  id: string; 
-  name: string; 
-  age: number;
-}
 
-type UserWithFriendsDto = {
-  user: UserDto;
-  bestFriend: UserDto | null;
-  friends: UserDto[];
+type User = {
+  id: string;
+  age: number;
+  bestFriend: User | null;
+  friends: User[];
 }
 ```
 
