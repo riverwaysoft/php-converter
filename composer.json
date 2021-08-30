@@ -36,6 +36,7 @@
             "App\\Tests\\": "tests/"
         }
     },
+    "bin": ["bin/dto-converter"],
     "require-dev": {
         "phpunit/phpunit": "^9",
         "spatie/phpunit-snapshot-assertions": "^4.2",
