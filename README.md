@@ -14,12 +14,7 @@ This library generates types for you so you can move faster and encounter fewer 
 composer require riverwaysoft/php-converter --dev
 ```
 
-2) Copy executable file
-```
-cp vendor/riverwaysoft/php-converter/bin/dto-converter bin/dto-converter
-```
-
-3) Mark a few classes with `#[Dto]` annotation to convert them into TypeScript or Dart
+2) Mark a few classes with `#[Dto]` annotation to convert them into TypeScript or Dart
 ```php
 
 use Riverwaysoft\DtoConverter\ClassFilter\Dto;
@@ -38,7 +33,7 @@ class User
 
 4) Run CLI command to generate TypeScript or Dart
 ```bash
-bin/dto-converter generate --from=/path/to/project/src --to=.
+vendor/bin/dto-converter generate --from=/path/to/project/src --to=.
 ```
 
 You'll get file `generated.ts` with the following contents:
