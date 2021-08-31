@@ -28,6 +28,8 @@ export type User = {
   id: string;
   bestFriend: User | null;
   friends: User[];
+  selfProperty: User;
+  selfConstructor: User;
 };
 
 export type UserCreate = {

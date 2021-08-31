@@ -143,6 +143,20 @@
                     "isList": true
                 },
                 "name": "friends"
+            },
+            {
+                "type": {
+                    "name": "self",
+                    "isList": false
+                },
+                "name": "selfProperty"
+            },
+            {
+                "type": {
+                    "name": "self",
+                    "isList": false
+                },
+                "name": "selfConstructor"
             }
         ]
     },

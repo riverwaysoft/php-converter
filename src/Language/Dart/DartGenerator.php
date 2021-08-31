@@ -114,6 +114,7 @@ class DartGenerator implements LanguageGeneratorInterface
             'bool' => 'bool',
             'mixed', 'object', 'array' => 'Object',
             'null' => 'null',
+            'self' => $dto->getName(),
             default => $this->handleUnknownType($type, $dto, $dtoList),
         };
     }
