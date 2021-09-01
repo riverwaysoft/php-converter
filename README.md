@@ -61,6 +61,9 @@ type User = {
 composer test
 ```
 
+## How it is different from alternatives?
+- Unlike [spatie/typescript-transformer](https://github.com/spatie/typescript-transformer) dto-converter supports not only TypeScript but also Dart. Support for other languages can be easily added by implementing LanguageInterface. dto-converter can also output generated types / classes into different files.
+
 ## Contributing
 
 Please see [CONTRIBUTING](./CONTRIBUTING.md) for details.
