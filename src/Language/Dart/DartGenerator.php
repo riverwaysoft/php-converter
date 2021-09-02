@@ -81,7 +81,11 @@ class DartGenerator implements LanguageGeneratorInterface
         $string = '';
 
         foreach ($properties as $property) {
-            $string .= sprintf("\n    required this.%s,", $property->getName());
+            $string .= sprintf(
+                "\n    %sthis.%s,",
+                $property->getType() instanceof UnionType && $property->getType()->isNullable() ? '' : 'required ',
+                $property->getName()
+            );
         }
 
         return $string;
@@ -121,10 +125,7 @@ class DartGenerator implements LanguageGeneratorInterface
 
     private function handleUnknownType(SingleType $type, DtoType $dto, DtoList $dtoList): string
     {
-        if ($dtoList->hasDtoWithType($type->getName())) {
-            return $type->getName();
-        }
-
+        /** @var UnknownTypeResolverInterface $unknownTypeResolver */
         foreach ($this->unknownTypeResolvers as $unknownTypeResolver) {
             if ($unknownTypeResolver->supports($type, $dto, $dtoList)) {
                 return $unknownTypeResolver->resolve($type, $dto, $dtoList);

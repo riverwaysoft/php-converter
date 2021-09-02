@@ -27,8 +27,8 @@ class Recipe {
 
   Recipe({
     required this.id,
-    required this.imageUrl,
-    required this.url,
+    this.imageUrl,
+    this.url,
     required this.isCooked,
     required this.weight,
   })
@@ -42,7 +42,7 @@ class User {
 
   User({
     required this.id,
-    required this.bestFriend,
+    this.bestFriend,
     required this.friends,
     required this.themeColor,
   })

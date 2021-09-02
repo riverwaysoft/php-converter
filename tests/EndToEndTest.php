@@ -428,7 +428,10 @@ export type UserCreate = {
                     $fileNameGenerator,
                     new DtoTypeDependencyCalculator()
                 )
-            )
+            ),
+            [
+                new ClassNameTypeResolver(),
+            ]
         );
         $results = $typeScriptGenerator->generate($normalized);
 
@@ -452,7 +455,7 @@ class Profile {
   final int age;
 
   Profile({
-    required this.name,
+    this.name,
     required this.age,
   })
 }", $results[1]->getContent());
@@ -466,7 +469,7 @@ class UserCreate {
 
   UserCreate({
     required this.id,
-    required this.profile,
+    this.profile,
   })
 }", $results[2]->getContent());
         $this->assertEquals('user_create.dart', $results[2]->getRelativeName());
