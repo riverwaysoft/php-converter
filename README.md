@@ -55,6 +55,50 @@ type User = {
 - Generate a single output file or multiple files (entity per class)
 - Custom class filters
 
+## Customize
+If you'd like to customize dto-convert you need to copy the generator script to your project folder:
+
+```
+cp vendor/bin/dto-converter bin/dto-convert
+``` 
+
+Now you can start customizing the dto-converter by editing the executable file.
+
+### How to customize generated output?
+By default dto-convert writes all the types into one file. You can configure it to put each entity in a separate file with all the required imports. Here is an example how to do it:
+
+```diff
++ $fileNameGenerator = new KebabCaseFileNameGenerator('.ts');
+
+$application->add(
+    new ConvertCommand(
+        new Converter(Normalizer::factory(
+            new PhpAttributeFilter('Dto'),
+        )),
+        new TypeScriptGenerator(
+-            new SingleFileOutputWriter('generated.ts'),
++            new EntityPerClassOutputWriter(
++                $fileNameGenerator,
++                new TypeScriptImportGenerator(
++                    $fileNameGenerator,
++                    new DtoTypeDependencyCalculator()
++                )
++            ),
+            [
+                new DateTimeTypeResolver(),
+                new ClassNameTypeResolver(),
+            ],
+        ),
+        new Filesystem(),
+        new FileSystemCodeProvider('/\.php$/'),
+        new OutputDiffCalculator(),
+    )
+);
+```
+
+Feel free to create your own OutputWriter.
+
+
 ## Testing
 
 ``` bash
