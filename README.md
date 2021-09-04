@@ -65,7 +65,7 @@ cp vendor/bin/dto-converter bin/dto-convert
 Now you can start customizing the dto-converter by editing the executable file.
 
 ### How to customize generated output?
-By default dto-convert writes all the types into one file. You can configure it to put each entity in a separate file with all the required imports. Here is an example how to do it:
+By default `dto-converter` writes all the types into one file. You can configure it to put each type / class in a separate file with all the required imports. Here is an example how to achieve it:
 
 ```diff
 + $fileNameGenerator = new KebabCaseFileNameGenerator('.ts');
@@ -98,6 +98,33 @@ $application->add(
 
 Feel free to create your own OutputWriter.
 
+### How to customize class filtering?
+Suppose you don't want to mark each DTO individually with `#[Dto]` but want to convert all the files ending with "Dto" automatically:
+
+```diff
+$application->add(
+    new ConvertCommand(
+-       new Converter(Normalizer::factory(
+-           new PhpAttributeFilter('Dto'),
+-       )),
++       new Converter(Normalizer::factory()),
+        new TypeScriptGenerator(
+            new SingleFileOutputWriter('generated.ts'),
+            [
+                new DateTimeTypeResolver(),
+                new ClassNameTypeResolver(),
+            ],
+        ),
+        new Filesystem(),
+-       new FileSystemCodeProvider('/\.php$/'),
++       new FileSystemCodeProvider('/Dto\.php$/'),
+        new OutputDiffCalculator(),
+    )
+);
+```
+
+You can even go further and use `NegationFilter` to exclude specific files as shown in [unit tests](https://github.com/riverwaysoft/dto-converter/blob/a8d5df2c03303c02bc9148bd1d7822d7fe48c5d8/tests/EndToEndTest.php#L297).
+
 
 ## Testing
 
@@ -106,7 +133,7 @@ composer test
 ```
 
 ## How it is different from alternatives?
-- Unlike [spatie/typescript-transformer](https://github.com/spatie/typescript-transformer) dto-converter supports not only TypeScript but also Dart. Support for other languages can be easily added by implementing LanguageInterface. dto-converter can also output generated types / classes into different files.
+- Unlike [spatie/typescript-transformer](https://github.com/spatie/typescript-transformer) `dto-converter` supports not only TypeScript but also Dart. Support for other languages can be easily added by implementing LanguageInterface. `dto-converter` can also output generated types / classes into different files.
 
 ## Contributing
 
