@@ -126,6 +126,36 @@ $application->add(
 You can even go further and use `NegationFilter` to exclude specific files as shown in [unit tests](https://github.com/riverwaysoft/dto-converter/blob/a8d5df2c03303c02bc9148bd1d7822d7fe48c5d8/tests/EndToEndTest.php#L297).
 
 
+## Error list
+Here is a list of errors `dto-converter` can throw and description what to do if you encounter these errors:
+
+### 1. Property z of class X has no type. Please add PHP type
+It means that you've forgotten to add type for property `a` of class Y. Example:
+
+```php
+#[Dto]
+class X {
+  public $z;
+} 
+```
+
+At the moment there is no strict / loose mode in `dto-converter`. It could silently convert such types to TypeScript `any` or Dart `Object` but we don't need that feature. Feel free to raise an issue if having loose mode makes sense for you. If you don't know the PHP type just use [mixed](https://www.php.net/manual/en/language.types.declarations.php#language.types.declarations.mixed) type to explicitly convert it to `any`/`Object`.
+
+
+### 2. PHP Type X is not supported
+It means `dto-converter` doesn't understand how to convert the type X into TypeScript or Dart. If you are using `#[Dto]` attribute you probably forgot to add it to class `X`. Example:
+
+```php
+#[Dto]
+class A {
+  public X $x;
+}
+
+class X {
+  public int $foo;
+}
+```
+
 ## Testing
 
 ``` bash
