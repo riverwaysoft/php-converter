@@ -139,11 +139,11 @@ class X {
 } 
 ```
 
-At the moment there is no strict / loose mode in `dto-converter`. It could silently convert such types to TypeScript `any` or Dart `Object` but we don't need that feature. Feel free to raise an issue if having loose mode makes sense for you. If you don't know the PHP type just use [mixed](https://www.php.net/manual/en/language.types.declarations.php#language.types.declarations.mixed) type to explicitly convert it to `any`/`Object`.
+At the moment there is no strict / loose mode in `dto-converter`. It is always strict. If you don't know the PHP type just use [mixed](https://www.php.net/manual/en/language.types.declarations.php#language.types.declarations.mixed) type to explicitly convert it to `any`/`Object`. It could silently convert such types to TypeScript `any` or Dart `Object` if we needed it. But we prefer an explicit approach. Feel free to raise an issue if having loose mode makes sense for you.
 
 
 ### 2. PHP Type X is not supported
-It means `dto-converter` doesn't understand how to convert the type X into TypeScript or Dart. If you are using `#[Dto]` attribute you probably forgot to add it to class `X`. Example:
+It means `dto-converter` doesn't know how to convert the type X into TypeScript or Dart. If you are using `#[Dto]` attribute you probably forgot to add it to class `X`. Example:
 
 ```php
 #[Dto]
