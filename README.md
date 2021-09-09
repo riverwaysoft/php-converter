@@ -156,7 +156,7 @@ $application->add(
 You can even go further and use `NegationFilter` to exclude specific files as shown in [unit tests](https://github.com/riverwaysoft/dto-converter/blob/a8d5df2c03303c02bc9148bd1d7822d7fe48c5d8/tests/EndToEndTest.php#L297).
 
 ### How to write custom type resolvers?
-`dto-converter` takes care of converting basic PHP types like number, string and so on. But what to do if you have to convert a type that isn't a DTO? For example `\DateTimeImmutable`. You can write a class that implements [UnknownTypeResolverInterface](https://github.com/riverwaysoft/dto-converter/blob/2d434562c1bc73bcb6819257b31dd75c818f4ab1/src/Language/UnknownTypeResolverInterface.php). `dto-convert` already includes such class in core functionality. There is also a shortcut to achieve it - use [InlineTypeResolver](https://github.com/riverwaysoft/dto-converter/blob/2d434562c1bc73bcb6819257b31dd75c818f4ab1/src/Language/TypeScript/InlineTypeResolver.php):
+`dto-converter` takes care of converting basic PHP types like number, string and so on. But what if you have a type that isn't a DTO? For example `\DateTimeImmutable`. You can write a class that implements [UnknownTypeResolverInterface](https://github.com/riverwaysoft/dto-converter/blob/2d434562c1bc73bcb6819257b31dd75c818f4ab1/src/Language/UnknownTypeResolverInterface.php). There is also a shortcut to achieve it - use [InlineTypeResolver](https://github.com/riverwaysoft/dto-converter/blob/2d434562c1bc73bcb6819257b31dd75c818f4ab1/src/Language/TypeScript/InlineTypeResolver.php):
 
 ```diff
 $application->add(
@@ -170,9 +170,9 @@ $application->add(
                 new DateTimeTypeResolver(),
                 new ClassNameTypeResolver(),
 +               new InlineTypeResolver([
-+                 // Convert libphonnumber object to string
++                 // Convert libphonnumber object to a string
 +                 'PhoneNumber' => 'string', 
-+                 // Convert PHP Money object to a custom TS type
++                 // Convert PHP Money object to a custom TypeScript type
 +                 'Money' => '{ amount: number; currency: string }',
 +                 // Convert Doctrine Embeddable to an existing Dto marked as #[Dto]
 +                 'SomeDoctrineEmbeddable' => 'SomeDoctrineEmbeddableDto',
