@@ -55,6 +55,36 @@ type User = {
 - Generate a single output file or multiple files (entity per class)
 - Custom class filters
 
+## Error list
+Here is a list of errors `dto-converter` can throw and description what to do if you encounter these errors:
+
+### 1. Property z of class X has no type. Please add PHP type
+It means that you've forgotten to add type for property `a` of class Y. Example:
+
+```php
+#[Dto]
+class X {
+  public $z;
+} 
+```
+
+At the moment there is no strict / loose mode in `dto-converter`. It is always strict. If you don't know the PHP type just use [mixed](https://www.php.net/manual/en/language.types.declarations.php#language.types.declarations.mixed) type to explicitly convert it to `any`/`Object`. It could silently convert such types to TypeScript `any` or Dart `Object` if we needed it. But we prefer an explicit approach. Feel free to raise an issue if having loose mode makes sense for you.
+
+
+### 2. PHP Type X is not supported
+It means `dto-converter` doesn't know how to convert the type X into TypeScript or Dart. If you are using `#[Dto]` attribute you probably forgot to add it to class `X`. Example:
+
+```php
+#[Dto]
+class A {
+  public X $x;
+}
+
+class X {
+  public int $foo;
+}
+```
+
 ## Customize
 If you'd like to customize dto-convert you need to copy the generator script to your project folder:
 
@@ -125,35 +155,35 @@ $application->add(
 
 You can even go further and use `NegationFilter` to exclude specific files as shown in [unit tests](https://github.com/riverwaysoft/dto-converter/blob/a8d5df2c03303c02bc9148bd1d7822d7fe48c5d8/tests/EndToEndTest.php#L297).
 
+### How to write custom type resolvers?
+`dto-converter` takes care of converting basic PHP types like number, string and so on. But what to do if you have to convert a type that isn't a DTO? For example `\DateTimeImmutable`. You can write a class that implements [UnknownTypeResolverInterface](https://github.com/riverwaysoft/dto-converter/blob/2d434562c1bc73bcb6819257b31dd75c818f4ab1/src/Language/UnknownTypeResolverInterface.php). `dto-convert` already includes such class in core functionality. There is also a shortcut to achieve it - use [InlineTypeResolver](https://github.com/riverwaysoft/dto-converter/blob/2d434562c1bc73bcb6819257b31dd75c818f4ab1/src/Language/TypeScript/InlineTypeResolver.php):
 
-## Error list
-Here is a list of errors `dto-converter` can throw and description what to do if you encounter these errors:
-
-### 1. Property z of class X has no type. Please add PHP type
-It means that you've forgotten to add type for property `a` of class Y. Example:
-
-```php
-#[Dto]
-class X {
-  public $z;
-} 
-```
-
-At the moment there is no strict / loose mode in `dto-converter`. It is always strict. If you don't know the PHP type just use [mixed](https://www.php.net/manual/en/language.types.declarations.php#language.types.declarations.mixed) type to explicitly convert it to `any`/`Object`. It could silently convert such types to TypeScript `any` or Dart `Object` if we needed it. But we prefer an explicit approach. Feel free to raise an issue if having loose mode makes sense for you.
-
-
-### 2. PHP Type X is not supported
-It means `dto-converter` doesn't know how to convert the type X into TypeScript or Dart. If you are using `#[Dto]` attribute you probably forgot to add it to class `X`. Example:
-
-```php
-#[Dto]
-class A {
-  public X $x;
-}
-
-class X {
-  public int $foo;
-}
+```diff
+$application->add(
+    new ConvertCommand(
+       new Converter(Normalizer::factory(
+           new PhpAttributeFilter('Dto'),
+       )),
+        new TypeScriptGenerator(
+            new SingleFileOutputWriter('generated.ts'),
+            [
+                new DateTimeTypeResolver(),
+                new ClassNameTypeResolver(),
++               new InlineTypeResolver([
++                 // Convert libphonnumber object to string
++                 'PhoneNumber' => 'string', 
++                 // Convert PHP Money object to a custom TS type
++                 'Money' => '{ amount: number; currency: string }',
++                 // Convert Doctrine Embeddable to an existing Dto marked as #[Dto]
++                 'SomeDoctrineEmbeddable' => 'SomeDoctrineEmbeddableDto',
++               ])
+            ],
+        ),
+        new Filesystem(),
+        new FileSystemCodeProvider('/\.php$/'),
+        new OutputDiffCalculator(),
+    )
+);
 ```
 
 ## Testing
