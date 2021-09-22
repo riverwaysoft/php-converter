@@ -132,7 +132,7 @@ class DartGenerator implements LanguageGeneratorInterface
             }
         }
 
-        throw UnsupportedTypeException::forType($type);
+        throw UnsupportedTypeException::forType($type, $dto->getName());
     }
 
     /** @param DtoEnumProperty[] $properties */

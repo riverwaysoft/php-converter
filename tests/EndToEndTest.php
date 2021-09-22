@@ -542,4 +542,33 @@ CODE;
         $this->assertCount(1, $results);
         $this->assertMatchesSnapshot($results[0]->getContent(), new TypeScriptSnapshotComparator());
     }
+
+    public function testUnkownTypeThrows(): void
+    {
+        $codeWithDateTime = <<<'CODE'
+<?php
+
+#[\Attribute(\Attribute::TARGET_CLASS)]
+class Dto
+{
+
+}
+
+#[Dto]
+class A
+{
+    public \DateTimeImmutable $createdAt;
+    public B $b;
+}
+
+class B {}
+CODE;
+
+        $converter = new Converter(Normalizer::factory(new PhpAttributeFilter('Dto')));
+        $result = $converter->convert([$codeWithDateTime]);
+        $typeScriptGenerator = new TypeScriptGenerator(new SingleFileOutputWriter('generated.ts'), [new ClassNameTypeResolver(), new DateTimeTypeResolver()]);
+
+        $this->expectExceptionMessage('PHP Type B is not supported. PHP class: A');
+        $results = ($typeScriptGenerator)->generate($result);
+    }
 }

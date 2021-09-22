@@ -111,6 +111,6 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
             }
         }
 
-        throw UnsupportedTypeException::forType($type);
+        throw UnsupportedTypeException::forType($type, $dto->getName());
     }
 }

@@ -27,7 +27,7 @@ class ApiPlatformInputTypeResolver implements UnknownTypeResolverInterface
     {
         if ($this->isPropertyEnum($type)) {
             if (!$dtoList->hasDtoWithType($type->getName())) {
-                throw UnsupportedTypeException::forType($type);
+                throw UnsupportedTypeException::forType($type, $dto->getName());
             }
 
             return sprintf("{ value: %s }", $type->getName());
