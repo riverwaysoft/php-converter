@@ -170,7 +170,7 @@ $application->add(
                 new DateTimeTypeResolver(),
                 new ClassNameTypeResolver(),
 +               new InlineTypeResolver([
-+                 // Convert libphonnumber object to a string
++                 // Convert libphonenumber object to a string
 +                 'PhoneNumber' => 'string', 
 +                 // Convert PHP Money object to a custom TypeScript type
 +                 'Money' => '{ amount: number; currency: string }',
@@ -194,6 +194,7 @@ composer test
 
 ## How it is different from alternatives?
 - Unlike [spatie/typescript-transformer](https://github.com/spatie/typescript-transformer) `dto-converter` supports not only TypeScript but also Dart. Support for other languages can be easily added by implementing LanguageInterface. `dto-converter` can also output generated types / classes into different files.
+- Unlike [grpc](https://github.com/grpc/grpc/tree/v1.40.0/examples/php) `dto-converter` doesn't require to modify your app or install some extensions.
 
 ## Contributing
 
