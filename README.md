@@ -186,6 +186,9 @@ $application->add(
 );
 ```
 
+### How to add support for other languages?
+To write a custom converter you can implement [LanguageGeneratorInterface](./src/Language/LanguageGeneratorInterface.php). Here is an example how to do it for Go language: [GoGeneratorSimple](./tests/GoGeneratorSimple.php). Check how to use it [here](./tests/GoGeneratorSimpleTest.php). It covers only basic scenarios to get you an idea, so feel free to modify it to your needs.
+
 ## Testing
 
 ``` bash

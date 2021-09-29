@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Riverwaysoft\DtoConverter\Dto;
 
+use Webmozart\Assert\Assert;
+
 class UnionType implements \JsonSerializable
 {
     public function __construct(
@@ -26,6 +28,23 @@ class UnionType implements \JsonSerializable
         }
 
         return false;
+    }
+
+    public function getNotNullType(): SingleType
+    {
+        Assert::true($this->isNullable());
+
+        /** @var SingleType|null $notNullType */
+        $notNullType = null;
+        foreach ($this->getTypes() as $type) {
+            if (!$type->isNull()) {
+                $notNullType = $type;
+            }
+        }
+
+        Assert::notNull($notNullType);
+
+        return $notNullType;
     }
 
     /** @return SingleType[] */
