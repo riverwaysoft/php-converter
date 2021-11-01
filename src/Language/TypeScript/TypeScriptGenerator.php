@@ -95,7 +95,7 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
             'string' => 'string',
             'bool' => 'boolean',
             'mixed', 'object' => 'any',
-            'array' => 'any[]',
+            'array', 'iterable', => 'any[]',
             'null' => 'null',
             'self' => $dto->getName(),
             default => $this->handleUnknownType($type, $dto, $dtoList),
