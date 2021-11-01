@@ -52,7 +52,7 @@ class AstVisitor extends NodeVisitorAbstract
             ? $param->parts[0]
             : $param->name;
 
-        if ($typeName === 'array' && $docComment) {
+        if (($typeName === 'array' || $typeName === 'iterable' || $typeName === 'mixed') && $docComment) {
             $docBlockType = $this->parseArrayType($docComment);
             if ($docBlockType) {
                 return SingleType::list($docBlockType);
