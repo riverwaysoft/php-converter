@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Riverwaysoft\DtoConverter\Cli;
 
-use Riverwaysoft\DtoConverter\CodeProvider\FileSystemCodeProvider;
+use Riverwaysoft\DtoConverter\CodeProvider\CodeProviderInterface;
 use Riverwaysoft\DtoConverter\Converter;
 use Riverwaysoft\DtoConverter\Language\LanguageGeneratorInterface;
 use Riverwaysoft\DtoConverter\OutputDiffCalculator\OutputDiffCalculator;
@@ -23,7 +23,7 @@ class ConvertCommand extends Command
         private Converter $converter,
         private LanguageGeneratorInterface $languageGenerator,
         private Filesystem $fileSystem,
-        private FileSystemCodeProvider $codeProvider,
+        private CodeProviderInterface $codeProvider,
         private OutputDiffCalculator $diffWriter
     ) {
         parent::__construct();

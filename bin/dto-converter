@@ -8,6 +8,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use Riverwaysoft\DtoConverter\ClassFilter\PhpAttributeFilter;
 use Riverwaysoft\DtoConverter\Cli\ConvertCommand;
 use Riverwaysoft\DtoConverter\CodeProvider\FileSystemCodeProvider;
+use Riverwaysoft\DtoConverter\CodeProvider\RemoteRepoCodeProvider;
 use Riverwaysoft\DtoConverter\Converter;
 use Riverwaysoft\DtoConverter\Language\TypeScript\ClassNameTypeResolver;
 use Riverwaysoft\DtoConverter\Normalizer;
@@ -33,7 +34,15 @@ $application->add(
             ],
         ),
         new Filesystem(),
-        new FileSystemCodeProvider('/\.php$/'),
+//        new FileSystemCodeProvider('/\.php$/'),
+        new RemoteRepoCodeProvider(
+            new FileSystemCodeProvider('/\.php$/'),
+            new Filesystem(),
+            repositoryUrl: "git@gitlab.com:riverwaysoft/youshka_project/youshka.git",
+            branchName: "payment_in_module",
+            repoDownloadFolder: sys_get_temp_dir() . '/youshka',
+            appendToPath: 'src' // Don't search outside src folder. Code optimization
+        ),
         new OutputDiffCalculator(),
     )
 );
