@@ -1,16 +1,18 @@
-#!/bin/php
+#!/usr/bin/env php
 <?php
 
 declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
+use Riverwaysoft\DtoConverter\Bridge\ApiPlatform\ApiPlatformInputTypeResolver;
 use Riverwaysoft\DtoConverter\ClassFilter\PhpAttributeFilter;
 use Riverwaysoft\DtoConverter\Cli\ConvertCommand;
 use Riverwaysoft\DtoConverter\CodeProvider\FileSystemCodeProvider;
 use Riverwaysoft\DtoConverter\CodeProvider\RemoteRepoCodeProvider;
 use Riverwaysoft\DtoConverter\Converter;
 use Riverwaysoft\DtoConverter\Language\TypeScript\ClassNameTypeResolver;
+use Riverwaysoft\DtoConverter\Language\TypeScript\InlineTypeResolver;
 use Riverwaysoft\DtoConverter\Normalizer;
 use Riverwaysoft\DtoConverter\Language\TypeScript\DateTimeTypeResolver;
 use Riverwaysoft\DtoConverter\Language\TypeScript\TypeScriptGenerator;
@@ -34,16 +36,12 @@ $application->add(
             ],
         ),
         new Filesystem(),
-//        new FileSystemCodeProvider('/\.php$/'),
+        new OutputDiffCalculator(),
+        new FileSystemCodeProvider('/\.php$/'),
         new RemoteRepoCodeProvider(
             new FileSystemCodeProvider('/\.php$/'),
             new Filesystem(),
-            repositoryUrl: "git@gitlab.com:riverwaysoft/youshka_project/youshka.git",
-            branchName: "payment_in_module",
-            repoDownloadFolder: sys_get_temp_dir() . '/youshka',
-            appendToPath: 'src' // Don't search outside src folder. Code optimization
         ),
-        new OutputDiffCalculator(),
     )
 );
 

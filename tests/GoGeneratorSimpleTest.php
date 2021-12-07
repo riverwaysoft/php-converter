@@ -50,7 +50,7 @@ CODE;
 
         $this->assertCount(1, $results);
 
-        $this->assertMatchesSnapshot($results[0]->getContent(), new class() extends TextDriver {
+        $this->assertMatchesSnapshot($results[0]->getContent(), new class () extends TextDriver {
             public function extension(): string
             {
                 return 'go';

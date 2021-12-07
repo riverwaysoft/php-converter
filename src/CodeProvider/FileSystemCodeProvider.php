@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Riverwaysoft\DtoConverter\CodeProvider;
 
-class FileSystemCodeProvider implements CodeProviderInterface
+class FileSystemCodeProvider
 {
     public function __construct(
         private string $pattern,
