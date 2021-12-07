@@ -31,9 +31,15 @@ class User
 
 ```
 
-4) Run CLI command to generate TypeScript or Dart
+4) Run CLI command to generate TypeScript
 ```bash
 vendor/bin/dto-converter generate --from=/path/to/project/src --to=.
+```
+
+or 
+
+```bash
+vendor/bin/dto-converter generate --from=git@remote/project.git --branch=branch_name --to=.
 ```
 
 You'll get file `generated.ts` with the following contents:
@@ -54,6 +60,7 @@ type User = {
 - Custom type resolvers (e.g. `DateTimeImmutable`)
 - Generate a single output file or multiple files (entity per class)
 - Custom class filters
+- Generate files from local git repository or remote
 
 ## Error list
 Here is a list of errors `dto-converter` can throw and description what to do if you encounter these errors:
@@ -120,8 +127,12 @@ $application->add(
             ],
         ),
         new Filesystem(),
-        new FileSystemCodeProvider('/\.php$/'),
         new OutputDiffCalculator(),
+        new FileSystemCodeProvider('/\.php$/'),
+        new RemoteRepoCodeProvider(
+            new FileSystemCodeProvider('/\.php$/'),
+            new Filesystem(),
+        ),
     )
 );
 ```
@@ -146,9 +157,13 @@ $application->add(
             ],
         ),
         new Filesystem(),
+        new OutputDiffCalculator(),
 -       new FileSystemCodeProvider('/\.php$/'),
 +       new FileSystemCodeProvider('/Dto\.php$/'),
-        new OutputDiffCalculator(),
+        new RemoteRepoCodeProvider(
+            new FileSystemCodeProvider('/\.php$/'),
+            new Filesystem(),
+        ),
     )
 );
 ```
@@ -180,8 +195,12 @@ $application->add(
             ],
         ),
         new Filesystem(),
-        new FileSystemCodeProvider('/\.php$/'),
         new OutputDiffCalculator(),
+        new FileSystemCodeProvider('/\.php$/'),
+        new RemoteRepoCodeProvider(
+            new FileSystemCodeProvider('/\.php$/'),
+            new Filesystem(),
+        ),
     )
 );
 ```
