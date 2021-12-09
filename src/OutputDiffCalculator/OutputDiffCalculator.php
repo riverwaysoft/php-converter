@@ -9,10 +9,15 @@ use Jfcherng\Diff\Renderer\RendererConstant;
 
 class OutputDiffCalculator
 {
+    public function __construct(private int $context = 3)
+    {
+    }
+
     public function calculate(string $oldFileContent, string $newFileContent): string
     {
         $diffOptions = [
-            'context' => 3,
+            // https://github.com/jfcherng/php-diff#example
+            'context' => $this->context,
             'ignoreCase' => false,
             'ignoreWhitespace' => false,
         ];

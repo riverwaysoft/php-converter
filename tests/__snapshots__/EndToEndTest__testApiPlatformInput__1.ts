@@ -13,5 +13,6 @@ export type UserCreateInput = {
   profile: string;
   promotedAt: string | null;
   userTheme: { value: ColorEnum };
+  money: { currency: string; amount: number };
   location: { lat: string; lan: string };
 };

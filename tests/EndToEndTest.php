@@ -515,12 +515,17 @@ class LocationEmbeddable {
   ) {}
 }
 
+class Money {
+
+}
+
 #[Dto]
 class UserCreateInput
 {
     public Profile $profile;
     public ?DateTimeImmutable $promotedAt;
     public ColorEnum $userTheme;
+    public Money $money;
     public LocationEmbeddable $location;
 }
 
@@ -534,6 +539,7 @@ CODE;
                 new DateTimeTypeResolver(),
                 new ApiPlatformInputTypeResolver([
                     'LocationEmbeddable' => '{ lat: string; lan: string }',
+                    'Money' => '{ currency: string; amount: number }',
                 ]),
                 new ClassNameTypeResolver(),
             ]

@@ -14,7 +14,7 @@ class ApiPlatformInputTypeResolver implements UnknownTypeResolverInterface
 {
     public function __construct(
         /** @var array<string, string> */
-        private array $embeddableMap = [],
+        private array $classMap = [],
     ) {
     }
 
@@ -34,14 +34,17 @@ class ApiPlatformInputTypeResolver implements UnknownTypeResolverInterface
         }
 
         if ($this->isEmbeddable($type)) {
-            if (empty($this->embeddableMap[$type->getName()])) {
+            if (empty($this->classMap[$type->getName()])) {
                 throw new \InvalidArgumentException(sprintf(
                     "There is no TypeScript type for %s. Please add %s to ApiPlatformInputTypeResolver constructor arguments",
                     $type->getName(),
                     $type->getName(),
                 ));
             }
-            return $this->embeddableMap[$type->getName()];
+        }
+
+        if (!empty($this->classMap[$type->getName()])) {
+            return $this->classMap[$type->getName()];
         }
 
         return 'string';
