@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter;
+namespace Riverwaysoft\DtoConverter\Ast;
 
 use Riverwaysoft\DtoConverter\Ast\AstVisitor;
 use Riverwaysoft\DtoConverter\ClassFilter\ClassFilterInterface;

@@ -41,11 +41,11 @@ class AstVisitor extends NodeVisitorAbstract
         ?string $docComment = null,
     ): SingleType|UnionType {
         if ($param instanceof Node\UnionType) {
-            return new UnionType(array_map([$this, 'createSingleType'], $param->types));
+            return new UnionType(array_map(fn ($singleParam) => $this->createSingleType($singleParam, $docComment), $param->types));
         }
 
         if ($param instanceof Node\NullableType) {
-            return UnionType::nullable($this->createSingleType($param->type));
+            return UnionType::nullable($this->createSingleType($param->type, $docComment));
         }
 
         $typeName = get_class($param) === Node\Name::class || get_class($param) === Node\Name\FullyQualified::class

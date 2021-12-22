@@ -4,7 +4,7 @@ namespace App\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Riverwaysoft\DtoConverter\Language\TypeScript\ClassNameTypeResolver;
-use Riverwaysoft\DtoConverter\Normalizer;
+use Riverwaysoft\DtoConverter\Ast\Normalizer;
 use Riverwaysoft\DtoConverter\OutputWriter\SingleFileOutputWriter\SingleFileOutputWriter;
 use Spatie\Snapshots\Drivers\TextDriver;
 use Spatie\Snapshots\MatchesSnapshots;

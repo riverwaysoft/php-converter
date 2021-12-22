@@ -6,7 +6,7 @@ namespace Riverwaysoft\DtoConverter\Cli;
 
 use Riverwaysoft\DtoConverter\CodeProvider\FileSystemCodeProvider;
 use Riverwaysoft\DtoConverter\CodeProvider\RemoteRepoCodeProvider;
-use Riverwaysoft\DtoConverter\Converter;
+use Riverwaysoft\DtoConverter\Ast\Converter;
 use Riverwaysoft\DtoConverter\Language\LanguageGeneratorInterface;
 use Riverwaysoft\DtoConverter\OutputDiffCalculator\OutputDiffCalculator;
 use Symfony\Component\Console\Command\Command;

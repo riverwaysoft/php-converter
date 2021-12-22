@@ -9,14 +9,14 @@ use Riverwaysoft\DtoConverter\ClassFilter\DocBlockCommentFilter;
 use Riverwaysoft\DtoConverter\ClassFilter\NegationFilter;
 use Riverwaysoft\DtoConverter\ClassFilter\PhpAttributeFilter;
 use Riverwaysoft\DtoConverter\CodeProvider\FileSystemCodeProvider;
-use Riverwaysoft\DtoConverter\Converter;
+use Riverwaysoft\DtoConverter\Ast\Converter;
 use Riverwaysoft\DtoConverter\Language\Dart\DartGenerator;
 use Riverwaysoft\DtoConverter\Language\Dart\DartImportGenerator;
 use Riverwaysoft\DtoConverter\Language\TypeScript\ClassNameTypeResolver;
 use Riverwaysoft\DtoConverter\Language\TypeScript\DateTimeTypeResolver;
 use Riverwaysoft\DtoConverter\Language\TypeScript\TypeScriptGenerator;
 use Riverwaysoft\DtoConverter\Language\TypeScript\TypeScriptImportGenerator;
-use Riverwaysoft\DtoConverter\Normalizer;
+use Riverwaysoft\DtoConverter\Ast\Normalizer;
 use Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter\DtoTypeDependencyCalculator;
 use Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter\EntityPerClassOutputWriter;
 use Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter\KebabCaseFileNameGenerator;
@@ -519,12 +519,18 @@ class Money {
 
 }
 
+class Industry {}
+
 #[Dto]
 class UserCreateInput
 {
     public Profile $profile;
     public ?DateTimeImmutable $promotedAt;
     public ColorEnum $userTheme;
+    /** @var Industry[]|null  */
+    public array|null $industriesUnion = null;
+    /** @var Industry[]|null  */
+    public ?array $industriesNullable = null;
     public Money $money;
     public LocationEmbeddable $location;
 }

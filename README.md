@@ -16,7 +16,6 @@ composer require riverwaysoft/php-converter --dev
 
 2) Mark a few classes with `#[Dto]` annotation to convert them into TypeScript or Dart
 ```php
-
 use Riverwaysoft\DtoConverter\ClassFilter\Dto;
 
 #[Dto]
@@ -28,7 +27,6 @@ class User
     /** @var User[] */
     public array $friends;
 }
-
 ```
 
 4) Run CLI command to generate TypeScript
@@ -45,7 +43,6 @@ vendor/bin/dto-converter generate --from=git@remote/project.git --branch=branch_
 You'll get file `generated.ts` with the following contents:
 
 ```typescript
-
 type User = {
   id: string;
   age: number;
