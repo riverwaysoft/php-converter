@@ -32,7 +32,7 @@ class OutputFile implements \JsonSerializable
         return empty($this->content);
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return [
             'content' => $this->content,

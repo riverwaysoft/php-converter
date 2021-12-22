@@ -28,7 +28,7 @@ class ExpressionType implements \JsonSerializable
         return $this->type === $expressionType->type;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return [
             'type' => $this->type,

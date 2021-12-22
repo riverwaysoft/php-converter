@@ -53,7 +53,7 @@ class UnionType implements \JsonSerializable
         return $this->types;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return [
             'types' => $this->types,
