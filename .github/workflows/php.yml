@@ -11,6 +11,11 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        php-versions: ['8.0', '8.1']
+    name: PHP ${{ matrix.php-versions }} Test on ubuntu latest
+
     steps:
     - uses: actions/checkout@v2
 
@@ -25,6 +30,9 @@ jobs:
         key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
         restore-keys: |
           ${{ runner.os }}-php-
+
+    - name: Check PHP
+      run: php -v
 
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress

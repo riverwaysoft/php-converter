@@ -27,7 +27,7 @@ class DtoEnumProperty implements \JsonSerializable
         return is_numeric($this->value);
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return [
             'name' =>$this->name,

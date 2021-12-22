@@ -22,10 +22,10 @@ class DtoClassProperty implements \JsonSerializable
         return $this->name;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return [
-            'type' =>$this->type,
+            'type' => $this->type,
             'name' => $this->name
         ];
     }

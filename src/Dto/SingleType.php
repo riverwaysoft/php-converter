@@ -37,7 +37,7 @@ class SingleType implements \JsonSerializable
         return $this->isList;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return [
             'name' => $this->name,
