@@ -490,10 +490,17 @@ class Dto
 #[Dto]
 final class ColorEnum extends Enum
 {
-    private const UNKNOWN = null;
     private const RED = 0;
     private const GREEN = 1;
     private const BLUE = 2;
+}
+
+#[Dto]
+final class GenderEnum extends Enum
+{
+    private const UNKNOWN = null;
+    private const MAN = 0;
+    private const WOMAN = 1;
 }
 
 class Profile
@@ -507,6 +514,8 @@ class ProfileOutput
 {
     public string $firstName;
     public string $lastName;
+    public GenderEnum $gender;
+    public ColorEnum $color;
 }
 
 class LocationEmbeddable {
@@ -533,6 +542,7 @@ class UserCreateInput
     /** @var Industry[]|null  */
     public ?array $industriesNullable = null;
     public Money $money;
+    public GenderEnum $gender;
     public LocationEmbeddable $location;
 }
 

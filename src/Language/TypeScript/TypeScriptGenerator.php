@@ -16,6 +16,7 @@ use Riverwaysoft\DtoConverter\Language\UnknownTypeResolverInterface;
 use Riverwaysoft\DtoConverter\Language\UnsupportedTypeException;
 use Riverwaysoft\DtoConverter\OutputWriter\OutputFile;
 use Riverwaysoft\DtoConverter\OutputWriter\OutputWriterInterface;
+use Webmozart\Assert\Assert;
 
 class TypeScriptGenerator implements LanguageGeneratorInterface
 {
@@ -44,9 +45,27 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
             return sprintf("export type %s = {%s\n};", $dto->getName(), $this->convertToTypeScriptProperties($dto, $dtoList));
         }
         if ($dto->getExpressionType()->equals(ExpressionType::enum())) {
-            return sprintf("export enum %s {%s\n}", $dto->getName(), $this->convertEnumToTypeScriptProperties($dto->getProperties()));
+            if ($this->shouldEnumBeConverterToUnion($dto)) {
+                return sprintf("export type %s = %s;", $dto->getName(), $this->convertEnumToTypeScriptUnionProperties($dto->getProperties()));
+            }
+            return sprintf("export enum %s {%s\n}", $dto->getName(), $this->convertEnumToTypeScriptEnumProperties($dto->getProperties()));
         }
-        throw new \Exception('Unknown expression type '.$dto->getExpressionType()->jsonSerialize());
+        throw new \Exception('Unknown expression type ' . $dto->getExpressionType()->jsonSerialize());
+    }
+
+    // TS only supports string or number backed enums. If one of the enum values is null TS gives compilation error
+    // In this case it's better to convert enum to union type
+    private function shouldEnumBeConverterToUnion(DtoType $dto): bool
+    {
+        Assert::true($dto->getExpressionType()->equals(ExpressionType::enum()));
+
+        foreach ($dto->getProperties() as $property) {
+            if ($property->isNull()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function convertToTypeScriptProperties(DtoType $dto, DtoList $dtoList): string
@@ -63,23 +82,35 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
     }
 
     /** @param DtoEnumProperty[] $properties */
-    private function convertEnumToTypeScriptProperties(array $properties): string
+    private function convertEnumToTypeScriptEnumProperties(array $properties): string
     {
         $string = '';
 
         foreach ($properties as $property) {
-            $propertyValue = sprintf("'%s'", $property->getValue());
-            if ($property->isNumeric()) {
-                $propertyValue = $property->getValue();
-            }
-            if ($property->isNull()) {
-                $propertyValue = 'null';
-            }
+            $propertyValue = $property->isNumeric()
+                ? $property->getValue()
+                : sprintf("'%s'", $property->getValue());
 
             $string .= sprintf("\n  %s = %s,", $property->getName(), $propertyValue);
         }
 
         return $string;
+    }
+
+    /** @param DtoEnumProperty[] $properties */
+    private function convertEnumToTypeScriptUnionProperties(array $properties): string
+    {
+        $propertyValues = array_map(function (DtoEnumProperty $property) {
+            if ($property->isNumeric()) {
+                return $property->getValue();
+            }
+            if ($property->isNull()) {
+                return 'null';
+            }
+            return sprintf("'%s'", $property->getValue());
+        }, $properties);
+
+        return implode(' | ', $propertyValues);
     }
 
     private function getTypeScriptTypeFromPhp(SingleType|UnionType $type, DtoType $dto, DtoList $dtoList): string

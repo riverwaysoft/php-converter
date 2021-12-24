@@ -1,13 +1,16 @@
 export enum ColorEnum {
-  UNKNOWN = null,
   RED = 0,
   GREEN = 1,
   BLUE = 2,
 }
 
+export type GenderEnum = null | 0 | 1;
+
 export type ProfileOutput = {
   firstName: string;
   lastName: string;
+  gender: GenderEnum;
+  color: ColorEnum;
 };
 
 export type UserCreateInput = {
@@ -17,5 +20,6 @@ export type UserCreateInput = {
   industriesUnion: string[] | null;
   industriesNullable: string[] | null;
   money: { currency: string; amount: number };
+  gender: { value: GenderEnum };
   location: { lat: string; lan: string };
 };
