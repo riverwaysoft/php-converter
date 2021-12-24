@@ -16,12 +16,13 @@ class DtoType implements \JsonSerializable
 
     public function isNumericEnum(): bool
     {
-        $numericEnums = array_filter(
-            $this->properties,
-            fn (DtoClassProperty|DtoEnumProperty $property) => $property instanceof DtoEnumProperty && $property->isNumeric()
-        );
+        foreach ($this->properties as $property) {
+            if (!($property instanceof DtoEnumProperty && $property->isNumeric())) {
+                return false;
+            }
+        }
 
-        return count($numericEnums) === count($this->properties);
+        return true;
     }
 
     public function getName(): string

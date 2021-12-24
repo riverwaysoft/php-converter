@@ -68,9 +68,13 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
         $string = '';
 
         foreach ($properties as $property) {
-            $propertyValue = $property->isNumeric()
-                ? $property->getValue()
-                : sprintf("'%s'", $property->getValue());
+            $propertyValue = sprintf("'%s'", $property->getValue());
+            if ($property->isNumeric()) {
+                $propertyValue = $property->getValue();
+            }
+            if ($property->isNull()) {
+                $propertyValue = 'null';
+            }
 
             $string .= sprintf("\n  %s = %s,", $property->getName(), $propertyValue);
         }

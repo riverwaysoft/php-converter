@@ -490,6 +490,7 @@ class Dto
 #[Dto]
 final class ColorEnum extends Enum
 {
+    private const UNKNOWN = null;
     private const RED = 0;
     private const GREEN = 1;
     private const BLUE = 2;
