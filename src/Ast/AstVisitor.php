@@ -68,8 +68,11 @@ class AstVisitor extends NodeVisitorAbstract
         foreach ($node->stmts as $stmt) {
             if ($stmt instanceof Node\Stmt\ClassConst) {
                 $propertyName = $stmt->consts[0]->name->name;
-                $notNullValue = $stmt->consts[0]->getAttribute('value')->value ?? null;
-                $isNullValue = ($stmt->consts[0]->value->getAttribute('name')->parts[0] ?? null) === 'null';
+                /** @var string|number|null $notNullValue */
+                /** @phpstan-ignore-next-line */
+                $notNullValue = $stmt->consts[0]->value->value ?? null;
+                /** @phpstan-ignore-next-line */
+                $isNullValue = ($stmt->consts[0]->value->name->parts[0] ?? null) === 'null';
                 if ($notNullValue === null && $isNullValue === false) {
                     throw new \Exception(sprintf("Property %s of enum is different from number, string and null.", $propertyName));
                 }
