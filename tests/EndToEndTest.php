@@ -564,6 +564,22 @@ CODE;
         $results = ($typeScriptGenerator)->generate($result);
         $this->assertCount(1, $results);
         $this->assertMatchesSnapshot($results[0]->getContent(), new TypeScriptSnapshotComparator());
+
+        // use TS template litaral
+        $typeScriptGenerator = new TypeScriptGenerator(
+            new SingleFileOutputWriter('generated.ts'),
+            [
+                new DateTimeTypeResolver(),
+                new ApiPlatformInputTypeResolver([
+                    'LocationEmbeddable' => '{ lat: string; lan: string }',
+                    'Money' => '{ currency: string; amount: number }',
+                ], true),
+                new ClassNameTypeResolver(),
+            ]
+        );
+        $results = ($typeScriptGenerator)->generate($result);
+        $this->assertCount(1, $results);
+        $this->assertMatchesSnapshot($results[0]->getContent(), new TypeScriptSnapshotComparator());
     }
 
     public function testUnkownTypeThrows(): void

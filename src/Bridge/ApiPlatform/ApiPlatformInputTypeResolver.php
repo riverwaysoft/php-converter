@@ -15,6 +15,8 @@ class ApiPlatformInputTypeResolver implements UnknownTypeResolverInterface
     public function __construct(
         /** @var array<string, string> */
         private array $classMap = [],
+        // https://www.typescriptlang.org/docs/handbook/2/template-literal-types.html
+        private bool $useTypeScriptTemplateLiteral = false,
     ) {
     }
 
@@ -45,6 +47,10 @@ class ApiPlatformInputTypeResolver implements UnknownTypeResolverInterface
 
         if (!empty($this->classMap[$type->getName()])) {
             return $this->classMap[$type->getName()];
+        }
+
+        if ($this->useTypeScriptTemplateLiteral) {
+            return '`/api/${string}`';
         }
 
         return 'string';
