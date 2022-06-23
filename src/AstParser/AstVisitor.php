@@ -59,7 +59,7 @@ class AstVisitor extends NodeVisitorAbstract
             return UnionType::nullable($this->createSingleType($param->type, $docComment));
         }
 
-        $typeName = $param instanceof Node\Name || $param instanceof Node\Name\FullyQualified
+        $typeName = get_class($param) === Node\Name::class || get_class($param) === Node\Name\FullyQualified::class
             ? $param->parts[0]
             : $param->name;
 
