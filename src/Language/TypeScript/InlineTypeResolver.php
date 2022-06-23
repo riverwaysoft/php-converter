@@ -11,8 +11,10 @@ use Riverwaysoft\DtoConverter\Language\UnknownTypeResolverInterface;
 
 class InlineTypeResolver implements UnknownTypeResolverInterface
 {
-    /** @var array<string, string> $map */
-    public function __construct(private array $map)
+    public function __construct(
+        /** @var array<string, string> */
+        private array $map,
+    )
     {
     }
 
