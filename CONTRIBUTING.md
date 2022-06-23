@@ -20,7 +20,7 @@ quality to benefit the project. Many developers have different skillsets, streng
 
 When requesting or submitting new features, first consider whether it might be useful to others. Open
 source projects are used by many developers, who may have entirely different needs to your own. Think about
-whether or not your feature is likely to be used by other users of the project.
+whether or not your feature is likely to be used by other users of the project. Instead of jumping into writing code raise an issue first. Only after your request is discussed you may create PR. It may save your time as well as time of maintainers.
 
 ## Procedure
 
@@ -47,7 +47,5 @@ If the project maintainer has any additional requirements, you will find them li
 - **Consider our release cycle** - We try to follow [SemVer v2.0.0](https://semver.org/). Randomly breaking public APIs is not an option.
 
 - **One pull request per feature** - If you want to do more than one thing, send multiple pull requests.
-
-- **Send coherent history** - Make sure each individual commit in your pull request is meaningful. If you had to make multiple intermediate commits while developing, please [squash them](https://www.git-scm.com/book/en/v2/Git-Tools-Rewriting-History#Changing-Multiple-Commit-Messages) before submitting.
 
 **Happy coding**!
