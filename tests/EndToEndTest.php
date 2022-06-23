@@ -15,6 +15,7 @@ use Riverwaysoft\DtoConverter\Language\Dart\DartImportGenerator;
 use Riverwaysoft\DtoConverter\Language\TypeScript\ClassNameTypeResolver;
 use Riverwaysoft\DtoConverter\Language\TypeScript\DateTimeTypeResolver;
 use Riverwaysoft\DtoConverter\Language\TypeScript\TypeScriptGenerator;
+use Riverwaysoft\DtoConverter\Language\TypeScript\TypeScriptGeneratorOptions;
 use Riverwaysoft\DtoConverter\Language\TypeScript\TypeScriptImportGenerator;
 use Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter\DtoTypeDependencyCalculator;
 use Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter\EntityPerClassOutputWriter;
@@ -49,7 +50,7 @@ class Profile {
 }
 CODE;
 
-    public function testNormalization(): void
+    public function testNormalizationTsDefault(): void
     {
         $codeAttribute = <<<'CODE'
 <?php
@@ -92,6 +93,46 @@ CODE;
     {
         $normalized = (new Converter())->convert([$this->codeNestedDto]);
         $results = (new TypeScriptGenerator(new SingleFileOutputWriter('generated.ts'), [new ClassNameTypeResolver()]))->generate($normalized);
+        $this->assertCount(1, $results);
+        $this->assertMatchesSnapshot($results[0]->getContent(), new TypeScriptSnapshotComparator());
+    }
+
+    public function testUseTypeOverEnumTs(): void
+    {
+        $code = <<<'CODE'
+<?php
+
+use MyCLabs\Enum\Enum;
+
+final class ColorEnum extends Enum
+{
+    private const RED = 0;
+    private const GREEN = 1;
+    private const BLUE = 2;
+}
+
+final class RoleEnum extends Enum
+{
+    private const ADMIN = 'admin';
+    private const READER = 'reader';
+    private const EDITOR = 'editor';
+}
+
+class User
+{
+    public string $id;
+    public ColorEnum $themeColor;
+    public RoleEnum $role;
+}
+CODE;
+
+        $normalized = (new Converter())->convert([$code]);
+        $typeScriptGenerator = new TypeScriptGenerator(
+            new SingleFileOutputWriter('generated.ts'),
+            [new ClassNameTypeResolver()],
+            new TypeScriptGeneratorOptions(useTypesInsteadOfEnums: true),
+        );
+        $results = $typeScriptGenerator->generate($normalized);
         $this->assertCount(1, $results);
         $this->assertMatchesSnapshot($results[0]->getContent(), new TypeScriptSnapshotComparator());
     }

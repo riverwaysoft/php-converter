@@ -21,11 +21,16 @@ use Webmozart\Assert\Assert;
 
 class TypeScriptGenerator implements LanguageGeneratorInterface
 {
+    private ?TypeScriptGeneratorOptions $options;
+
     public function __construct(
         private OutputWriterInterface $outputWriter,
         /** @var UnknownTypeResolverInterface[] $unknownTypeResolvers */
         private array $unknownTypeResolvers = [],
-    ) {
+        ?TypeScriptGeneratorOptions $options = null,
+    )
+    {
+        $this->options = $options ?? new TypeScriptGeneratorOptions(useTypesInsteadOfEnums: false);
     }
 
     /** @return OutputFile[] */
@@ -59,6 +64,10 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
     private function shouldEnumBeConverterToUnion(DtoType $dto): bool
     {
         Assert::true($dto->getExpressionType()->equals(ExpressionType::enum()));
+
+        if ($this->options->useTypesInsteadOfEnums) {
+            return true;
+        }
 
         foreach ($dto->getProperties() as $property) {
             if ($property->isNull()) {
@@ -117,7 +126,7 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
     private function getTypeScriptTypeFromPhp(SingleType|UnionType|ListType $type, DtoType $dto, DtoList $dtoList): string
     {
         if ($type instanceof UnionType) {
-            $arr = array_map(fn (SingleType|ListType|UnionType $type) => $this->getTypeScriptTypeFromPhp($type, $dto, $dtoList), $type->getTypes());
+            $arr = array_map(fn(SingleType|ListType|UnionType $type) => $this->getTypeScriptTypeFromPhp($type, $dto, $dtoList), $type->getTypes());
             return implode(separator: ' | ', array: $arr);
         }
 
