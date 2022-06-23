@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace Riverwaysoft\DtoConverter\Cli;
 
 use Riverwaysoft\DtoConverter\CodeProvider\FileSystemCodeProvider;
-use Riverwaysoft\DtoConverter\CodeProvider\RemoteRepoCodeProvider;
-use Riverwaysoft\DtoConverter\Ast\Converter;
+use Riverwaysoft\DtoConverter\AstParser\Converter;
 use Riverwaysoft\DtoConverter\Language\LanguageGeneratorInterface;
 use Riverwaysoft\DtoConverter\OutputDiffCalculator\OutputDiffCalculator;
 use Symfony\Component\Console\Command\Command;
@@ -26,7 +25,6 @@ class ConvertCommand extends Command
         private Filesystem $fileSystem,
         private OutputDiffCalculator $diffWriter,
         private FileSystemCodeProvider $fsCodeProvider,
-        private RemoteRepoCodeProvider $remoteRepoCodeProvider,
     ) {
         parent::__construct();
     }
@@ -46,20 +44,7 @@ class ConvertCommand extends Command
         $to = $input->getOption('to');
         Assert::directory($to);
 
-        $repositorySourceType = $this->guessRepositorySource($from);
-
-        $files = [];
-        if ($repositorySourceType->equals(RepositorySourceEnum::directory())) {
-            $files = $this->fsCodeProvider->getListings($from);
-        }
-        if ($repositorySourceType->equals(RepositorySourceEnum::remote())) {
-            $branch = $input->getOption('branch');
-            if (!$branch) {
-                throw new \InvalidArgumentException('Option --branch is required when using URL as repository source');
-            }
-            $output->writeln('Downloading repository...');
-            $files = $this->remoteRepoCodeProvider->getListings($from, $branch);
-        }
+        $files = $this->fsCodeProvider->getListings($from);
         if (empty($files)) {
             $output->writeln('No files to convert');
             return Command::SUCCESS;
@@ -88,17 +73,5 @@ class ConvertCommand extends Command
         }
 
         return Command::SUCCESS;
-    }
-
-    public function guessRepositorySource(string $from): ?RepositorySourceEnum
-    {
-        if (is_dir($from)) {
-            return RepositorySourceEnum::directory();
-        }
-        if ((str_starts_with(haystack: $from, needle: 'https://') || str_starts_with(haystack: $from, needle: 'git@'))
-            && str_ends_with(haystack: $from, needle: '.git')) {
-            return RepositorySourceEnum::remote();
-        }
-        return null;
     }
 }

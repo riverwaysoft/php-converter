@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\Ast;
+namespace Riverwaysoft\DtoConverter\AstParser;
 
 use Riverwaysoft\DtoConverter\Dto\DtoList;
 

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\Ast;
+namespace Riverwaysoft\DtoConverter\AstParser;
 
-use Riverwaysoft\DtoConverter\Ast\AstVisitor;
+use Riverwaysoft\DtoConverter\AstParser\AstVisitor;
 use Riverwaysoft\DtoConverter\ClassFilter\ClassFilterInterface;
 use Riverwaysoft\DtoConverter\Dto\DtoList;
 use PhpParser\NodeTraverser;
@@ -30,7 +30,7 @@ class Normalizer
         $ast = $this->parser->parse($code);
 
         $dtoList = new DtoList();
-        $visitor = new AstVisitor($dtoList, $this->classFilter);
+        $visitor = new AstVisitor($dtoList, new PhpDocTypeParser(), $this->classFilter);
 
         $traverser = new NodeTraverser();
         $traverser->addVisitor($visitor);

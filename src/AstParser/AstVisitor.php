@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\Ast;
+namespace Riverwaysoft\DtoConverter\AstParser;
 
 use Riverwaysoft\DtoConverter\ClassFilter\ClassFilterInterface;
 use Riverwaysoft\DtoConverter\Dto\DtoEnumProperty;
@@ -10,6 +10,7 @@ use Riverwaysoft\DtoConverter\Dto\DtoList;
 use Riverwaysoft\DtoConverter\Dto\DtoClassProperty;
 use Riverwaysoft\DtoConverter\Dto\DtoType;
 use Riverwaysoft\DtoConverter\Dto\ExpressionType;
+use Riverwaysoft\DtoConverter\Dto\ListType;
 use Riverwaysoft\DtoConverter\Dto\SingleType;
 use Riverwaysoft\DtoConverter\Dto\UnionType;
 use PhpParser\Node;
@@ -19,8 +20,10 @@ class AstVisitor extends NodeVisitorAbstract
 {
     public function __construct(
         private DtoList $dtoList,
+        private PhpDocTypeParser $phpDocTypeParser,
         private ?ClassFilterInterface $classFilter = null
-    ) {
+    )
+    {
     }
 
     /** @inheritDoc */
@@ -39,9 +42,17 @@ class AstVisitor extends NodeVisitorAbstract
     private function createSingleType(
         Node\Name|Node\Identifier|Node\NullableType|Node\UnionType $param,
         ?string $docComment = null,
-    ): SingleType|UnionType {
+    ): SingleType|UnionType|ListType
+    {
+        if ($docComment) {
+            $docBlockType = $this->phpDocTypeParser->parse($docComment);
+            if ($docBlockType) {
+                return $docBlockType;
+            }
+        }
+
         if ($param instanceof Node\UnionType) {
-            return new UnionType(array_map(fn ($singleParam) => $this->createSingleType($singleParam, $docComment), $param->types));
+            return new UnionType(array_map(fn($singleParam) => $this->createSingleType($singleParam, $docComment), $param->types));
         }
 
         if ($param instanceof Node\NullableType) {
@@ -51,13 +62,6 @@ class AstVisitor extends NodeVisitorAbstract
         $typeName = get_class($param) === Node\Name::class || get_class($param) === Node\Name\FullyQualified::class
             ? $param->parts[0]
             : $param->name;
-
-        if (($typeName === 'array' || $typeName === 'iterable' || $typeName === 'mixed') && $docComment) {
-            $docBlockType = $this->parseArrayType($docComment);
-            if ($docBlockType) {
-                return SingleType::list($docBlockType);
-            }
-        }
 
         return new SingleType($typeName);
     }
@@ -69,9 +73,7 @@ class AstVisitor extends NodeVisitorAbstract
             if ($stmt instanceof Node\Stmt\ClassConst) {
                 $propertyName = $stmt->consts[0]->name->name;
                 /** @var string|number|null $notNullValue */
-                /** @phpstan-ignore-next-line */
                 $notNullValue = $stmt->consts[0]->value->value ?? null;
-                /** @phpstan-ignore-next-line */
                 $isNullValue = ($stmt->consts[0]->value->name->parts[0] ?? null) === 'null';
                 if ($notNullValue === null && $isNullValue === false) {
                     throw new \Exception(sprintf("Property %s of enum is different from number, string and null.", $propertyName));
@@ -126,12 +128,5 @@ class AstVisitor extends NodeVisitorAbstract
         return ($node->extends?->parts[0] === 'Enum')
             ? ExpressionType::enum()
             : ExpressionType::class();
-    }
-
-    private function parseArrayType(string $docComment): ?string
-    {
-        preg_match('/var (.+)\[]/', $docComment, $matches);
-
-        return $matches[1] ?? null;
     }
 }

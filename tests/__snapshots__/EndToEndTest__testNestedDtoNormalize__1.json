@@ -7,15 +7,13 @@
         "properties": [
             {
                 "type": {
-                    "name": "string",
-                    "isList": false
+                    "name": "string"
                 },
                 "name": "firstName"
             },
             {
                 "type": {
-                    "name": "string",
-                    "isList": false
+                    "name": "string"
                 },
                 "name": "lastName"
             }
@@ -31,16 +29,13 @@
                 "type": {
                     "types": [
                         {
-                            "name": "FullName",
-                            "isList": false
+                            "name": "FullName"
                         },
                         {
-                            "name": "null",
-                            "isList": false
+                            "name": "null"
                         },
                         {
-                            "name": "string",
-                            "isList": false
+                            "name": "string"
                         }
                     ]
                 },
@@ -48,8 +43,7 @@
             },
             {
                 "type": {
-                    "name": "int",
-                    "isList": false
+                    "name": "int"
                 },
                 "name": "age"
             }
@@ -63,8 +57,7 @@
         "properties": [
             {
                 "type": {
-                    "name": "string",
-                    "isList": false
+                    "name": "string"
                 },
                 "name": "id"
             },
@@ -72,12 +65,10 @@
                 "type": {
                     "types": [
                         {
-                            "name": "Profile",
-                            "isList": false
+                            "name": "Profile"
                         },
                         {
-                            "name": "null",
-                            "isList": false
+                            "name": "null"
                         }
                     ]
                 },
