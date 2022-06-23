@@ -17,7 +17,7 @@ class PhpDocTypeParserTest extends TestCase
     {
         $parser = new PhpDocTypeParser();
         $result = $parser->parse($input);
-        $this->assertEquals($result, $expected, sprintf("Assert failed. Data row: %s", $explanation));
+        $this->assertEquals($result, $expected, sprintf("Assert failed. Data row: '%s'", $explanation));
     }
 
     public function getData()
@@ -84,6 +84,14 @@ class PhpDocTypeParserTest extends TestCase
                 '@var is required',
                 '/** number[]|null */',
                 null,
+            ],
+            [
+                'type with any other decorator',
+                '/**
+                    @SomeDecorator
+                    @var number
+                 */',
+                new SingleType('number'),
             ],
         ];
     }

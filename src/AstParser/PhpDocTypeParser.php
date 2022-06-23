@@ -39,13 +39,19 @@ class PhpDocTypeParser
             return null;
         }
 
-        $firstNode = $result[0];
-        if (!$firstNode instanceof PhpDocTagNode) {
-            return null;
+        $varTagNode = null;
+
+        foreach ($result as $node) {
+            if (!$node instanceof PhpDocTagNode) {
+                continue;
+            }
+
+            if ($node->value instanceof VarTagValueNode) {
+                $varTagNode = $node->value;
+            }
         }
 
-        $varTagNode = $firstNode->value;
-        if (!$varTagNode instanceof VarTagValueNode) {
+        if (!$varTagNode) {
             return null;
         }
 
@@ -61,7 +67,7 @@ class PhpDocTypeParser
             return new ListType($this->convertToDto($node->type));
         }
         if ($node instanceof UnionTypeNode) {
-            return new UnionType(array_map(fn (TypeNode $child) => $this->convertToDto($child), $node->types));
+            return new UnionType(array_map(fn(TypeNode $child) => $this->convertToDto($child), $node->types));
         }
         return null;
     }
