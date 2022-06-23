@@ -34,12 +34,6 @@ class User
 vendor/bin/dto-converter generate --from=/path/to/project/src --to=.
 ```
 
-or 
-
-```bash
-vendor/bin/dto-converter generate --from=git@remote/project.git --branch=branch_name --to=.
-```
-
 You'll get file `generated.ts` with the following contents:
 
 ```typescript
@@ -57,7 +51,6 @@ type User = {
 - Custom type resolvers (e.g. `DateTimeImmutable`)
 - Generate a single output file or multiple files (entity per class)
 - Custom class filters
-- Generate files from local git repository or remote
 
 ## Customize
 If you'd like to customize dto-convert you need to copy the generator script to your project folder:
