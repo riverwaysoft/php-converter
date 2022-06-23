@@ -9,6 +9,7 @@ use Riverwaysoft\DtoConverter\Dto\DtoList;
 use Riverwaysoft\DtoConverter\Dto\DtoClassProperty;
 use Riverwaysoft\DtoConverter\Dto\DtoType;
 use Riverwaysoft\DtoConverter\Dto\ExpressionType;
+use Riverwaysoft\DtoConverter\Dto\ListType;
 use Riverwaysoft\DtoConverter\Dto\SingleType;
 use Riverwaysoft\DtoConverter\Dto\UnionType;
 use Riverwaysoft\DtoConverter\Language\LanguageGeneratorInterface;
@@ -113,15 +114,15 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
         return implode(' | ', $propertyValues);
     }
 
-    private function getTypeScriptTypeFromPhp(SingleType|UnionType $type, DtoType $dto, DtoList $dtoList): string
+    private function getTypeScriptTypeFromPhp(SingleType|UnionType|ListType $type, DtoType $dto, DtoList $dtoList): string
     {
         if ($type instanceof UnionType) {
-            $arr = array_map(fn (SingleType $type) => $this->getTypeScriptTypeFromPhp($type, $dto, $dtoList), $type->getTypes());
+            $arr = array_map(fn (SingleType|ListType $type) => $this->getTypeScriptTypeFromPhp($type, $dto, $dtoList), $type->getTypes());
             return implode(separator: ' | ', array: $arr);
         }
 
-        if ($type->isList()) {
-            return sprintf('%s[]', $this->getTypeScriptTypeFromPhp(new SingleType($type->getName()), $dto, $dtoList));
+        if ($type instanceof ListType) {
+            return sprintf('%s[]', $this->getTypeScriptTypeFromPhp($type->getType(), $dto, $dtoList));
         }
 
         // https://www.php.net/manual/en/language.types.declarations.php

@@ -14,7 +14,7 @@ class UnionType implements \JsonSerializable
     ) {
     }
 
-    public static function nullable(SingleType $singleType): self
+    public static function nullable(SingleType|ListType $singleType): self
     {
         return new self([$singleType, SingleType::null()]);
     }
@@ -30,7 +30,7 @@ class UnionType implements \JsonSerializable
         return false;
     }
 
-    public function getNotNullType(): SingleType
+    public function getNotNullType(): SingleType|ListType
     {
         Assert::true($this->isNullable());
 

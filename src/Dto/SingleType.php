@@ -8,13 +8,7 @@ class SingleType implements \JsonSerializable
 {
     public function __construct(
         private string $name,
-        private bool $isList = false,
     ) {
-    }
-
-    public static function list(string $name): self
-    {
-        return new self(name: $name, isList: true);
     }
 
     public static function null(): self
@@ -32,16 +26,10 @@ class SingleType implements \JsonSerializable
         return $this->name;
     }
 
-    public function isList(): bool
-    {
-        return $this->isList;
-    }
-
     public function jsonSerialize(): mixed
     {
         return [
             'name' => $this->name,
-            'isList' => $this->isList,
         ];
     }
 }

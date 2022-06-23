@@ -7,12 +7,12 @@ namespace Riverwaysoft\DtoConverter\Dto;
 class DtoClassProperty implements \JsonSerializable
 {
     public function __construct(
-        private SingleType|UnionType $type,
+        private SingleType|UnionType|ListType $type,
         private string $name,
     ) {
     }
 
-    public function getType(): UnionType|SingleType
+    public function getType(): UnionType|SingleType|ListType
     {
         return $this->type;
     }

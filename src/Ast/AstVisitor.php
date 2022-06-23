@@ -10,6 +10,7 @@ use Riverwaysoft\DtoConverter\Dto\DtoList;
 use Riverwaysoft\DtoConverter\Dto\DtoClassProperty;
 use Riverwaysoft\DtoConverter\Dto\DtoType;
 use Riverwaysoft\DtoConverter\Dto\ExpressionType;
+use Riverwaysoft\DtoConverter\Dto\ListType;
 use Riverwaysoft\DtoConverter\Dto\SingleType;
 use Riverwaysoft\DtoConverter\Dto\UnionType;
 use PhpParser\Node;
@@ -39,7 +40,7 @@ class AstVisitor extends NodeVisitorAbstract
     private function createSingleType(
         Node\Name|Node\Identifier|Node\NullableType|Node\UnionType $param,
         ?string $docComment = null,
-    ): SingleType|UnionType {
+    ): SingleType|UnionType|ListType {
         if ($param instanceof Node\UnionType) {
             return new UnionType(array_map(fn ($singleParam) => $this->createSingleType($singleParam, $docComment), $param->types));
         }
@@ -55,7 +56,7 @@ class AstVisitor extends NodeVisitorAbstract
         if (($typeName === 'array' || $typeName === 'iterable' || $typeName === 'mixed') && $docComment) {
             $docBlockType = $this->parseArrayType($docComment);
             if ($docBlockType) {
-                return SingleType::list($docBlockType);
+                return new ListType(new SingleType($docBlockType));
             }
         }
 

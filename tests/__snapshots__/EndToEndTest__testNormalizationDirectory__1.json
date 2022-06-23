@@ -7,15 +7,13 @@
         "properties": [
             {
                 "type": {
-                    "name": "string",
-                    "isList": false
+                    "name": "string"
                 },
                 "name": "id"
             },
             {
                 "type": {
-                    "name": "string",
-                    "isList": false
+                    "name": "string"
                 },
                 "name": "createdAt"
             }
@@ -29,15 +27,13 @@
         "properties": [
             {
                 "type": {
-                    "name": "string",
-                    "isList": false
+                    "name": "string"
                 },
                 "name": "firstName"
             },
             {
                 "type": {
-                    "name": "string",
-                    "isList": false
+                    "name": "string"
                 },
                 "name": "lastName"
             }
@@ -89,12 +85,10 @@
                 "type": {
                     "types": [
                         {
-                            "name": "FullName",
-                            "isList": false
+                            "name": "FullName"
                         },
                         {
-                            "name": "null",
-                            "isList": false
+                            "name": "null"
                         }
                     ]
                 },
@@ -102,8 +96,7 @@
             },
             {
                 "type": {
-                    "name": "int",
-                    "isList": false
+                    "name": "int"
                 },
                 "name": "age"
             }
@@ -117,8 +110,7 @@
         "properties": [
             {
                 "type": {
-                    "name": "string",
-                    "isList": false
+                    "name": "string"
                 },
                 "name": "id"
             },
@@ -126,12 +118,10 @@
                 "type": {
                     "types": [
                         {
-                            "name": "User",
-                            "isList": false
+                            "name": "User"
                         },
                         {
-                            "name": "null",
-                            "isList": false
+                            "name": "null"
                         }
                     ]
                 },
@@ -139,22 +129,21 @@
             },
             {
                 "type": {
-                    "name": "User",
-                    "isList": true
+                    "array": {
+                        "name": "User"
+                    }
                 },
                 "name": "friends"
             },
             {
                 "type": {
-                    "name": "self",
-                    "isList": false
+                    "name": "self"
                 },
                 "name": "selfProperty"
             },
             {
                 "type": {
-                    "name": "self",
-                    "isList": false
+                    "name": "self"
                 },
                 "name": "selfConstructor"
             }
@@ -168,15 +157,13 @@
         "properties": [
             {
                 "type": {
-                    "name": "string",
-                    "isList": false
+                    "name": "string"
                 },
                 "name": "id"
             },
             {
                 "type": {
-                    "name": "PermissionsEnum",
-                    "isList": false
+                    "name": "PermissionsEnum"
                 },
                 "name": "permissions"
             },
@@ -184,12 +171,10 @@
                 "type": {
                     "types": [
                         {
-                            "name": "Profile",
-                            "isList": false
+                            "name": "Profile"
                         },
                         {
-                            "name": "null",
-                            "isList": false
+                            "name": "null"
                         }
                     ]
                 },
@@ -197,8 +182,7 @@
             },
             {
                 "type": {
-                    "name": "int",
-                    "isList": false
+                    "name": "int"
                 },
                 "name": "age"
             },
@@ -206,12 +190,10 @@
                 "type": {
                     "types": [
                         {
-                            "name": "string",
-                            "isList": false
+                            "name": "string"
                         },
                         {
-                            "name": "null",
-                            "isList": false
+                            "name": "null"
                         }
                     ]
                 },
@@ -219,43 +201,41 @@
             },
             {
                 "type": {
-                    "name": "float",
-                    "isList": false
+                    "name": "float"
                 },
                 "name": "latitude"
             },
             {
                 "type": {
-                    "name": "float",
-                    "isList": false
+                    "name": "float"
                 },
                 "name": "longitude"
             },
             {
                 "type": {
-                    "name": "array",
-                    "isList": false
+                    "name": "array"
                 },
                 "name": "achievements"
             },
             {
                 "type": {
-                    "name": "string",
-                    "isList": true
+                    "array": {
+                        "name": "string"
+                    }
                 },
                 "name": "tags"
             },
             {
                 "type": {
-                    "name": "Activity",
-                    "isList": true
+                    "array": {
+                        "name": "Activity"
+                    }
                 },
                 "name": "activities"
             },
             {
                 "type": {
-                    "name": "mixed",
-                    "isList": false
+                    "name": "mixed"
                 },
                 "name": "mixed"
             },
@@ -263,12 +243,10 @@
                 "type": {
                     "types": [
                         {
-                            "name": "bool",
-                            "isList": false
+                            "name": "bool"
                         },
                         {
-                            "name": "null",
-                            "isList": false
+                            "name": "null"
                         }
                     ]
                 },

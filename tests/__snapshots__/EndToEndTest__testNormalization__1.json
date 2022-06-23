@@ -7,8 +7,7 @@
         "properties": [
             {
                 "type": {
-                    "name": "string",
-                    "isList": false
+                    "name": "string"
                 },
                 "name": "id"
             },
@@ -16,12 +15,10 @@
                 "type": {
                     "types": [
                         {
-                            "name": "string",
-                            "isList": false
+                            "name": "string"
                         },
                         {
-                            "name": "null",
-                            "isList": false
+                            "name": "null"
                         }
                     ]
                 },
@@ -37,8 +34,9 @@
         "properties": [
             {
                 "type": {
-                    "name": "string",
-                    "isList": true
+                    "array": {
+                        "name": "string"
+                    }
                 },
                 "name": "achievements"
             },
@@ -46,12 +44,10 @@
                 "type": {
                     "types": [
                         {
-                            "name": "string",
-                            "isList": false
+                            "name": "string"
                         },
                         {
-                            "name": "null",
-                            "isList": false
+                            "name": "null"
                         }
                     ]
                 },
@@ -61,16 +57,13 @@
                 "type": {
                     "types": [
                         {
-                            "name": "int",
-                            "isList": false
+                            "name": "int"
                         },
                         {
-                            "name": "string",
-                            "isList": false
+                            "name": "string"
                         },
                         {
-                            "name": "float",
-                            "isList": false
+                            "name": "float"
                         }
                     ]
                 },
@@ -80,12 +73,10 @@
                 "type": {
                     "types": [
                         {
-                            "name": "bool",
-                            "isList": false
+                            "name": "bool"
                         },
                         {
-                            "name": "null",
-                            "isList": false
+                            "name": "null"
                         }
                     ]
                 },
@@ -93,22 +84,19 @@
             },
             {
                 "type": {
-                    "name": "float",
-                    "isList": false
+                    "name": "float"
                 },
                 "name": "latitude"
             },
             {
                 "type": {
-                    "name": "float",
-                    "isList": false
+                    "name": "float"
                 },
                 "name": "longitude"
             },
             {
                 "type": {
-                    "name": "mixed",
-                    "isList": false
+                    "name": "mixed"
                 },
                 "name": "mixed"
             }

@@ -9,6 +9,7 @@ use Riverwaysoft\DtoConverter\Dto\DtoEnumProperty;
 use Riverwaysoft\DtoConverter\Dto\DtoList;
 use Riverwaysoft\DtoConverter\Dto\DtoType;
 use Riverwaysoft\DtoConverter\Dto\ExpressionType;
+use Riverwaysoft\DtoConverter\Dto\ListType;
 use Riverwaysoft\DtoConverter\Dto\SingleType;
 use Riverwaysoft\DtoConverter\Dto\UnionType;
 use Riverwaysoft\DtoConverter\Language\LanguageGeneratorInterface;
@@ -91,7 +92,7 @@ class DartGenerator implements LanguageGeneratorInterface
         return $string;
     }
 
-    private function getDartTypeFromPhp(UnionType|SingleType $type, DtoType $dto, DtoList $dtoList)
+    private function getDartTypeFromPhp(UnionType|SingleType|ListType $type, DtoType $dto, DtoList $dtoList)
     {
         if ($type instanceof UnionType) {
             Assert::greaterThan($type->getTypes(), 2, "Dart does not support union types");
@@ -100,8 +101,8 @@ class DartGenerator implements LanguageGeneratorInterface
             return sprintf('%s?', $this->getDartTypeFromPhp($notNullType, $dto, $dtoList));
         }
 
-        if ($type->isList()) {
-            return sprintf('List<%s>', $this->getDartTypeFromPhp(new SingleType($type->getName()), $dto, $dtoList));
+        if ($type instanceof ListType) {
+            return sprintf('List<%s>', $this->getDartTypeFromPhp($type->getType(), $dto, $dtoList));
         }
 
         return match ($type->getName()) {

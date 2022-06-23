@@ -8,6 +8,7 @@ use Riverwaysoft\DtoConverter\Dto\DtoClassProperty;
 use Riverwaysoft\DtoConverter\Dto\DtoList;
 use Riverwaysoft\DtoConverter\Dto\DtoType;
 use Riverwaysoft\DtoConverter\Dto\ExpressionType;
+use Riverwaysoft\DtoConverter\Dto\ListType;
 use Riverwaysoft\DtoConverter\Dto\SingleType;
 use Riverwaysoft\DtoConverter\Dto\UnionType;
 use Riverwaysoft\DtoConverter\Language\LanguageGeneratorInterface;
@@ -56,7 +57,7 @@ class GoGeneratorSimple implements LanguageGeneratorInterface
         return $string;
     }
 
-    private function getGoTypeFromPhp(SingleType|UnionType $type, DtoType $dto, DtoList $dtoList): string
+    private function getGoTypeFromPhp(SingleType|UnionType|ListType $type, DtoType $dto, DtoList $dtoList): string
     {
         if ($type instanceof UnionType) {
             Assert::greaterThan($type->getTypes(), 2, "Go does not support union types");
@@ -65,8 +66,8 @@ class GoGeneratorSimple implements LanguageGeneratorInterface
             return sprintf('*%s', $this->getGoTypeFromPhp($notNullType, $dto, $dtoList));
         }
 
-        if ($type->isList()) {
-            return sprintf('[]%s', $this->getGoTypeFromPhp(new SingleType($type->getName()), $dto, $dtoList));
+        if ($type instanceof ListType) {
+            return sprintf('[]%s', $this->getGoTypeFromPhp($type->getType(), $dto, $dtoList));
         }
 
         return match ($type->getName()) {
