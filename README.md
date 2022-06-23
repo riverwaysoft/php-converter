@@ -59,36 +59,6 @@ type User = {
 - Custom class filters
 - Generate files from local git repository or remote
 
-## Error list
-Here is a list of errors `dto-converter` can throw and description what to do if you encounter these errors:
-
-### 1. Property z of class X has no type. Please add PHP type
-It means that you've forgotten to add type for property `a` of class Y. Example:
-
-```php
-#[Dto]
-class X {
-  public $z;
-} 
-```
-
-At the moment there is no strict / loose mode in `dto-converter`. It is always strict. If you don't know the PHP type just use [mixed](https://www.php.net/manual/en/language.types.declarations.php#language.types.declarations.mixed) type to explicitly convert it to `any`/`Object`. It could silently convert such types to TypeScript `any` or Dart `Object` if we needed it. But we prefer an explicit approach. Feel free to raise an issue if having loose mode makes sense for you.
-
-
-### 2. PHP Type X is not supported
-It means `dto-converter` doesn't know how to convert the type X into TypeScript or Dart. If you are using `#[Dto]` attribute you probably forgot to add it to class `X`. Example:
-
-```php
-#[Dto]
-class A {
-  public X $x;
-}
-
-class X {
-  public int $foo;
-}
-```
-
 ## Customize
 If you'd like to customize dto-convert you need to copy the generator script to your project folder:
 
@@ -192,6 +162,36 @@ $application->add(
 
 ### How to add support for other languages?
 To write a custom converter you can implement [LanguageGeneratorInterface](./src/Language/LanguageGeneratorInterface.php). Here is an example how to do it for Go language: [GoGeneratorSimple](./tests/GoGeneratorSimple.php). Check how to use it [here](./tests/GoGeneratorSimpleTest.php). It covers only basic scenarios to get you an idea, so feel free to modify it to your needs.
+
+## Error list
+Here is a list of errors `dto-converter` can throw and description what to do if you encounter these errors:
+
+### 1. Property z of class X has no type. Please add PHP type
+It means that you've forgotten to add type for property `a` of class Y. Example:
+
+```php
+#[Dto]
+class X {
+  public $z;
+} 
+```
+
+At the moment there is no strict / loose mode in `dto-converter`. It is always strict. If you don't know the PHP type just use [mixed](https://www.php.net/manual/en/language.types.declarations.php#language.types.declarations.mixed) type to explicitly convert it to `any`/`Object`. It could silently convert such types to TypeScript `any` or Dart `Object` if we needed it. But we prefer an explicit approach. Feel free to raise an issue if having loose mode makes sense for you.
+
+
+### 2. PHP Type X is not supported
+It means `dto-converter` doesn't know how to convert the type X into TypeScript or Dart. If you are using `#[Dto]` attribute you probably forgot to add it to class `X`. Example:
+
+```php
+#[Dto]
+class A {
+  public X $x;
+}
+
+class X {
+  public int $foo;
+}
+```
 
 ## Testing
 
