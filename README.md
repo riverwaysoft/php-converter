@@ -126,10 +126,6 @@ $application->add(
         new Filesystem(),
         new OutputDiffCalculator(),
         new FileSystemCodeProvider('/\.php$/'),
-        new RemoteRepoCodeProvider(
-            new FileSystemCodeProvider('/\.php$/'),
-            new Filesystem(),
-        ),
     )
 );
 ```
@@ -157,10 +153,6 @@ $application->add(
         new OutputDiffCalculator(),
 -       new FileSystemCodeProvider('/\.php$/'),
 +       new FileSystemCodeProvider('/Dto\.php$/'),
-        new RemoteRepoCodeProvider(
-            new FileSystemCodeProvider('/\.php$/'),
-            new Filesystem(),
-        ),
     )
 );
 ```
@@ -194,10 +186,6 @@ $application->add(
         new Filesystem(),
         new OutputDiffCalculator(),
         new FileSystemCodeProvider('/\.php$/'),
-        new RemoteRepoCodeProvider(
-            new FileSystemCodeProvider('/\.php$/'),
-            new Filesystem(),
-        ),
     )
 );
 ```
