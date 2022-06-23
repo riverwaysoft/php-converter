@@ -117,7 +117,7 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
     private function getTypeScriptTypeFromPhp(SingleType|UnionType|ListType $type, DtoType $dto, DtoList $dtoList): string
     {
         if ($type instanceof UnionType) {
-            $arr = array_map(fn (SingleType|ListType $type) => $this->getTypeScriptTypeFromPhp($type, $dto, $dtoList), $type->getTypes());
+            $arr = array_map(fn (SingleType|ListType|UnionType $type) => $this->getTypeScriptTypeFromPhp($type, $dto, $dtoList), $type->getTypes());
             return implode(separator: ' | ', array: $arr);
         }
 

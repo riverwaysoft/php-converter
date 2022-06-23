@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\DocBlockTypeParser;
+namespace Riverwaysoft\DtoConverter\AstParser;
 
 use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTagNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\VarTagValueNode;
 use PHPStan\PhpDocParser\Ast\Type\ArrayTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\IdentifierTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\TypeNode;
+use PHPStan\PhpDocParser\Ast\Type\UnionTypeNode;
 use PHPStan\PhpDocParser\Lexer\Lexer;
 use PHPStan\PhpDocParser\Parser\ConstExprParser;
 use PHPStan\PhpDocParser\Parser\PhpDocParser;
@@ -18,7 +19,7 @@ use Riverwaysoft\DtoConverter\Dto\ListType;
 use Riverwaysoft\DtoConverter\Dto\SingleType;
 use Riverwaysoft\DtoConverter\Dto\UnionType;
 
-class PhpDocDockTypeParser
+class PhpDocTypeParser
 {
     private Lexer $lexer;
     private PhpDocParser $phpDocParser;
@@ -53,12 +54,14 @@ class PhpDocDockTypeParser
 
     private function convertToDto(TypeNode $node)
     {
+        if ($node instanceof IdentifierTypeNode) {
+            return new SingleType($node->name);
+        }
         if ($node instanceof ArrayTypeNode) {
-            $type = $node->type;
-            if (!$type instanceof IdentifierTypeNode) {
-                throw new \RuntimeException();
-            }
-            return new ListType(new SingleType($type->name));
+            return new ListType($this->convertToDto($node->type));
+        }
+        if ($node instanceof UnionTypeNode) {
+            return new UnionType(array_map(fn (TypeNode $child) => $this->convertToDto($child), $node->types));
         }
         return null;
     }

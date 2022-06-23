@@ -9,14 +9,14 @@ use Riverwaysoft\DtoConverter\ClassFilter\DocBlockCommentFilter;
 use Riverwaysoft\DtoConverter\ClassFilter\NegationFilter;
 use Riverwaysoft\DtoConverter\ClassFilter\PhpAttributeFilter;
 use Riverwaysoft\DtoConverter\CodeProvider\FileSystemCodeProvider;
-use Riverwaysoft\DtoConverter\Ast\Converter;
+use Riverwaysoft\DtoConverter\AstParser\Converter;
 use Riverwaysoft\DtoConverter\Language\Dart\DartGenerator;
 use Riverwaysoft\DtoConverter\Language\Dart\DartImportGenerator;
 use Riverwaysoft\DtoConverter\Language\TypeScript\ClassNameTypeResolver;
 use Riverwaysoft\DtoConverter\Language\TypeScript\DateTimeTypeResolver;
 use Riverwaysoft\DtoConverter\Language\TypeScript\TypeScriptGenerator;
 use Riverwaysoft\DtoConverter\Language\TypeScript\TypeScriptImportGenerator;
-use Riverwaysoft\DtoConverter\Ast\Normalizer;
+use Riverwaysoft\DtoConverter\AstParser\Normalizer;
 use Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter\DtoTypeDependencyCalculator;
 use Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter\EntityPerClassOutputWriter;
 use Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter\KebabCaseFileNameGenerator;
@@ -30,27 +30,6 @@ use Spatie\Snapshots\MatchesSnapshots;
 class EndToEndTest extends TestCase
 {
     use MatchesSnapshots;
-
-    private $codeAttribute = <<<'CODE'
-<?php
-
-class UserCreate {
-    /** @var string[] */
-    public array $achievements;
-    public ?string $name;
-    public int|string|float $age;
-    public bool|null $isApproved;
-    public float $latitude;
-    public float $longitude;
-    public mixed $mixed;
-}
-
-class CloudNotify {
-    public function __construct(public string $id, public string|null $fcmToken, string $notPublicIgnoreMe)
-    {
-    }
-}
-CODE;
 
     private $codeNestedDto = <<<'CODE'
 <?php
@@ -71,7 +50,56 @@ class Profile {
 }
 CODE;
 
-    private $codeDart = <<<'CODE'
+    public function testNormalization(): void
+    {
+        $codeAttribute = <<<'CODE'
+<?php
+
+class UserCreate {
+    /** @var string[] */
+    public array $achievements;
+    /** @var int[][] */
+    public array $matrix;
+    public ?string $name;
+    public string|int|string|null|null $duplicatesInType;
+    public int|string|float $age;
+    public bool|null $isApproved;
+    public float $latitude;
+    public float $longitude;
+    public mixed $mixed;
+}
+
+class CloudNotify {
+    public function __construct(public string $id, public string|null $fcmToken, string $notPublicIgnoreMe)
+    {
+    }
+}
+CODE;
+
+        $normalized = (Normalizer::factory())->normalize($codeAttribute);
+        $this->assertMatchesJsonSnapshot($normalized->getList());
+        $results = (new TypeScriptGenerator(new SingleFileOutputWriter('generated.ts')))->generate($normalized);
+        $this->assertCount(1, $results);
+        $this->assertMatchesSnapshot($results[0]->getContent(), new TypeScriptSnapshotComparator());
+    }
+
+    public function testNestedDtoNormalize(): void
+    {
+        $normalized = (Normalizer::factory())->normalize($this->codeNestedDto);
+        $this->assertMatchesJsonSnapshot($normalized->getList());
+    }
+
+    public function testNestedDtoConvert(): void
+    {
+        $normalized = (Normalizer::factory())->normalize($this->codeNestedDto);
+        $results = (new TypeScriptGenerator(new SingleFileOutputWriter('generated.ts'), [new ClassNameTypeResolver()]))->generate($normalized);
+        $this->assertCount(1, $results);
+        $this->assertMatchesSnapshot($results[0]->getContent(), new TypeScriptSnapshotComparator());
+    }
+
+    public function testDart()
+    {
+        $codeDart = <<<'CODE'
 <?php
 
 use MyCLabs\Enum\Enum;
@@ -111,33 +139,7 @@ class User
 }
 CODE;
 
-
-    public function testNormalization(): void
-    {
-        $normalized = (Normalizer::factory())->normalize($this->codeAttribute);
-        $this->assertMatchesJsonSnapshot($normalized->getList());
-        $results = (new TypeScriptGenerator(new SingleFileOutputWriter('generated.ts')))->generate($normalized);
-        $this->assertCount(1, $results);
-        $this->assertMatchesSnapshot($results[0]->getContent(), new TypeScriptSnapshotComparator());
-    }
-
-    public function testNestedDtoNormalize(): void
-    {
-        $normalized = (Normalizer::factory())->normalize($this->codeNestedDto);
-        $this->assertMatchesJsonSnapshot($normalized->getList());
-    }
-
-    public function testNestedDtoConvert(): void
-    {
-        $normalized = (Normalizer::factory())->normalize($this->codeNestedDto);
-        $results = (new TypeScriptGenerator(new SingleFileOutputWriter('generated.ts'), [new ClassNameTypeResolver()]))->generate($normalized);
-        $this->assertCount(1, $results);
-        $this->assertMatchesSnapshot($results[0]->getContent(), new TypeScriptSnapshotComparator());
-    }
-
-    public function testDart()
-    {
-        $normalized = (Normalizer::factory())->normalize($this->codeDart);
+        $normalized = (Normalizer::factory())->normalize($codeDart);
         $results = (new DartGenerator(new SingleFileOutputWriter('generated.dart'), [new ClassNameTypeResolver()]))->generate($normalized);
         $this->assertCount(1, $results);
         $this->assertMatchesSnapshot($results[0]->getContent(), new DartSnapshotComparator());
@@ -534,7 +536,9 @@ class Industry {}
 #[Dto]
 class UserCreateInput
 {
+    /* The time when the user was promoted */
     public Profile $profile;
+    // The time when the user was promoted
     public ?DateTimeImmutable $promotedAt;
     public ColorEnum $userTheme;
     /** @var Industry[]|null  */
@@ -565,7 +569,7 @@ CODE;
         $this->assertCount(1, $results);
         $this->assertMatchesSnapshot($results[0]->getContent(), new TypeScriptSnapshotComparator());
 
-        // use TS template litaral
+        // use TS template literal
         $typeScriptGenerator = new TypeScriptGenerator(
             new SingleFileOutputWriter('generated.ts'),
             [
@@ -582,7 +586,7 @@ CODE;
         $this->assertMatchesSnapshot($results[0]->getContent(), new TypeScriptSnapshotComparator());
     }
 
-    public function testUnkownTypeThrows(): void
+    public function testUnknownTypeThrows(): void
     {
         $codeWithDateTime = <<<'CODE'
 <?php
@@ -608,6 +612,6 @@ CODE;
         $typeScriptGenerator = new TypeScriptGenerator(new SingleFileOutputWriter('generated.ts'), [new ClassNameTypeResolver(), new DateTimeTypeResolver()]);
 
         $this->expectExceptionMessage('PHP Type B is not supported. PHP class: A');
-        $results = ($typeScriptGenerator)->generate($result);
+        $typeScriptGenerator->generate($result);
     }
 }

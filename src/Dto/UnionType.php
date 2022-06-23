@@ -8,13 +8,19 @@ use Webmozart\Assert\Assert;
 
 class UnionType implements \JsonSerializable
 {
+    /** @var SingleType[] $types */
+    private array $types;
+
     public function __construct(
         /** @var SingleType[] $types */
-        private array $types,
-    ) {
+        array $types,
+    )
+    {
+        // Exclude duplicates in a type, e.g ?string|null -> string|null
+        $this->types = array_values(array_unique($types, SORT_REGULAR));
     }
 
-    public static function nullable(SingleType|ListType $singleType): self
+    public static function nullable(SingleType|ListType|UnionType $singleType): self
     {
         return new self([$singleType, SingleType::null()]);
     }
@@ -30,11 +36,11 @@ class UnionType implements \JsonSerializable
         return false;
     }
 
-    public function getNotNullType(): SingleType|ListType
+    public function getNotNullType(): SingleType|ListType|UnionType
     {
         Assert::true($this->isNullable());
 
-        /** @var SingleType|null $notNullType */
+        /** @var SingleType|ListType|UnionType|null $notNullType */
         $notNullType = null;
         foreach ($this->getTypes() as $type) {
             if (!$type->isNull()) {

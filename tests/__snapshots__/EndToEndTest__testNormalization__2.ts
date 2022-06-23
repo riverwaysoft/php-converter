@@ -7,7 +7,9 @@ export type CloudNotify = {
 
 export type UserCreate = {
   achievements: string[];
+  matrix: number[][];
   name: string | null;
+  duplicatesInType: string | number | null;
   age: number | string | number;
   isApproved: boolean | null;
   latitude: number;
