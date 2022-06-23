@@ -3,8 +3,8 @@
 namespace App\Tests;
 
 use PHPUnit\Framework\TestCase;
+use Riverwaysoft\DtoConverter\Converter\Converter;
 use Riverwaysoft\DtoConverter\Language\TypeScript\ClassNameTypeResolver;
-use Riverwaysoft\DtoConverter\AstParser\Normalizer;
 use Riverwaysoft\DtoConverter\OutputWriter\SingleFileOutputWriter\SingleFileOutputWriter;
 use Spatie\Snapshots\Drivers\TextDriver;
 use Spatie\Snapshots\MatchesSnapshots;
@@ -45,7 +45,7 @@ CODE;
 
     public function testDart()
     {
-        $normalized = (Normalizer::factory())->normalize($this->codePhp);
+        $normalized = (new Converter())->convert([$this->codePhp]);
         $results = (new GoGeneratorSimple(new SingleFileOutputWriter('generated.go'), [new ClassNameTypeResolver()]))->generate($normalized);
 
         $this->assertCount(1, $results);

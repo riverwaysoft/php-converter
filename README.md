@@ -76,9 +76,7 @@ By default `dto-converter` writes all the types into one file. You can configure
 
 $application->add(
     new ConvertCommand(
-        new Converter(Normalizer::factory(
-            new PhpAttributeFilter('Dto'),
-        )),
+        new Converter(new PhpAttributeFilter('Dto')),
         new TypeScriptGenerator(
 -            new SingleFileOutputWriter('generated.ts'),
 +            new EntityPerClassOutputWriter(
@@ -108,10 +106,8 @@ Suppose you don't want to mark each DTO individually with `#[Dto]` but want to c
 ```diff
 $application->add(
     new ConvertCommand(
--       new Converter(Normalizer::factory(
--           new PhpAttributeFilter('Dto'),
--       )),
-+       new Converter(Normalizer::factory()),
+-       new Converter(new PhpAttributeFilter('Dto')),
++       new Converter(),
         new TypeScriptGenerator(
             new SingleFileOutputWriter('generated.ts'),
             [
@@ -135,9 +131,7 @@ You can even go further and use `NegationFilter` to exclude specific files as sh
 ```diff
 $application->add(
     new ConvertCommand(
-       new Converter(Normalizer::factory(
-           new PhpAttributeFilter('Dto'),
-       )),
+        new Converter(new PhpAttributeFilter('Dto')),
         new TypeScriptGenerator(
             new SingleFileOutputWriter('generated.ts'),
             [

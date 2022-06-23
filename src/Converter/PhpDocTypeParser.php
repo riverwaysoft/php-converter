@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\AstParser;
+namespace Riverwaysoft\DtoConverter\Converter;
 
 use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTagNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\VarTagValueNode;

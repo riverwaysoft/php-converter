@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\AstParser;
+namespace Riverwaysoft\DtoConverter\Converter;
 
 use Riverwaysoft\DtoConverter\ClassFilter\ClassFilterInterface;
 use Riverwaysoft\DtoConverter\Dto\DtoEnumProperty;

@@ -9,14 +9,13 @@ use Riverwaysoft\DtoConverter\ClassFilter\DocBlockCommentFilter;
 use Riverwaysoft\DtoConverter\ClassFilter\NegationFilter;
 use Riverwaysoft\DtoConverter\ClassFilter\PhpAttributeFilter;
 use Riverwaysoft\DtoConverter\CodeProvider\FileSystemCodeProvider;
-use Riverwaysoft\DtoConverter\AstParser\Converter;
+use Riverwaysoft\DtoConverter\Converter\Converter;
 use Riverwaysoft\DtoConverter\Language\Dart\DartGenerator;
 use Riverwaysoft\DtoConverter\Language\Dart\DartImportGenerator;
 use Riverwaysoft\DtoConverter\Language\TypeScript\ClassNameTypeResolver;
 use Riverwaysoft\DtoConverter\Language\TypeScript\DateTimeTypeResolver;
 use Riverwaysoft\DtoConverter\Language\TypeScript\TypeScriptGenerator;
 use Riverwaysoft\DtoConverter\Language\TypeScript\TypeScriptImportGenerator;
-use Riverwaysoft\DtoConverter\AstParser\Normalizer;
 use Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter\DtoTypeDependencyCalculator;
 use Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter\EntityPerClassOutputWriter;
 use Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter\KebabCaseFileNameGenerator;
@@ -76,7 +75,7 @@ class CloudNotify {
 }
 CODE;
 
-        $normalized = (Normalizer::factory())->normalize($codeAttribute);
+        $normalized = (new Converter())->convert([$codeAttribute]);
         $this->assertMatchesJsonSnapshot($normalized->getList());
         $results = (new TypeScriptGenerator(new SingleFileOutputWriter('generated.ts')))->generate($normalized);
         $this->assertCount(1, $results);
@@ -85,13 +84,13 @@ CODE;
 
     public function testNestedDtoNormalize(): void
     {
-        $normalized = (Normalizer::factory())->normalize($this->codeNestedDto);
+        $normalized = (new Converter())->convert([$this->codeNestedDto]);
         $this->assertMatchesJsonSnapshot($normalized->getList());
     }
 
     public function testNestedDtoConvert(): void
     {
-        $normalized = (Normalizer::factory())->normalize($this->codeNestedDto);
+        $normalized = (new Converter())->convert([$this->codeNestedDto]);
         $results = (new TypeScriptGenerator(new SingleFileOutputWriter('generated.ts'), [new ClassNameTypeResolver()]))->generate($normalized);
         $this->assertCount(1, $results);
         $this->assertMatchesSnapshot($results[0]->getContent(), new TypeScriptSnapshotComparator());
@@ -139,7 +138,7 @@ class User
 }
 CODE;
 
-        $normalized = (Normalizer::factory())->normalize($codeDart);
+        $normalized = (new Converter())->convert([$codeDart]);
         $results = (new DartGenerator(new SingleFileOutputWriter('generated.dart'), [new ClassNameTypeResolver()]))->generate($normalized);
         $this->assertCount(1, $results);
         $this->assertMatchesSnapshot($results[0]->getContent(), new DartSnapshotComparator());
@@ -148,7 +147,7 @@ CODE;
 
     public function testNormalizationDirectory(): void
     {
-        $converter = new Converter(Normalizer::factory());
+        $converter = new Converter();
         $fileProvider = new FileSystemCodeProvider('/\.php$/');
         $result = $converter->convert($fileProvider->getListings(__DIR__ . '/Fixtures'));
         $this->assertMatchesJsonSnapshot($result->getList());
@@ -182,7 +181,7 @@ class UserCreateConstructor
 }
 CODE;
 
-        $converter = new Converter(Normalizer::factory());
+        $converter = new Converter();
         $result = $converter->convert([$codeWithDateTime]);
         $typeScriptGenerator = new TypeScriptGenerator(new SingleFileOutputWriter('generated.ts'), [new ClassNameTypeResolver(), new DateTimeTypeResolver()]);
         $results = ($typeScriptGenerator)->generate($result);
@@ -240,7 +239,7 @@ class User
 
 CODE;
 
-        $converter = new Converter(Normalizer::factory(new DocBlockCommentFilter('@DTO')));
+        $converter = new Converter(new DocBlockCommentFilter('@DTO'));
         $result = $converter->convert([$codeWithDateTime]);
 
         $this->assertTrue($result->hasDtoWithType('User'));
@@ -297,7 +296,7 @@ class User
 CODE;
 
         $classesWithoutIgnoreFilter = new NegationFilter(new DocBlockCommentFilter('@ignore'));
-        $converter = new Converter(Normalizer::factory($classesWithoutIgnoreFilter));
+        $converter = new Converter($classesWithoutIgnoreFilter);
         $result = $converter->convert([$codeWithDateTime]);
 
         $this->assertTrue($result->hasDtoWithType('User'));
@@ -364,7 +363,7 @@ class User
 
 CODE;
 
-        $converter = new Converter(Normalizer::factory(new PhpAttributeFilter('Dto')));
+        $converter = new Converter(new PhpAttributeFilter('Dto'));
         $result = $converter->convert([$codeWithDateTime]);
 
         $this->assertTrue($result->hasDtoWithType('User'));
@@ -376,7 +375,7 @@ CODE;
 
     public function testEntityPerClassOutputWriterTypeScript()
     {
-        $normalized = (Normalizer::factory())->normalize($this->codeNestedDto);
+        $normalized = (new Converter())->convert([$this->codeNestedDto]);
 
         $fileNameGenerator = new KebabCaseFileNameGenerator('.ts');
         $typeScriptGenerator = new TypeScriptGenerator(
@@ -420,7 +419,7 @@ export type UserCreate = {
 
     public function testEntityPerClassOutputWriterDart()
     {
-        $normalized = (Normalizer::factory())->normalize($this->codeNestedDto);
+        $normalized = (new Converter())->convert([$this->codeNestedDto]);
 
         $fileNameGenerator = new SnakeCaseFileNameGenerator('.dart');
         $typeScriptGenerator = new DartGenerator(
@@ -476,6 +475,7 @@ class UserCreate {
 }", $results[2]->getContent());
         $this->assertEquals('user_create.dart', $results[2]->getRelativeName());
     }
+
     public function testApiPlatformInput(): void
     {
         $codeWithDateTime = <<<'CODE'
@@ -552,7 +552,7 @@ class UserCreateInput
 
 CODE;
 
-        $converter = new Converter(Normalizer::factory(new PhpAttributeFilter('Dto')));
+        $converter = new Converter(new PhpAttributeFilter('Dto'));
         $result = $converter->convert([$codeWithDateTime]);
         $typeScriptGenerator = new TypeScriptGenerator(
             new SingleFileOutputWriter('generated.ts'),
@@ -607,7 +607,7 @@ class A
 class B {}
 CODE;
 
-        $converter = new Converter(Normalizer::factory(new PhpAttributeFilter('Dto')));
+        $converter = new Converter(new PhpAttributeFilter('Dto'));
         $result = $converter->convert([$codeWithDateTime]);
         $typeScriptGenerator = new TypeScriptGenerator(new SingleFileOutputWriter('generated.ts'), [new ClassNameTypeResolver(), new DateTimeTypeResolver()]);
 
