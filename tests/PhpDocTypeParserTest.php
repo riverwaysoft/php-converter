@@ -88,8 +88,8 @@ class PhpDocTypeParserTest extends TestCase
             [
                 'type with any other decorator',
                 '/**
-                    @SomeDecorator
-                    @var number
+                  *  @SomeDecorator
+                  *  @var number
                  */',
                 new SingleType('number'),
             ],
