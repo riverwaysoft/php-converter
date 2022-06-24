@@ -31,7 +31,7 @@ class User
 
 4) Run CLI command to generate TypeScript
 ```bash
-vendor/bin/dto-converter generate --from=/path/to/project/src --to=.
+vendor/bin/dto-converter-ts generate --from=/path/to/project/src --to=.
 ```
 
 You'll get file `generated.ts` with the following contents:
@@ -53,10 +53,10 @@ type User = {
 - Custom class filters
 
 ## Customize
-If you'd like to customize dto-convert you need to copy the generator script to your project folder:
+If you'd like to customize `dto-converter-ts` you need to copy the generator script to your project folder:
 
 ```
-cp vendor/bin/dto-converter bin/dto-convert
+cp vendor/bin/dto-converter-ts bin/dto-converter-ts
 ``` 
 
 Now you can start customizing the dto-converter by editing the executable file.

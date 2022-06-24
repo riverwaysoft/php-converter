@@ -8,8 +8,7 @@ class PhpListType implements PhpTypeInterface
 {
     public function __construct(
         private PhpTypeInterface $type,
-    )
-    {
+    ) {
     }
 
     public function getType(): PhpTypeInterface

@@ -23,8 +23,7 @@ class AstVisitor extends NodeVisitorAbstract
         private PhpDocTypeParser $phpDocTypeParser,
         private PhpTypeFactory $phpTypeFactory,
         private ?ClassFilterInterface $classFilter = null
-    )
-    {
+    ) {
     }
 
     /** @inheritDoc */
@@ -43,8 +42,7 @@ class AstVisitor extends NodeVisitorAbstract
     private function createSingleType(
         Node\Name|Node\Identifier|Node\NullableType|Node\UnionType $param,
         ?string $docComment = null,
-    ): PhpTypeInterface
-    {
+    ): PhpTypeInterface {
         if ($docComment) {
             $docBlockType = $this->phpDocTypeParser->parse($docComment);
             if ($docBlockType) {
@@ -53,7 +51,7 @@ class AstVisitor extends NodeVisitorAbstract
         }
 
         if ($param instanceof Node\UnionType) {
-            return new PhpUnionType(array_map(fn($singleParam) => $this->createSingleType($singleParam, $docComment), $param->types));
+            return new PhpUnionType(array_map(fn ($singleParam) => $this->createSingleType($singleParam, $docComment), $param->types));
         }
 
         if ($param instanceof Node\NullableType) {

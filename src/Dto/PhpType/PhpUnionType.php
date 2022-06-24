@@ -14,8 +14,7 @@ class PhpUnionType implements PhpTypeInterface
     /** @param PhpTypeInterface[] $types */
     public function __construct(
         array $types,
-    )
-    {
+    ) {
         // Exclude duplicates in a type, e.g ?string|null -> string|null
         $this->types = array_values(array_unique($types, SORT_REGULAR));
     }

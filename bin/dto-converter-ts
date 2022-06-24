@@ -5,15 +5,11 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Riverwaysoft\DtoConverter\Bridge\ApiPlatform\ApiPlatformInputTypeResolver;
 use Riverwaysoft\DtoConverter\ClassFilter\PhpAttributeFilter;
 use Riverwaysoft\DtoConverter\Cli\ConvertCommand;
 use Riverwaysoft\DtoConverter\CodeProvider\FileSystemCodeProvider;
-use Riverwaysoft\DtoConverter\CodeProvider\RemoteRepoCodeProvider;
-use Riverwaysoft\DtoConverter\Converter;
+use Riverwaysoft\DtoConverter\Converter\Converter;
 use Riverwaysoft\DtoConverter\Language\TypeScript\ClassNameTypeResolver;
-use Riverwaysoft\DtoConverter\Language\TypeScript\InlineTypeResolver;
-use Riverwaysoft\DtoConverter\Normalizer;
 use Riverwaysoft\DtoConverter\Language\TypeScript\DateTimeTypeResolver;
 use Riverwaysoft\DtoConverter\Language\TypeScript\TypeScriptGenerator;
 use Riverwaysoft\DtoConverter\OutputDiffCalculator\OutputDiffCalculator;
@@ -25,9 +21,9 @@ $application = new Application();
 
 $application->add(
     new ConvertCommand(
-        new Converter(Normalizer::factory(
+        new Converter(
             new PhpAttributeFilter('Dto'),
-        )),
+        ),
         new TypeScriptGenerator(
             new SingleFileOutputWriter('generated.ts'),
             [
@@ -38,10 +34,6 @@ $application->add(
         new Filesystem(),
         new OutputDiffCalculator(),
         new FileSystemCodeProvider('/\.php$/'),
-        new RemoteRepoCodeProvider(
-            new FileSystemCodeProvider('/\.php$/'),
-            new Filesystem(),
-        ),
     )
 );
 

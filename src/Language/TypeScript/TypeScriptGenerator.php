@@ -30,8 +30,7 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
         /** @var UnknownTypeResolverInterface[] $unknownTypeResolvers */
         private array $unknownTypeResolvers = [],
         ?TypeScriptGeneratorOptions $options = null,
-    )
-    {
+    ) {
         $this->options = $options ?? new TypeScriptGeneratorOptions(useTypesInsteadOfEnums: false);
     }
 
@@ -128,7 +127,7 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
     private function getTypeScriptTypeFromPhp(PhpTypeInterface $type, DtoType $dto, DtoList $dtoList): string
     {
         if ($type instanceof PhpUnionType) {
-            $types = array_map(fn(PhpTypeInterface $type) => $this->getTypeScriptTypeFromPhp($type, $dto, $dtoList), $type->getTypes());
+            $types = array_map(fn (PhpTypeInterface $type) => $this->getTypeScriptTypeFromPhp($type, $dto, $dtoList), $type->getTypes());
             return implode(separator: ' | ', array: $types);
         }
 

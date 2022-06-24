@@ -86,7 +86,6 @@ class GoGeneratorSimple implements LanguageGeneratorInterface
 
         /** @var PhpUnknownType $type */
         return $this->handleUnknownType($type, $dto, $dtoList);
-
     }
 
     private function handleUnknownType(PhpUnknownType $type, DtoType $dto, DtoList $dtoList): string

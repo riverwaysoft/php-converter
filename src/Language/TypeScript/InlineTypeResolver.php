@@ -14,8 +14,7 @@ class InlineTypeResolver implements UnknownTypeResolverInterface
     public function __construct(
         /** @var array<string, string> */
         private array $map,
-    )
-    {
+    ) {
     }
 
     public function supports(PhpUnknownType $type, DtoType $dto, DtoList $dtoList): bool

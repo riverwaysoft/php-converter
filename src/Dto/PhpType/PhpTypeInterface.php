@@ -6,5 +6,4 @@ namespace Riverwaysoft\DtoConverter\Dto\PhpType;
 
 interface PhpTypeInterface extends \JsonSerializable
 {
-
 }

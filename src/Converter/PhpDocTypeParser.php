@@ -68,7 +68,7 @@ class PhpDocTypeParser
             return new PhpListType($this->convertToDto($node->type));
         }
         if ($node instanceof UnionTypeNode) {
-            return new PhpUnionType(array_map(fn(TypeNode $child) => $this->convertToDto($child), $node->types));
+            return new PhpUnionType(array_map(fn (TypeNode $child) => $this->convertToDto($child), $node->types));
         }
         return null;
     }

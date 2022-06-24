@@ -8,9 +8,6 @@ class TypeScriptGeneratorOptions
 {
     public function __construct(
         public bool $useTypesInsteadOfEnums,
-    )
-    {
-        
+    ) {
     }
-
 }

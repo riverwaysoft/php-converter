@@ -8,7 +8,6 @@ class PhpUnknownType implements PhpTypeInterface
 {
     public function __construct(private string $name)
     {
-
     }
 
     public function getName(): string

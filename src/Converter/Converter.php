@@ -22,8 +22,7 @@ class Converter
 
     public function __construct(
         private ?ClassFilterInterface $classFilter = null,
-    )
-    {
+    ) {
         $this->phpTypeFactory = new PhpTypeFactory();
         $this->parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
         $this->phpDocTypeParser = new PhpDocTypeParser($this->phpTypeFactory);

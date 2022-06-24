@@ -8,8 +8,7 @@ class PhpBaseType implements PhpTypeInterface
 {
     private function __construct(
         private string $name,
-    )
-    {
+    ) {
     }
 
     public static function int(): self
