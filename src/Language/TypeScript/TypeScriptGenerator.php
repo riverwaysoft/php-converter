@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 namespace Riverwaysoft\DtoConverter\Language\TypeScript;
 
+use Riverwaysoft\DtoConverter\Dto\DtoClassProperty;
 use Riverwaysoft\DtoConverter\Dto\DtoEnumProperty;
 use Riverwaysoft\DtoConverter\Dto\DtoList;
-use Riverwaysoft\DtoConverter\Dto\DtoClassProperty;
 use Riverwaysoft\DtoConverter\Dto\DtoType;
 use Riverwaysoft\DtoConverter\Dto\ExpressionType;
-use Riverwaysoft\DtoConverter\Dto\ListType;
-use Riverwaysoft\DtoConverter\Dto\SingleType;
-use Riverwaysoft\DtoConverter\Dto\UnionType;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpBaseType;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpListType;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeInterface;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnionType;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnknownType;
 use Riverwaysoft\DtoConverter\Language\LanguageGeneratorInterface;
 use Riverwaysoft\DtoConverter\Language\UnknownTypeResolverInterface;
 use Riverwaysoft\DtoConverter\Language\UnsupportedTypeException;
@@ -123,31 +125,36 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
         return implode(' | ', $propertyValues);
     }
 
-    private function getTypeScriptTypeFromPhp(SingleType|UnionType|ListType $type, DtoType $dto, DtoList $dtoList): string
+    private function getTypeScriptTypeFromPhp(PhpTypeInterface $type, DtoType $dto, DtoList $dtoList): string
     {
-        if ($type instanceof UnionType) {
-            $arr = array_map(fn(SingleType|ListType|UnionType $type) => $this->getTypeScriptTypeFromPhp($type, $dto, $dtoList), $type->getTypes());
-            return implode(separator: ' | ', array: $arr);
+        if ($type instanceof PhpUnionType) {
+            $types = array_map(fn(PhpTypeInterface $type) => $this->getTypeScriptTypeFromPhp($type, $dto, $dtoList), $type->getTypes());
+            return implode(separator: ' | ', array: $types);
         }
 
-        if ($type instanceof ListType) {
+        if ($type instanceof PhpListType) {
             return sprintf('%s[]', $this->getTypeScriptTypeFromPhp($type->getType(), $dto, $dtoList));
         }
 
-        // https://www.php.net/manual/en/language.types.declarations.php
-        return match ($type->getName()) {
-            'int', 'float' => 'number',
-            'string' => 'string',
-            'bool' => 'boolean',
-            'mixed', 'object' => 'any',
-            'array', 'iterable', => 'any[]',
-            'null' => 'null',
-            'self' => $dto->getName(),
-            default => $this->handleUnknownType($type, $dto, $dtoList),
-        };
+        if ($type instanceof PhpBaseType) {
+            /** @var PhpBaseType $type */
+            return match (true) {
+                $type->equalsTo(PhpBaseType::int()), $type->equalsTo(PhpBaseType::float()) => 'number',
+                $type->equalsTo(PhpBaseType::string()) => 'string',
+                $type->equalsTo(PhpBaseType::bool()) => 'boolean',
+                $type->equalsTo(PhpBaseType::mixed()), $type->equalsTo(PhpBaseType::object()) => 'any',
+                $type->equalsTo(PhpBaseType::array()), $type->equalsTo(PhpBaseType::iterable()) => 'any[]',
+                $type->equalsTo(PhpBaseType::null()) => 'null',
+                $type->equalsTo(PhpBaseType::self()) => $dto->getName(),
+                default => throw new \Exception(sprintf("Unknown base PHP type: %s", $type->jsonSerialize()))
+            };
+        }
+
+        /** @var PhpUnknownType $type */
+        return $this->handleUnknownType($type, $dto, $dtoList);
     }
 
-    private function handleUnknownType(SingleType $type, DtoType $dto, DtoList $dtoList): string
+    private function handleUnknownType(PhpUnknownType $type, DtoType $dto, DtoList $dtoList): string
     {
         /** @var UnknownTypeResolverInterface $unknownTypeResolver */
         foreach ($this->unknownTypeResolvers as $unknownTypeResolver) {

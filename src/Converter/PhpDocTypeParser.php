@@ -15,16 +15,17 @@ use PHPStan\PhpDocParser\Parser\ConstExprParser;
 use PHPStan\PhpDocParser\Parser\PhpDocParser;
 use PHPStan\PhpDocParser\Parser\TokenIterator;
 use PHPStan\PhpDocParser\Parser\TypeParser;
-use Riverwaysoft\DtoConverter\Dto\ListType;
-use Riverwaysoft\DtoConverter\Dto\SingleType;
-use Riverwaysoft\DtoConverter\Dto\UnionType;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpListType;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeFactory;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeInterface;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnionType;
 
 class PhpDocTypeParser
 {
     private Lexer $lexer;
     private PhpDocParser $phpDocParser;
 
-    public function __construct()
+    public function __construct(private PhpTypeFactory $phpTypeFactory)
     {
         $this->lexer = new Lexer();
         $constExprParser = new ConstExprParser();
@@ -32,7 +33,7 @@ class PhpDocTypeParser
         $this->phpDocParser = new PhpDocParser($typeParser, $constExprParser);
     }
 
-    public function parse(string $input): ListType|SingleType|UnionType|null
+    public function parse(string $input): PhpTypeInterface|null
     {
         $result = $this->phpDocParser->parse(new TokenIterator($this->lexer->tokenize($input)))->children;
         if (!is_array($result)) {
@@ -58,16 +59,16 @@ class PhpDocTypeParser
         return $this->convertToDto($varTagNode->type);
     }
 
-    private function convertToDto(TypeNode $node)
+    private function convertToDto(TypeNode $node): PhpTypeInterface|null
     {
         if ($node instanceof IdentifierTypeNode) {
-            return new SingleType($node->name);
+            return $this->phpTypeFactory->create($node->name);
         }
         if ($node instanceof ArrayTypeNode) {
-            return new ListType($this->convertToDto($node->type));
+            return new PhpListType($this->convertToDto($node->type));
         }
         if ($node instanceof UnionTypeNode) {
-            return new UnionType(array_map(fn(TypeNode $child) => $this->convertToDto($child), $node->types));
+            return new PhpUnionType(array_map(fn(TypeNode $child) => $this->convertToDto($child), $node->types));
         }
         return null;
     }

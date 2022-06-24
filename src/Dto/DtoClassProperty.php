@@ -4,15 +4,21 @@ declare(strict_types=1);
 
 namespace Riverwaysoft\DtoConverter\Dto;
 
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpBaseType;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpListType;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeInterface;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnionType;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnknownType;
+
 class DtoClassProperty implements \JsonSerializable
 {
     public function __construct(
-        private SingleType|UnionType|ListType $type,
+        private PhpTypeInterface $type,
         private string $name,
     ) {
     }
 
-    public function getType(): UnionType|SingleType|ListType
+    public function getType(): PhpTypeInterface
     {
         return $this->type;
     }

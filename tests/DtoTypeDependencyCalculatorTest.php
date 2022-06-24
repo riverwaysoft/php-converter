@@ -8,13 +8,14 @@ use PHPUnit\Framework\TestCase;
 use Riverwaysoft\DtoConverter\Dto\DtoClassProperty;
 use Riverwaysoft\DtoConverter\Dto\DtoType;
 use Riverwaysoft\DtoConverter\Dto\ExpressionType;
-use Riverwaysoft\DtoConverter\Dto\SingleType;
-use Riverwaysoft\DtoConverter\Dto\UnionType;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpBaseType;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnionType;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnknownType;
 use Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter\DtoTypeDependencyCalculator;
 
 class DtoTypeDependencyCalculatorTest extends TestCase
 {
-    public function testBasicStructure()
+    public function testBasicStructure(): void
     {
         $dependencyCalculator = new DtoTypeDependencyCalculator();
 
@@ -23,21 +24,22 @@ class DtoTypeDependencyCalculatorTest extends TestCase
             ExpressionType::class(),
             properties: [
                 new DtoClassProperty(
-                    type: new UnionType(
+                    type: new PhpUnionType(
                         types: [
-                            new SingleType(name: 'null'),
-                            new SingleType('string'),
-                            new SingleType('FullName'),
-                            new SingleType('Profile'), // Self reference
+                            PhpBaseType::null(),
+                            PhpBaseType::string(),
+                            new PhpUnknownType('FullName'),
+                            new PhpUnknownType('Profile'), // Self reference
                         ]
                     ),
                     name: 'name',
                 ),
-                new DtoClassProperty(type: new SingleType('int'), name: 'age'),
+                new DtoClassProperty(type: PhpBaseType::int(), name: 'age'),
             ]
         );
 
         $dependencies = $dependencyCalculator->getDependencies($dto);
         $this->assertCount(1, $dependencies);
+        $this->assertEquals(new PhpUnknownType('FullName'), $dependencies[0]);
     }
 }

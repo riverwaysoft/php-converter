@@ -21,6 +21,7 @@ class DtoList
     public function getList(): array
     {
         $values = array_values($this->dtoList);
+        // Force stable alphabetical order of types
         usort(array: $values, callback: fn ($a, $b) => $a <=> $b);
 
         return $values;

@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\Dto;
+namespace Riverwaysoft\DtoConverter\Dto\PhpType;
 
-class ListType implements \JsonSerializable
+class PhpListType implements PhpTypeInterface
 {
     public function __construct(
-        private SingleType|ListType $type,
+        private PhpTypeInterface $type,
     )
     {
     }
 
-    public function getType(): SingleType|ListType
+    public function getType(): PhpTypeInterface
     {
         return $this->type;
     }

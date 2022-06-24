@@ -35,6 +35,7 @@ class UserCreate
     public ?string $name;
     public float $latitude;
     public float $longitude;
+    /** @phpstan-ignore-next-line */
     public array $achievements;
     /** @var string[] */
     public array $tags;

@@ -31,7 +31,7 @@ class EndToEndTest extends TestCase
 {
     use MatchesSnapshots;
 
-    private $codeNestedDto = <<<'CODE'
+    private string $codeNestedDto = <<<'CODE'
 <?php
 
 class UserCreate {
@@ -137,7 +137,7 @@ CODE;
         $this->assertMatchesSnapshot($results[0]->getContent(), new TypeScriptSnapshotComparator());
     }
 
-    public function testDart()
+    public function testDart(): void
     {
         $codeDart = <<<'CODE'
 <?php
@@ -184,7 +184,6 @@ CODE;
         $this->assertCount(1, $results);
         $this->assertMatchesSnapshot($results[0]->getContent(), new DartSnapshotComparator());
     }
-
 
     public function testNormalizationDirectory(): void
     {
@@ -414,7 +413,7 @@ CODE;
         $this->assertFalse($result->hasDtoWithType('IgnoreMe'));
     }
 
-    public function testEntityPerClassOutputWriterTypeScript()
+    public function testEntityPerClassOutputWriterTypeScript(): void
     {
         $normalized = (new Converter())->convert([$this->codeNestedDto]);
 
@@ -434,31 +433,10 @@ CODE;
         $results = $typeScriptGenerator->generate($normalized);
 
         $this->assertCount(3, $results);
-
-        $this->assertEquals("export type FullName = {
-  firstName: string;
-  lastName: string;
-};", $results[0]->getContent());
-        $this->assertEquals('full-name.ts', $results[0]->getRelativeName());
-
-        $this->assertEquals("import { FullName } from './full-name';
-
-export type Profile = {
-  name: FullName | null | string;
-  age: number;
-};", $results[1]->getContent());
-        $this->assertEquals('profile.ts', $results[1]->getRelativeName());
-
-        $this->assertEquals("import { Profile } from './profile';
-
-export type UserCreate = {
-  id: string;
-  profile: Profile | null;
-};", $results[2]->getContent());
-        $this->assertEquals('user-create.ts', $results[2]->getRelativeName());
+        $this->assertMatchesSnapshot($results);
     }
 
-    public function testEntityPerClassOutputWriterDart()
+    public function testEntityPerClassOutputWriterDart(): void
     {
         $normalized = (new Converter())->convert([$this->codeNestedDto]);
 
@@ -478,43 +456,7 @@ export type UserCreate = {
         $results = $typeScriptGenerator->generate($normalized);
 
         $this->assertCount(3, $results);
-
-        $this->assertEquals("class FullName {
-  final String firstName;
-  final String lastName;
-
-  FullName({
-    required this.firstName,
-    required this.lastName,
-  })
-}", $results[0]->getContent());
-        $this->assertEquals('full_name.dart', $results[0]->getRelativeName());
-
-        $this->assertEquals("import './full_name.dart';
-
-class Profile {
-  final String? name;
-  final int age;
-
-  Profile({
-    this.name,
-    required this.age,
-  })
-}", $results[1]->getContent());
-        $this->assertEquals('profile.dart', $results[1]->getRelativeName());
-
-        $this->assertEquals("import './profile.dart';
-
-class UserCreate {
-  final String id;
-  final Profile? profile;
-
-  UserCreate({
-    required this.id,
-    this.profile,
-  })
-}", $results[2]->getContent());
-        $this->assertEquals('user_create.dart', $results[2]->getRelativeName());
+        $this->assertMatchesSnapshot($results);
     }
 
     public function testApiPlatformInput(): void

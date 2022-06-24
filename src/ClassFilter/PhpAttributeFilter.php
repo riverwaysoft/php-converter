@@ -8,7 +8,7 @@ use PhpParser\Node\Stmt\Class_;
 
 class PhpAttributeFilter implements ClassFilterInterface
 {
-    public function __construct(private $attribute)
+    public function __construct(private string $attribute)
     {
     }
 

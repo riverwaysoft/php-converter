@@ -23,7 +23,7 @@ class ExpressionType implements \JsonSerializable
         return new self('enum');
     }
 
-    public function equals(ExpressionType $expressionType): bool
+    public function equals(self $expressionType): bool
     {
         return $this->type === $expressionType->type;
     }

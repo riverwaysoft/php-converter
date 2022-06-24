@@ -4,23 +4,24 @@ declare(strict_types=1);
 
 namespace Riverwaysoft\DtoConverter\Converter;
 
-use Riverwaysoft\DtoConverter\ClassFilter\ClassFilterInterface;
-use Riverwaysoft\DtoConverter\Dto\DtoEnumProperty;
-use Riverwaysoft\DtoConverter\Dto\DtoList;
-use Riverwaysoft\DtoConverter\Dto\DtoClassProperty;
-use Riverwaysoft\DtoConverter\Dto\DtoType;
-use Riverwaysoft\DtoConverter\Dto\ExpressionType;
-use Riverwaysoft\DtoConverter\Dto\ListType;
-use Riverwaysoft\DtoConverter\Dto\SingleType;
-use Riverwaysoft\DtoConverter\Dto\UnionType;
 use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;
+use Riverwaysoft\DtoConverter\ClassFilter\ClassFilterInterface;
+use Riverwaysoft\DtoConverter\Dto\DtoClassProperty;
+use Riverwaysoft\DtoConverter\Dto\DtoEnumProperty;
+use Riverwaysoft\DtoConverter\Dto\DtoList;
+use Riverwaysoft\DtoConverter\Dto\DtoType;
+use Riverwaysoft\DtoConverter\Dto\ExpressionType;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeFactory;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeInterface;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnionType;
 
 class AstVisitor extends NodeVisitorAbstract
 {
     public function __construct(
         private DtoList $dtoList,
         private PhpDocTypeParser $phpDocTypeParser,
+        private PhpTypeFactory $phpTypeFactory,
         private ?ClassFilterInterface $classFilter = null
     )
     {
@@ -42,7 +43,7 @@ class AstVisitor extends NodeVisitorAbstract
     private function createSingleType(
         Node\Name|Node\Identifier|Node\NullableType|Node\UnionType $param,
         ?string $docComment = null,
-    ): SingleType|UnionType|ListType
+    ): PhpTypeInterface
     {
         if ($docComment) {
             $docBlockType = $this->phpDocTypeParser->parse($docComment);
@@ -52,18 +53,18 @@ class AstVisitor extends NodeVisitorAbstract
         }
 
         if ($param instanceof Node\UnionType) {
-            return new UnionType(array_map(fn($singleParam) => $this->createSingleType($singleParam, $docComment), $param->types));
+            return new PhpUnionType(array_map(fn($singleParam) => $this->createSingleType($singleParam, $docComment), $param->types));
         }
 
         if ($param instanceof Node\NullableType) {
-            return UnionType::nullable($this->createSingleType($param->type, $docComment));
+            return PhpUnionType::nullable($this->createSingleType($param->type, $docComment));
         }
 
         $typeName = get_class($param) === Node\Name::class || get_class($param) === Node\Name\FullyQualified::class
             ? $param->parts[0]
             : $param->name;
 
-        return new SingleType($typeName);
+        return $this->phpTypeFactory->create($typeName);
     }
 
     private function createDtoType(Node\Stmt\Class_ $node): void

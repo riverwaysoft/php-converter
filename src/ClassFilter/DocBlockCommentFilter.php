@@ -8,7 +8,7 @@ use PhpParser\Node\Stmt\Class_;
 
 class DocBlockCommentFilter implements ClassFilterInterface
 {
-    public function __construct(private $string)
+    public function __construct(private string $string)
     {
     }
 

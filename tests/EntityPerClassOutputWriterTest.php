@@ -8,8 +8,9 @@ use PHPUnit\Framework\TestCase;
 use Riverwaysoft\DtoConverter\Dto\DtoClassProperty;
 use Riverwaysoft\DtoConverter\Dto\DtoType;
 use Riverwaysoft\DtoConverter\Dto\ExpressionType;
-use Riverwaysoft\DtoConverter\Dto\SingleType;
-use Riverwaysoft\DtoConverter\Dto\UnionType;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpBaseType;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnionType;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnknownType;
 use Riverwaysoft\DtoConverter\Language\TypeScript\TypeScriptImportGenerator;
 use Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter\DtoTypeDependencyCalculator;
 use Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter\EntityPerClassOutputWriter;
@@ -20,14 +21,14 @@ class EntityPerClassOutputWriterTest extends TestCase
 {
     use MatchesSnapshots;
 
-    public function testItIsEmptyByDefault()
+    public function testItIsEmptyByDefault(): void
     {
         $fileNameGenerator = new KebabCaseFileNameGenerator('.ts');
         $outputWriter = new EntityPerClassOutputWriter($fileNameGenerator, new TypeScriptImportGenerator($fileNameGenerator, new DtoTypeDependencyCalculator()));
         $this->assertEmpty($outputWriter->getTypes());
     }
 
-    public function testGeneratingMultipleFiles()
+    public function testGeneratingMultipleFiles(): void
     {
         $fileNameGenerator = new KebabCaseFileNameGenerator('.ts');
         $outputWriter = new EntityPerClassOutputWriter($fileNameGenerator, new TypeScriptImportGenerator($fileNameGenerator, new DtoTypeDependencyCalculator()));
@@ -38,8 +39,8 @@ class EntityPerClassOutputWriterTest extends TestCase
                 'FullName',
                 ExpressionType::class(),
                 properties: [
-                    new DtoClassProperty(type: new SingleType('string'), name: 'firstName'),
-                    new DtoClassProperty(type: new SingleType('string'), name: 'lastName'),
+                    new DtoClassProperty(type: PhpBaseType::string(), name: 'firstName'),
+                    new DtoClassProperty(type: PhpBaseType::string(), name: 'lastName'),
                 ]
             )
         );
@@ -51,16 +52,16 @@ class EntityPerClassOutputWriterTest extends TestCase
                 ExpressionType::class(),
                 properties: [
                     new DtoClassProperty(
-                        type: new UnionType(
+                        type: new PhpUnionType(
                             types: [
-                                new SingleType(name: 'null'),
-                                new SingleType('string'),
-                                new SingleType('FullName'),
+                                PhpBaseType::null(),
+                                PhpBaseType::string(),
+                                new PhpUnknownType('FullName'),
                             ]
                         ),
                         name: 'name',
                     ),
-                    new DtoClassProperty(type: new SingleType('int'), name: 'age'),
+                    new DtoClassProperty(type: PhpBaseType::int(), name: 'age'),
                 ]
             )
         );

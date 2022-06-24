@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests;
 
 use PHPUnit\Framework\TestCase;
@@ -13,7 +15,7 @@ class GoGeneratorSimpleTest extends TestCase
 {
     use MatchesSnapshots;
 
-    private $codePhp = <<<'CODE'
+    private string $codePhp = <<<'CODE'
 <?php
 
 class Category
@@ -43,7 +45,7 @@ class User
 }
 CODE;
 
-    public function testDart()
+    public function testDart(): void
     {
         $normalized = (new Converter())->convert([$this->codePhp]);
         $results = (new GoGeneratorSimple(new SingleFileOutputWriter('generated.go'), [new ClassNameTypeResolver()]))->generate($normalized);

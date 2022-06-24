@@ -8,9 +8,11 @@ use Riverwaysoft\DtoConverter\Dto\DtoClassProperty;
 use Riverwaysoft\DtoConverter\Dto\DtoList;
 use Riverwaysoft\DtoConverter\Dto\DtoType;
 use Riverwaysoft\DtoConverter\Dto\ExpressionType;
-use Riverwaysoft\DtoConverter\Dto\ListType;
-use Riverwaysoft\DtoConverter\Dto\SingleType;
-use Riverwaysoft\DtoConverter\Dto\UnionType;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpBaseType;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpListType;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeInterface;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnionType;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnknownType;
 use Riverwaysoft\DtoConverter\Language\LanguageGeneratorInterface;
 use Riverwaysoft\DtoConverter\Language\UnknownTypeResolverInterface;
 use Riverwaysoft\DtoConverter\Language\UnsupportedTypeException;
@@ -57,29 +59,37 @@ class GoGeneratorSimple implements LanguageGeneratorInterface
         return $string;
     }
 
-    private function getGoTypeFromPhp(SingleType|UnionType|ListType $type, DtoType $dto, DtoList $dtoList): string
+    private function getGoTypeFromPhp(PhpTypeInterface $type, DtoType $dto, DtoList $dtoList): string
     {
-        if ($type instanceof UnionType) {
+        if ($type instanceof PhpUnionType) {
             Assert::greaterThan($type->getTypes(), 2, "Go does not support union types");
             Assert::true($type->isNullable(), "Go only supports nullable union types");
-            $notNullType = $type->getNotNullType();
+            $notNullType = $type->getFirstNotNullType();
             return sprintf('*%s', $this->getGoTypeFromPhp($notNullType, $dto, $dtoList));
         }
 
-        if ($type instanceof ListType) {
+        if ($type instanceof PhpListType) {
             return sprintf('[]%s', $this->getGoTypeFromPhp($type->getType(), $dto, $dtoList));
         }
 
-        return match ($type->getName()) {
-            'int', 'float' => 'int',
-            'string' => 'string',
-            'bool' => 'bool',
-            'mixed', 'object' => 'interface{}',
-            default => $this->handleUnknownType($type, $dto, $dtoList),
-        };
+        if ($type instanceof PhpBaseType) {
+            /** @var PhpBaseType $type */
+            return match (true) {
+                $type->equalsTo(PhpBaseType::int()), $type->equalsTo(PhpBaseType::float()) => 'int',
+                $type->equalsTo(PhpBaseType::string()) => 'string',
+                $type->equalsTo(PhpBaseType::bool()) => 'bool',
+                $type->equalsTo(PhpBaseType::mixed()), $type->equalsTo(PhpBaseType::object()) => 'any',
+                default => throw new \Exception(sprintf("Unknown base PHP type: %s", $type->jsonSerialize()))
+            };
+        }
+
+
+        /** @var PhpUnknownType $type */
+        return $this->handleUnknownType($type, $dto, $dtoList);
+
     }
 
-    private function handleUnknownType(SingleType $type, DtoType $dto, DtoList $dtoList): string
+    private function handleUnknownType(PhpUnknownType $type, DtoType $dto, DtoList $dtoList): string
     {
         /** @var UnknownTypeResolverInterface $unknownTypeResolver */
         foreach ($this->unknownTypeResolvers as $unknownTypeResolver) {

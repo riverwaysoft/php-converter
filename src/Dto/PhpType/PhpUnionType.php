@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\Dto;
+namespace Riverwaysoft\DtoConverter\Dto\PhpType;
 
 use Webmozart\Assert\Assert;
 
-class UnionType implements \JsonSerializable
+class PhpUnionType implements PhpTypeInterface
 {
-    /** @var SingleType[] $types */
+    /** @var PhpTypeInterface[] $types */
     private array $types;
 
+    /** @param PhpTypeInterface[] $types */
     public function __construct(
-        /** @var SingleType[] $types */
         array $types,
     )
     {
@@ -20,15 +20,15 @@ class UnionType implements \JsonSerializable
         $this->types = array_values(array_unique($types, SORT_REGULAR));
     }
 
-    public static function nullable(SingleType|ListType|UnionType $singleType): self
+    public static function nullable(PhpTypeInterface $singleType): self
     {
-        return new self([$singleType, SingleType::null()]);
+        return new self([$singleType, PhpBaseType::null()]);
     }
 
     public function isNullable(): bool
     {
         foreach ($this->getTypes() as $type) {
-            if ($type->isNull()) {
+            if ($type instanceof PhpBaseType && $type->equalsTo(PhpBaseType::null())) {
                 return true;
             }
         }
@@ -36,15 +36,16 @@ class UnionType implements \JsonSerializable
         return false;
     }
 
-    public function getNotNullType(): SingleType|ListType|UnionType
+    public function getFirstNotNullType(): PhpTypeInterface
     {
         Assert::true($this->isNullable());
 
-        /** @var SingleType|ListType|UnionType|null $notNullType */
+        /** @var PhpTypeInterface|null $notNullType */
         $notNullType = null;
         foreach ($this->getTypes() as $type) {
-            if (!$type->isNull()) {
+            if ($type instanceof PhpUnknownType || ($type instanceof PhpBaseType && !$type->equalsTo(PhpBaseType::null()))) {
                 $notNullType = $type;
+                break;
             }
         }
 
@@ -53,7 +54,7 @@ class UnionType implements \JsonSerializable
         return $notNullType;
     }
 
-    /** @return SingleType[] */
+    /** @return PhpTypeInterface[] */
     public function getTypes(): array
     {
         return $this->types;

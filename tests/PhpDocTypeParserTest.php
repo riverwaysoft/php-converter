@@ -6,92 +6,96 @@ namespace App\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Riverwaysoft\DtoConverter\Converter\PhpDocTypeParser;
-use Riverwaysoft\DtoConverter\Dto\ListType;
-use Riverwaysoft\DtoConverter\Dto\SingleType;
-use Riverwaysoft\DtoConverter\Dto\UnionType;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpBaseType;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpListType;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeFactory;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeInterface;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnionType;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnknownType;
 
 class PhpDocTypeParserTest extends TestCase
 {
     /** @dataProvider getData */
-    public function testBasicScenario(string $explanation, string $input, ListType|UnionType|SingleType|null $expected)
+    public function testBasicScenario(string $explanation, string $input, PhpTypeInterface|null $expected): void
     {
-        $parser = new PhpDocTypeParser();
+        $parser = new PhpDocTypeParser(new PhpTypeFactory());
         $result = $parser->parse($input);
         $this->assertEquals($result, $expected, sprintf("Assert failed. Data row: '%s'", $explanation));
     }
 
-    public function getData()
+    /** @return array{string, string, PhpTypeInterface|null}[] */
+    public function getData(): array
     {
         return [
             [
                 'array of objects',
                 '/** @var Recipe[] */',
-                new ListType(
-                    new SingleType('Recipe'),
+                new PhpListType(
+                    new PhpUnknownType('Recipe'),
                 ),
             ],
             [
                 'string only',
-                '/** @var number */',
-                new SingleType('number'),
+                '/** @var int */',
+                PhpBaseType::int(),
             ],
             [
                 'nullable string',
-                '/** @var number|string */',
-                new UnionType([
-                    new SingleType('number'),
-                    new SingleType('string'),
+                '/** @var int|string */',
+                new PhpUnionType([
+                    PhpBaseType::int(),
+                    PhpBaseType::string(),
                 ]),
             ],
             [
                 'nullable number',
-                '/** @var number|null */',
-                new UnionType([
-                    new SingleType('number'),
-                    SingleType::null(),
+                '/** @var int|null */',
+                new PhpUnionType([
+                    PhpBaseType::int(),
+                    PhpBaseType::null(),
                 ]),
             ],
             [
                 '2d array',
-                '/** @var number[][] */',
-                new ListType(
-                    new ListType(
-                        new SingleType('number'),
+                '/** @var int[][] */',
+                new PhpListType(
+                    new PhpListType(
+                        PhpBaseType::int(),
                     ),
                 ),
             ],
             [
                 '3d array',
-                '/** @var number[][][] */',
-                new ListType(
-                    new ListType(
-                        new ListType(
-                            new SingleType('number'),
+                '/** @var int[][][] */',
+                new PhpListType(
+                    new PhpListType(
+                        new PhpListType(
+                            PhpBaseType::int(),
                         ),
                     ),
                 ),
             ],
             [
                 'nullable array',
-                '/** @var number[]|null */',
-                UnionType::nullable(
-                    new ListType(
-                        new SingleType('number'),
+                '/** @var int[]|null */',
+                PhpUnionType::nullable(
+                    new PhpListType(
+                        PhpBaseType::int(),
                     ),
                 ),
             ],
             [
                 '@var is required',
-                '/** number[]|null */',
+                '/** int[]|null */',
                 null,
             ],
             [
                 'type with any other decorator',
                 '/**
                   *  @SomeDecorator
-                  *  @var number
+                  *  @var int
                  */',
-                new SingleType('number'),
+                PhpBaseType::int(),
             ],
         ];
     }

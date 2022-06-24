@@ -6,7 +6,7 @@ namespace Riverwaysoft\DtoConverter\Bridge\ApiPlatform;
 
 use Riverwaysoft\DtoConverter\Dto\DtoList;
 use Riverwaysoft\DtoConverter\Dto\DtoType;
-use Riverwaysoft\DtoConverter\Dto\SingleType;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnknownType;
 use Riverwaysoft\DtoConverter\Language\UnknownTypeResolverInterface;
 use Riverwaysoft\DtoConverter\Language\UnsupportedTypeException;
 
@@ -20,12 +20,12 @@ class ApiPlatformInputTypeResolver implements UnknownTypeResolverInterface
     ) {
     }
 
-    public function supports(SingleType $type, DtoType $dto, DtoList $dtoList): bool
+    public function supports(PhpUnknownType $type, DtoType $dto, DtoList $dtoList): bool
     {
         return $this->isApiPlatformInput($dto) && $this->isPropertyTypeClass($type) && !$this->isInput($type);
     }
 
-    public function resolve(SingleType $type, DtoType $dto, DtoList $dtoList): mixed
+    public function resolve(PhpUnknownType $type, DtoType $dto, DtoList $dtoList): mixed
     {
         if ($this->isPropertyEnum($type)) {
             if (!$dtoList->hasDtoWithType($type->getName())) {
@@ -61,22 +61,22 @@ class ApiPlatformInputTypeResolver implements UnknownTypeResolverInterface
         return str_ends_with(haystack: $dto->getName(), needle: 'Input');
     }
 
-    private function isEmbeddable(SingleType $type): bool
+    private function isEmbeddable(PhpUnknownType $type): bool
     {
         return str_ends_with(haystack: $type->getName(), needle: 'Embeddable');
     }
 
-    private function isInput(SingleType $type): bool
+    private function isInput(PhpUnknownType $type): bool
     {
         return str_ends_with(haystack: $type->getName(), needle: 'Input');
     }
 
-    private function isPropertyEnum(SingleType $type): bool
+    private function isPropertyEnum(PhpUnknownType $type): bool
     {
         return str_ends_with(haystack: $type->getName(), needle: 'Enum');
     }
 
-    private function isPropertyTypeClass(SingleType $type): bool
+    private function isPropertyTypeClass(PhpUnknownType $type): bool
     {
         return preg_match('/^[A-Z]/', $type->getName()) === 1;
     }

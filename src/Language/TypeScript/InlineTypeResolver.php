@@ -6,7 +6,7 @@ namespace Riverwaysoft\DtoConverter\Language\TypeScript;
 
 use Riverwaysoft\DtoConverter\Dto\DtoList;
 use Riverwaysoft\DtoConverter\Dto\DtoType;
-use Riverwaysoft\DtoConverter\Dto\SingleType;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnknownType;
 use Riverwaysoft\DtoConverter\Language\UnknownTypeResolverInterface;
 
 class InlineTypeResolver implements UnknownTypeResolverInterface
@@ -18,12 +18,12 @@ class InlineTypeResolver implements UnknownTypeResolverInterface
     {
     }
 
-    public function supports(SingleType $type, DtoType $dto, DtoList $dtoList): bool
+    public function supports(PhpUnknownType $type, DtoType $dto, DtoList $dtoList): bool
     {
         return !empty($this->map[$type->getName()]);
     }
 
-    public function resolve(SingleType $type, DtoType $dto, DtoList $dtoList): string
+    public function resolve(PhpUnknownType $type, DtoType $dto, DtoList $dtoList): string
     {
         $result = $this->map[$type->getName()];
         if (!$result) {

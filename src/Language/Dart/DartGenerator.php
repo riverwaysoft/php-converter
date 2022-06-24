@@ -9,9 +9,11 @@ use Riverwaysoft\DtoConverter\Dto\DtoEnumProperty;
 use Riverwaysoft\DtoConverter\Dto\DtoList;
 use Riverwaysoft\DtoConverter\Dto\DtoType;
 use Riverwaysoft\DtoConverter\Dto\ExpressionType;
-use Riverwaysoft\DtoConverter\Dto\ListType;
-use Riverwaysoft\DtoConverter\Dto\SingleType;
-use Riverwaysoft\DtoConverter\Dto\UnionType;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpBaseType;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpListType;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeInterface;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnionType;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnknownType;
 use Riverwaysoft\DtoConverter\Language\LanguageGeneratorInterface;
 use Riverwaysoft\DtoConverter\Language\UnknownTypeResolverInterface;
 use Riverwaysoft\DtoConverter\Language\UnsupportedTypeException;
@@ -63,7 +65,7 @@ class DartGenerator implements LanguageGeneratorInterface
         throw new \Exception('Unknown expression type '.$dto->getExpressionType()->jsonSerialize());
     }
 
-    private function convertToDartProperties(DtoType $dto, DtoList $dtoList)
+    private function convertToDartProperties(DtoType $dto, DtoList $dtoList): string
     {
         $string = '';
 
@@ -84,7 +86,7 @@ class DartGenerator implements LanguageGeneratorInterface
         foreach ($properties as $property) {
             $string .= sprintf(
                 "\n    %sthis.%s,",
-                $property->getType() instanceof UnionType && $property->getType()->isNullable() ? '' : 'required ',
+                $property->getType() instanceof PhpUnionType && $property->getType()->isNullable() ? '' : 'required ',
                 $property->getName()
             );
         }
@@ -92,32 +94,38 @@ class DartGenerator implements LanguageGeneratorInterface
         return $string;
     }
 
-    private function getDartTypeFromPhp(UnionType|SingleType|ListType $type, DtoType $dto, DtoList $dtoList)
+    private function getDartTypeFromPhp(PhpTypeInterface $type, DtoType $dto, DtoList $dtoList): string
     {
-        if ($type instanceof UnionType) {
+        if ($type instanceof PhpUnionType) {
             Assert::greaterThan($type->getTypes(), 2, "Dart does not support union types");
             Assert::true($type->isNullable(), "Dart only support nullable union types");
-            $notNullType = $type->getNotNullType();
+            $notNullType = $type->getFirstNotNullType();
             return sprintf('%s?', $this->getDartTypeFromPhp($notNullType, $dto, $dtoList));
         }
 
-        if ($type instanceof ListType) {
+        if ($type instanceof PhpListType) {
             return sprintf('List<%s>', $this->getDartTypeFromPhp($type->getType(), $dto, $dtoList));
         }
 
-        return match ($type->getName()) {
-            'int' => 'int',
-            'float' => 'double',
-            'string' => 'String',
-            'bool' => 'bool',
-            'mixed', 'object', 'array' => 'Object',
-            'null' => 'null',
-            'self' => $dto->getName(),
-            default => $this->handleUnknownType($type, $dto, $dtoList),
-        };
+        if ($type instanceof PhpBaseType) {
+            /** @var PhpBaseType $type */
+            return match (true) {
+                $type->equalsTo(PhpBaseType::int()) => 'int',
+                $type->equalsTo(PhpBaseType::float()) => 'double',
+                $type->equalsTo(PhpBaseType::string()) => 'String',
+                $type->equalsTo(PhpBaseType::bool()) => 'bool',
+                $type->equalsTo(PhpBaseType::mixed()), $type->equalsTo(PhpBaseType::iterable()), $type->equalsTo(PhpBaseType::array()) => 'Object',
+                $type->equalsTo(PhpBaseType::null()) => 'null',
+                $type->equalsTo(PhpBaseType::self()) => $dto->getName(),
+                default => throw new \Exception(sprintf("Unknown base PHP type: %s", $type->jsonSerialize()))
+            };
+        }
+
+        /** @var PhpUnknownType $type */
+        return $this->handleUnknownType($type, $dto, $dtoList);
     }
 
-    private function handleUnknownType(SingleType $type, DtoType $dto, DtoList $dtoList): string
+    private function handleUnknownType(PhpUnknownType $type, DtoType $dto, DtoList $dtoList): string
     {
         /** @var UnknownTypeResolverInterface $unknownTypeResolver */
         foreach ($this->unknownTypeResolvers as $unknownTypeResolver) {
@@ -130,7 +138,7 @@ class DartGenerator implements LanguageGeneratorInterface
     }
 
     /** @param DtoEnumProperty[] $properties */
-    private function convertEnumToTypeScriptProperties(array $properties)
+    private function convertEnumToTypeScriptProperties(array $properties): string
     {
         $string = '';
 

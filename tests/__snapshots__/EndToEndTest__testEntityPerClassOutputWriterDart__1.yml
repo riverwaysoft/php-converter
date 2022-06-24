@@ -1,0 +1,43 @@
+-
+    relativeName: full_name.dart
+    content: |-
+        class FullName {
+          final String firstName;
+          final String lastName;
+
+          FullName({
+            required this.firstName,
+            required this.lastName,
+          })
+        }
+    empty: false
+-
+    relativeName: profile.dart
+    content: |-
+        import './full_name.dart';
+
+        class Profile {
+          final FullName? name;
+          final int age;
+
+          Profile({
+            this.name,
+            required this.age,
+          })
+        }
+    empty: false
+-
+    relativeName: user_create.dart
+    content: |-
+        import './profile.dart';
+
+        class UserCreate {
+          final String id;
+          final Profile? profile;
+
+          UserCreate({
+            required this.id,
+            this.profile,
+          })
+        }
+    empty: false
