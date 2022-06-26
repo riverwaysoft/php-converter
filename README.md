@@ -46,11 +46,13 @@ type User = {
 ```
 
 ## Features
-- Union types / Nullable types / Enums / Array types with PHP DocBlock support e.g. `User[]`
-- Nested DTO / Recursive DTO
-- Custom type resolvers (e.g. `DateTimeImmutable`)
-- Generate a single output file or multiple files (entity per class)
-- Custom class filters
+- Support of all PHP data types including union types, nullable types, enums (both [native PHP 8.1 enums](https://www.php.net/manual/en/language.enumerations.overview.php) and [MyCLabs enums](https://github.com/myclabs/php-enum))
+- PHP DocBlock type support e.g `User[]`, `int[][]|null` 
+- Nested types
+- Recursive types
+- Custom type resolvers (for example for `DateTimeImmutable`, etc)
+- Generate a single output file or multiple files (1 type per file). An option to override the generation logic
+- Flexible class filters with an option to use your own filters
 
 ## Customize
 If you'd like to customize `dto-converter-ts` you need to copy the generator script to your project folder:
