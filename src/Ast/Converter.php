@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\Converter;
+namespace Riverwaysoft\DtoConverter\Ast;
 
 use PhpParser\NodeTraverser;
 use PhpParser\Parser;

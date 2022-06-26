@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\Converter;
+namespace Riverwaysoft\DtoConverter\Ast;
 
 use PhpParser\Node;
+use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\Enum_;
 use PhpParser\NodeVisitorAbstract;
 use Riverwaysoft\DtoConverter\ClassFilter\ClassFilterInterface;
 use Riverwaysoft\DtoConverter\Dto\DtoClassProperty;
@@ -23,13 +25,13 @@ class AstVisitor extends NodeVisitorAbstract
         private PhpDocTypeParser $phpDocTypeParser,
         private PhpTypeFactory $phpTypeFactory,
         private ?ClassFilterInterface $classFilter = null
-    ) {
+    )
+    {
     }
 
-    /** @inheritDoc */
     public function leaveNode(Node $node)
     {
-        if ($node instanceof Node\Stmt\Class_) {
+        if ($node instanceof Class_ || $node instanceof Enum_) {
             if ($this->classFilter && !$this->classFilter->isMatch($node)) {
                 return null;
             }
@@ -42,7 +44,8 @@ class AstVisitor extends NodeVisitorAbstract
     private function createSingleType(
         Node\Name|Node\Identifier|Node\NullableType|Node\UnionType $param,
         ?string $docComment = null,
-    ): PhpTypeInterface {
+    ): PhpTypeInterface
+    {
         if ($docComment) {
             $docBlockType = $this->phpDocTypeParser->parse($docComment);
             if ($docBlockType) {
@@ -51,7 +54,7 @@ class AstVisitor extends NodeVisitorAbstract
         }
 
         if ($param instanceof Node\UnionType) {
-            return new PhpUnionType(array_map(fn ($singleParam) => $this->createSingleType($singleParam, $docComment), $param->types));
+            return new PhpUnionType(array_map(fn($singleParam) => $this->createSingleType($singleParam, $docComment), $param->types));
         }
 
         if ($param instanceof Node\NullableType) {
@@ -65,7 +68,7 @@ class AstVisitor extends NodeVisitorAbstract
         return $this->phpTypeFactory->create($typeName);
     }
 
-    private function createDtoType(Node\Stmt\Class_ $node): void
+    private function createDtoType(Class_|Enum_ $node): void
     {
         $properties = [];
         foreach ($node->stmts as $stmt) {
@@ -113,6 +116,22 @@ class AstVisitor extends NodeVisitorAbstract
                     );
                 }
             }
+
+            if ($stmt instanceof Node\Stmt\EnumCase) {
+                $expr = $stmt->expr;
+                $propertyName = $stmt->name->name;
+                if (!$expr) {
+                    throw new \Exception(sprintf("Non-backed enums are not supported because they are not serializable. Please use backed enums: %s\n Error in enum: %s", 'https://www.php.net/manual/en/language.enumerations.backed.php', $propertyName));
+                }
+                if (!$expr instanceof Node\Scalar\LNumber && !$expr instanceof Node\Scalar\String_) {
+                    throw new \Exception(sprintf('A backed enum should be type of int or string, %s given. Error in enum %s', get_class($expr), $propertyName));
+                }
+                $propertyValue = $expr->value;
+                $properties[] = new DtoEnumProperty(
+                    name: $propertyName,
+                    value: $propertyValue,
+                );
+            }
         }
 
         $this->dtoList->addDto(new DtoType(
@@ -122,9 +141,17 @@ class AstVisitor extends NodeVisitorAbstract
         ));
     }
 
-    public function resolveExpressionType(Node\Stmt\Class_ $node): ExpressionType
+    public function resolveExpressionType(Class_|Enum_ $node): ExpressionType
     {
-        return ($node->extends?->parts[0] === 'Enum')
+        $isPhpBuiltInEnum = $node instanceof Enum_;
+        if ($isPhpBuiltInEnum) {
+            return ExpressionType::enum();
+        }
+
+        // https://github.com/myclabs/php-enum
+        $isMyCLabsEnum = $node->extends?->parts[0] === 'Enum';
+
+        return $isMyCLabsEnum
             ? ExpressionType::enum()
             : ExpressionType::class();
     }

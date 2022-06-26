@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Riverwaysoft\DtoConverter\ClassFilter;
 
 use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\Enum_;
 
 class NegationFilter implements ClassFilterInterface
 {
@@ -12,7 +13,7 @@ class NegationFilter implements ClassFilterInterface
     {
     }
 
-    public function isMatch(Class_ $class): bool
+    public function isMatch(Class_|Enum_ $class): bool
     {
         return !$this->filter->isMatch($class);
     }
