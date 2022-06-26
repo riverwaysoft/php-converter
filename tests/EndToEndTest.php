@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Tests;
 
+use PHPUnit\Framework\TestCase;
+use Riverwaysoft\DtoConverter\Ast\Converter;
 use Riverwaysoft\DtoConverter\Bridge\ApiPlatform\ApiPlatformInputTypeResolver;
 use Riverwaysoft\DtoConverter\ClassFilter\DocBlockCommentFilter;
 use Riverwaysoft\DtoConverter\ClassFilter\NegationFilter;
 use Riverwaysoft\DtoConverter\ClassFilter\PhpAttributeFilter;
 use Riverwaysoft\DtoConverter\CodeProvider\FileSystemCodeProvider;
-use Riverwaysoft\DtoConverter\Converter\Converter;
 use Riverwaysoft\DtoConverter\Language\Dart\DartGenerator;
 use Riverwaysoft\DtoConverter\Language\Dart\DartImportGenerator;
 use Riverwaysoft\DtoConverter\Language\TypeScript\ClassNameTypeResolver;
@@ -22,9 +23,6 @@ use Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter\EntityPerC
 use Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter\KebabCaseFileNameGenerator;
 use Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter\SnakeCaseFileNameGenerator;
 use Riverwaysoft\DtoConverter\OutputWriter\SingleFileOutputWriter\SingleFileOutputWriter;
-use Riverwaysoft\DtoConverter\Testing\DartSnapshotComparator;
-use PHPUnit\Framework\TestCase;
-use Riverwaysoft\DtoConverter\Testing\TypeScriptSnapshotComparator;
 use Spatie\Snapshots\MatchesSnapshots;
 
 class EndToEndTest extends TestCase
@@ -96,6 +94,7 @@ CODE;
         $this->assertCount(1, $results);
         $this->assertMatchesSnapshot($results[0]->getContent(), new TypeScriptSnapshotComparator());
     }
+
 
     public function testUseTypeOverEnumTs(): void
     {
@@ -596,5 +595,89 @@ CODE;
 
         $this->expectExceptionMessage('PHP Type B is not supported. PHP class: A');
         $typeScriptGenerator->generate($result);
+    }
+
+    public function testPhp81EnumsFailedWhenNonBacked(): void
+    {
+        $codeWithDateTime = <<<'CODE'
+<?php
+#[\Attribute(\Attribute::TARGET_CLASS)]
+class Dto
+{
+
+}
+
+#[Dto]
+enum Color
+{
+    case RED;
+    case BLUE;
+    case WHITE;
+}
+CODE;
+
+        $converter = new Converter(new PhpAttributeFilter('Dto'));
+        $this->expectExceptionMessageMatches('/^Non-backed enums are not supported because they are not serializable. Please use backed enums/');
+        $converter->convert([$codeWithDateTime]);
+    }
+
+    public function testPhp81SuccessWhenBacked(): void
+    {
+        $codeWithDateTime = <<<'CODE'
+<?php
+
+#[\Attribute(\Attribute::TARGET_CLASS)]
+class Dto
+{
+
+}
+
+#[Dto]
+enum Color: int
+{
+    case RED = 0;
+    case BLUE = 1;
+    case WHITE = 2;
+}
+
+#[Dto]
+enum Role: string
+{
+    case ADMIN = 'admin';
+    case EDITOR = 'editor';
+    case READER = 'reader';
+}
+
+#[Dto]
+class User {
+    public function __construct(public Color $color, public readonly int $user, public Role $role)
+    {
+
+    }
+
+    public function getColor(): Color
+    {
+        return $this->color;
+    }
+
+    public function getUser(): int
+    {
+        return $this->user;
+    }
+}
+CODE;
+
+        $converter = new Converter(new PhpAttributeFilter('Dto'));
+        $result = $converter->convert([$codeWithDateTime]);
+
+        $typeScriptGenerator = new TypeScriptGenerator(
+            new SingleFileOutputWriter('generated.ts'),
+            [
+                new ClassNameTypeResolver(),
+            ]
+        );
+        $results = ($typeScriptGenerator)->generate($result);
+        $this->assertCount(1, $results);
+        $this->assertMatchesSnapshot($results[0]->getContent(), new TypeScriptSnapshotComparator());
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Riverwaysoft\DtoConverter\ClassFilter;
 
 use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\Enum_;
 
 class PhpAttributeFilter implements ClassFilterInterface
 {
@@ -12,7 +13,7 @@ class PhpAttributeFilter implements ClassFilterInterface
     {
     }
 
-    public function isMatch(Class_ $class): bool
+    public function isMatch(Class_|Enum_ $class): bool
     {
         foreach ($class->attrGroups as $attributeGroup) {
             foreach ($attributeGroup->attrs as $attr) {

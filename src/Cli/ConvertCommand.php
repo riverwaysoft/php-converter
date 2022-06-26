@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Riverwaysoft\DtoConverter\Cli;
 
 use Riverwaysoft\DtoConverter\CodeProvider\FileSystemCodeProvider;
-use Riverwaysoft\DtoConverter\Converter\Converter;
+use Riverwaysoft\DtoConverter\Ast\Converter;
 use Riverwaysoft\DtoConverter\Language\LanguageGeneratorInterface;
 use Riverwaysoft\DtoConverter\OutputDiffCalculator\OutputDiffCalculator;
 use Symfony\Component\Console\Command\Command;

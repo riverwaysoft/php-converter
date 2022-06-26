@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Riverwaysoft\DtoConverter\Converter\PhpDocTypeParser;
+use Riverwaysoft\DtoConverter\Ast\PhpDocTypeParser;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpBaseType;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpListType;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeFactory;
