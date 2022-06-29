@@ -7,6 +7,10 @@ Generates TypeScript & Dart out of your PHP DTO classes.
 Statically typed languages like TypeScript or Dart are great because they allow catching bugs without even running your code. But unless you have well-defined contracts between API and consumer apps, you have to always fix outdated typings when the API changes.
 This library generates types for you so you can move faster and encounter fewer bugs.
 
+## Requirements
+
+PHP 8.0 or above
+
 ## Quick start
 
 1) Installation
