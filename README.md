@@ -23,12 +23,12 @@ composer require riverwaysoft/php-converter --dev
 use Riverwaysoft\DtoConverter\ClassFilter\Dto;
 
 #[Dto]
-class User
+class UserOutput
 {
     public string $id;
     public int $age;
-    public ?User $bestFriend;
-    /** @var User[] */
+    public ?UserOutput $bestFriend;
+    /** @var UserOutput[] */
     public array $friends;
 }
 ```
@@ -41,11 +41,11 @@ vendor/bin/dto-converter-ts generate --from=/path/to/project/src --to=.
 You'll get file `generated.ts` with the following contents:
 
 ```typescript
-type User = {
+type UserOutput = {
   id: string;
   age: number;
-  bestFriend: User | null;
-  friends: User[];
+  bestFriend: UserOutput | null;
+  friends: UserOutput[];
 }
 ```
 
