@@ -1,5 +1,6 @@
 # dto-converter [![Latest Version on Packagist](https://img.shields.io/packagist/v/riverwaysoft/php-converter.svg)](https://packagist.org/packages/riverwaysoft/php-converter) [![Tests](https://github.com/riverwaysoft/dto-converter/actions/workflows/php.yml/badge.svg?branch=master)](https://github.com/riverwaysoft/dto-converter/actions/workflows/php.yml) [![PHPStan](https://github.com/riverwaysoft/dto-converter/actions/workflows/static_analysis.yml/badge.svg?branch=master)](https://github.com/riverwaysoft/dto-converter/actions/workflows/static_analysis.yml) [![Total Downloads](https://img.shields.io/packagist/dt/riverwaysoft/php-converter.svg)](https://packagist.org/packages/riverwaysoft/php-converter)
 
+<img width="818" alt="Screen Shot 2022-10-07 at 09 04 35" src="https://user-images.githubusercontent.com/22447849/194478818-7276da5c-bf5e-4ad2-8efd-6463c53d01d3.png">
 
 Generates TypeScript & Dart out of your PHP DTO classes.
 
