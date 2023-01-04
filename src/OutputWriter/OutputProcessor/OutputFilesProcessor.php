@@ -12,11 +12,10 @@ class OutputFilesProcessor
         /** @var SingleOutputFileProcessorInterface[] $outputProcessors */
         private array $outputProcessors = [],
     ) {
-
     }
 
     /**
-     * @var OutputFile[]
+     * @param OutputFile[] $outputFiles
      * @return OutputFile[]
      */
     public function process(array $outputFiles): array
