@@ -8,6 +8,7 @@ use Riverwaysoft\DtoConverter\CodeProvider\FileSystemCodeProvider;
 use Riverwaysoft\DtoConverter\Ast\Converter;
 use Riverwaysoft\DtoConverter\Language\LanguageGeneratorInterface;
 use Riverwaysoft\DtoConverter\OutputDiffCalculator\OutputDiffCalculator;
+use Riverwaysoft\DtoConverter\OutputWriter\OutputProcessor\SingleOutputFileProcessorInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -55,8 +56,9 @@ class ConvertCommand extends Command
 
         foreach ($outputFiles as $outputFile) {
             $outputAbsolutePath = rtrim($to, '/') . '/' . $outputFile->getRelativeName();
+            $newFileContent = $outputFile->getContent();
             if ($this->fileSystem->exists($outputAbsolutePath)) {
-                $diff = $this->diffWriter->calculate(file_get_contents($outputAbsolutePath), $outputFile->getContent());
+                $diff = $this->diffWriter->calculate(file_get_contents($outputAbsolutePath), $newFileContent);
                 if (empty($diff)) {
                     $output->writeln(sprintf("\nNo difference between the old generated file and the new one: %s", $outputFile->getRelativeName()));
                 } else {
@@ -69,7 +71,7 @@ class ConvertCommand extends Command
                 $output->writeln(sprintf("\nSuccessfully created file %s", $outputFile->getRelativeName()));
             }
             $this->fileSystem->touch($outputAbsolutePath);
-            $this->fileSystem->appendToFile($outputAbsolutePath, $outputFile->getContent());
+            $this->fileSystem->appendToFile($outputAbsolutePath, $newFileContent);
         }
 
         return Command::SUCCESS;

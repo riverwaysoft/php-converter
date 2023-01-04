@@ -18,6 +18,7 @@ use Riverwaysoft\DtoConverter\Language\LanguageGeneratorInterface;
 use Riverwaysoft\DtoConverter\Language\UnknownTypeResolverInterface;
 use Riverwaysoft\DtoConverter\Language\UnsupportedTypeException;
 use Riverwaysoft\DtoConverter\OutputWriter\OutputFile;
+use Riverwaysoft\DtoConverter\OutputWriter\OutputProcessor\OutputFilesProcessor;
 use Riverwaysoft\DtoConverter\OutputWriter\OutputWriterInterface;
 use Webmozart\Assert\Assert;
 
@@ -30,8 +31,10 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
         /** @var UnknownTypeResolverInterface[] $unknownTypeResolvers */
         private array $unknownTypeResolvers = [],
         ?TypeScriptGeneratorOptions $options = null,
+        private ?OutputFilesProcessor $outputFilesProcessor = null
     ) {
         $this->options = $options ?? new TypeScriptGeneratorOptions(useTypesInsteadOfEnums: false);
+        $this->outputFilesProcessor = $this->outputFilesProcessor ?? new OutputFilesProcessor();
     }
 
     /** @return OutputFile[] */
@@ -43,7 +46,7 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
             $this->outputWriter->writeType($this->convertToTypeScriptType($dto, $dtoList), $dto);
         }
 
-        return $this->outputWriter->getTypes();
+        return $this->outputFilesProcessor->process($this->outputWriter->getTypes());
     }
 
     private function convertToTypeScriptType(DtoType $dto, DtoList $dtoList): string

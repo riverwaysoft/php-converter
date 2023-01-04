@@ -17,6 +17,7 @@ use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnknownType;
 use Riverwaysoft\DtoConverter\Language\LanguageGeneratorInterface;
 use Riverwaysoft\DtoConverter\Language\UnknownTypeResolverInterface;
 use Riverwaysoft\DtoConverter\Language\UnsupportedTypeException;
+use Riverwaysoft\DtoConverter\OutputWriter\OutputProcessor\OutputFilesProcessor;
 use Riverwaysoft\DtoConverter\OutputWriter\OutputWriterInterface;
 use Webmozart\Assert\Assert;
 
@@ -26,7 +27,9 @@ class DartGenerator implements LanguageGeneratorInterface
         private OutputWriterInterface $outputWriter,
         /** @var UnknownTypeResolverInterface[] */
         private array $unknownTypeResolvers = [],
+        private ?OutputFilesProcessor $outputFilesProcessor = null
     ) {
+        $this->outputFilesProcessor = $this->outputFilesProcessor ?? new OutputFilesProcessor();
     }
 
     /** @inheritDoc */
@@ -43,7 +46,7 @@ class DartGenerator implements LanguageGeneratorInterface
             $this->outputWriter->writeType($this->convertToDartType($dto, $dtoList), $dto);
         }
 
-        return $this->outputWriter->getTypes();
+        return $this->outputFilesProcessor->process($this->outputWriter->getTypes());
     }
 
     private function convertToDartType(DtoType $dto, DtoList $dtoList): string
