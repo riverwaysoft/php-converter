@@ -69,8 +69,13 @@ class AstVisitor extends NodeVisitorAbstract
     private function createDtoType(Class_|Enum_ $node): void
     {
         $properties = [];
+        $expressionType = $this->resolveExpressionType($node);
+
         foreach ($node->stmts as $stmt) {
             if ($stmt instanceof Node\Stmt\ClassConst) {
+                if ($expressionType->equals(ExpressionType::class())) {
+                    continue;
+                }
                 $propertyName = $stmt->consts[0]->name->name;
                 /** @var string|number|null $notNullValue */
                 $notNullValue = $stmt->consts[0]->value->value ?? null;
@@ -134,7 +139,7 @@ class AstVisitor extends NodeVisitorAbstract
 
         $this->dtoList->addDto(new DtoType(
             name: $node->name->name,
-            expressionType: $this->resolveExpressionType($node),
+            expressionType: $expressionType,
             properties: $properties,
         ));
     }

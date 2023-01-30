@@ -648,6 +648,37 @@ CODE;
         $typeScriptGenerator->generate($result);
     }
 
+    public function testDtoConstantDoesntThrow(): void
+    {
+        $codeWithDateTime = <<<'CODE'
+<?php
+
+#[Dto]
+class A
+{
+    public const SOME_CONSTANT = 1;
+    public \DateTimeImmutable $createdAt;
+}
+
+#[Dto]
+final class GenderEnum extends Enum
+{
+    public const UNKNOWN = null;
+    private const MAN = 0;
+    private const WOMAN = 1;
+}
+
+CODE;
+
+        $converter = new Converter(new PhpAttributeFilter('Dto'));
+        $result = $converter->convert([$codeWithDateTime]);
+        $typeScriptGenerator = new TypeScriptGenerator(new SingleFileOutputWriter('generated.ts'), [new ClassNameTypeResolver(), new DateTimeTypeResolver()]);
+
+        $results = $typeScriptGenerator->generate($result);
+
+        $this->assertMatchesSnapshot($results[0]->getContent(), new TypeScriptSnapshotComparator());
+    }
+
     public function testPhp81EnumsFailedWhenNonBacked(): void
     {
         $codeWithDateTime = <<<'CODE'
