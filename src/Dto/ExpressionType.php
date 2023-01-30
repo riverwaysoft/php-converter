@@ -28,7 +28,7 @@ class ExpressionType implements \JsonSerializable
         return new self('enum-non-standard');
     }
 
-    public function isEnum(): bool
+    public function isAnyEnum(): bool
     {
         return $this->equals(self::enumNonStandard()) || $this->equals(self::enum());
     }

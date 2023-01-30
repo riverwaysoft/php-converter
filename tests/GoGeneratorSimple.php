@@ -41,7 +41,7 @@ class GoGeneratorSimple implements LanguageGeneratorInterface
 
     private function convertToGoType(DtoType $dto, DtoList $dtoList): string
     {
-        Assert::false($dto->getExpressionType()->isEnum(), 'Go language doesn\'t support enums');
+        Assert::false($dto->getExpressionType()->isAnyEnum(), 'Go language doesn\'t support enums');
 
         return sprintf("type %s struct {%s\n};", $dto->getName(), $this->convertToGoProperties($dto, $dtoList));
     }

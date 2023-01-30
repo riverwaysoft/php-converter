@@ -515,11 +515,11 @@ class Dto
 }
 
 #[Dto]
-final class ColorEnum extends Enum
+enum ColorEnum
 {
-    private const RED = 0;
-    private const GREEN = 1;
-    private const BLUE = 2;
+    case RED = 0;
+    case GREEN = 1;
+    case BLUE = 2;
 }
 
 #[Dto]

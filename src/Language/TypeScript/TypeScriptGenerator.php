@@ -54,7 +54,7 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
         if ($dto->getExpressionType()->equals(ExpressionType::class())) {
             return sprintf("export type %s = {%s\n};", $dto->getName(), $this->convertToTypeScriptProperties($dto, $dtoList));
         }
-        if ($dto->getExpressionType()->isEnum()) {
+        if ($dto->getExpressionType()->isAnyEnum()) {
             if ($this->shouldEnumBeConverterToUnion($dto)) {
                 return sprintf("export type %s = %s;", $dto->getName(), $this->convertEnumToTypeScriptUnionProperties($dto->getProperties()));
             }
@@ -67,7 +67,7 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
     // In this case it's better to convert enum to union type
     private function shouldEnumBeConverterToUnion(DtoType $dto): bool
     {
-        Assert::true($dto->getExpressionType()->isEnum());
+        Assert::true($dto->getExpressionType()->isAnyEnum());
 
         if ($this->options->useTypesInsteadOfEnums) {
             return true;

@@ -39,7 +39,7 @@ class DartGenerator implements LanguageGeneratorInterface
 
         foreach ($dtoList->getList() as $dto) {
             // Dart only supports numeric enum
-            if ($dto->getExpressionType()->isEnum() && !$dto->isNumericEnum()) {
+            if ($dto->getExpressionType()->isAnyEnum() && !$dto->isNumericEnum()) {
                 continue;
             }
 
