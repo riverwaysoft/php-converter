@@ -18,7 +18,7 @@ export type ProfileOutput = {
 export type UserCreateInput = {
   profile: `/api/${string}`;
   promotedAt: string | null;
-  userTheme: { value: ColorEnum };
+  userTheme: ColorEnum;
   industriesUnion: `/api/${string}`[] | null;
   industriesNullable: `/api/${string}`[] | null;
   money: { currency: string; amount: number };

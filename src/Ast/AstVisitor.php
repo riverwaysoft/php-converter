@@ -155,7 +155,7 @@ class AstVisitor extends NodeVisitorAbstract
         $isMyCLabsEnum = $node->extends?->parts[0] === 'Enum';
 
         return $isMyCLabsEnum
-            ? ExpressionType::enum()
+            ? ExpressionType::enumNonStandard()
             : ExpressionType::class();
     }
 }

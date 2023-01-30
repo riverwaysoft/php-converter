@@ -36,11 +36,16 @@ class DtoList
 
     public function hasDtoWithType(string $type): bool
     {
+        return $this->getDtoByType($type) !== null;
+    }
+
+    public function getDtoByType(string $type): DtoType|null
+    {
         foreach ($this->dtoList as $dto) {
             if ($dto->getName() === $type) {
-                return true;
+                return $dto;
             }
         }
-        return false;
+        return null;
     }
 }

@@ -6,6 +6,7 @@ namespace Riverwaysoft\DtoConverter\Bridge\ApiPlatform;
 
 use Riverwaysoft\DtoConverter\Dto\DtoList;
 use Riverwaysoft\DtoConverter\Dto\DtoType;
+use Riverwaysoft\DtoConverter\Dto\ExpressionType;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnknownType;
 use Riverwaysoft\DtoConverter\Language\UnknownTypeResolverInterface;
 use Riverwaysoft\DtoConverter\Language\UnsupportedTypeException;
@@ -31,8 +32,14 @@ class ApiPlatformInputTypeResolver implements UnknownTypeResolverInterface
             if (!$dtoList->hasDtoWithType($type->getName())) {
                 throw UnsupportedTypeException::forType($type, $dto->getName());
             }
+            $result = $dtoList->getDtoByType($type->getName());
 
-            return sprintf("{ value: %s }", $type->getName());
+            if ($result?->getExpressionType()->equals(ExpressionType::enumNonStandard())) {
+                return sprintf("{ value: %s }", $type->getName());
+            }
+            if ($result?->getExpressionType()->equals(ExpressionType::enum())) {
+                return $type->getName();
+            }
         }
 
         if ($this->isEmbeddable($type)) {
