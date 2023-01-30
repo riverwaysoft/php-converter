@@ -16,7 +16,7 @@ class DtoTypeDependencyCalculator
     public function getDependencies(DtoType $dtoType): array
     {
         // Enums can't have other types as values
-        if ($dtoType->getExpressionType()->equals(ExpressionType::enum())) {
+        if ($dtoType->getExpressionType()->isEnum()) {
             return [];
         }
 

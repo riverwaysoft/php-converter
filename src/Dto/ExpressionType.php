@@ -23,6 +23,16 @@ class ExpressionType implements \JsonSerializable
         return new self('enum');
     }
 
+    public static function enumNonStandard(): self
+    {
+        return new self('enum-non-standard');
+    }
+
+    public function isEnum(): bool
+    {
+        return $this->equals(self::enumNonStandard()) || $this->equals(self::enum());
+    }
+
     public function equals(self $expressionType): bool
     {
         return $this->type === $expressionType->type;

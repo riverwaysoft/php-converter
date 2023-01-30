@@ -42,7 +42,7 @@
     {
         "name": "NumberEnum",
         "expressionType": {
-            "type": "enum"
+            "type": "enum-non-standard"
         },
         "properties": [
             {
@@ -62,7 +62,7 @@
     {
         "name": "PermissionsEnum",
         "expressionType": {
-            "type": "enum"
+            "type": "enum-non-standard"
         },
         "properties": [
             {
