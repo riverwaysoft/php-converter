@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\Language\TypeScript;
+namespace Riverwaysoft\DtoConverter\Language\UnknownTypeResolver;
 
 use Riverwaysoft\DtoConverter\Dto\DtoList;
 use Riverwaysoft\DtoConverter\Dto\DtoType;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeInterface;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnknownType;
-use Riverwaysoft\DtoConverter\Language\UnknownTypeResolverInterface;
 
 class InlineTypeResolver implements UnknownTypeResolverInterface
 {
@@ -22,7 +22,7 @@ class InlineTypeResolver implements UnknownTypeResolverInterface
         return !empty($this->map[$type->getName()]);
     }
 
-    public function resolve(PhpUnknownType $type, DtoType $dto, DtoList $dtoList): string
+    public function resolve(PhpUnknownType $type, DtoType $dto, DtoList $dtoList): string|PhpTypeInterface
     {
         $result = $this->map[$type->getName()];
         if (!$result) {

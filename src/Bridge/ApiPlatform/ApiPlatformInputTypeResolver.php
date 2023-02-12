@@ -7,8 +7,10 @@ namespace Riverwaysoft\DtoConverter\Bridge\ApiPlatform;
 use Riverwaysoft\DtoConverter\Dto\DtoList;
 use Riverwaysoft\DtoConverter\Dto\DtoType;
 use Riverwaysoft\DtoConverter\Dto\ExpressionType;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpBaseType;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeInterface;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnknownType;
-use Riverwaysoft\DtoConverter\Language\UnknownTypeResolverInterface;
+use Riverwaysoft\DtoConverter\Language\UnknownTypeResolver\UnknownTypeResolverInterface;
 use Riverwaysoft\DtoConverter\Language\UnsupportedTypeException;
 
 class ApiPlatformInputTypeResolver implements UnknownTypeResolverInterface
@@ -26,7 +28,7 @@ class ApiPlatformInputTypeResolver implements UnknownTypeResolverInterface
         return $this->isApiPlatformInput($dto) && $this->isPropertyTypeClass($type) && !$this->isInput($type);
     }
 
-    public function resolve(PhpUnknownType $type, DtoType $dto, DtoList $dtoList): mixed
+    public function resolve(PhpUnknownType $type, DtoType $dto, DtoList $dtoList): string|PhpTypeInterface
     {
         if ($this->isPropertyEnum($type)) {
             if (!$dtoList->hasDtoWithType($type->getName())) {
@@ -60,7 +62,7 @@ class ApiPlatformInputTypeResolver implements UnknownTypeResolverInterface
             return '`/api/${string}`';
         }
 
-        return 'string';
+        return PhpBaseType::string();
     }
 
     private function isApiPlatformInput(DtoType $dto): bool

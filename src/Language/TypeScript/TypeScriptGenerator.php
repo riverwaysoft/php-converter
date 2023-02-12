@@ -15,7 +15,7 @@ use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeInterface;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnionType;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnknownType;
 use Riverwaysoft\DtoConverter\Language\LanguageGeneratorInterface;
-use Riverwaysoft\DtoConverter\Language\UnknownTypeResolverInterface;
+use Riverwaysoft\DtoConverter\Language\UnknownTypeResolver\UnknownTypeResolverInterface;
 use Riverwaysoft\DtoConverter\Language\UnsupportedTypeException;
 use Riverwaysoft\DtoConverter\OutputWriter\OutputFile;
 use Riverwaysoft\DtoConverter\OutputWriter\OutputProcessor\OutputFilesProcessor;
@@ -153,12 +153,16 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
         }
 
         /** @var PhpUnknownType $type */
-        return $this->handleUnknownType($type, $dto, $dtoList);
+        $result = $this->handleUnknownType($type, $dto, $dtoList);
+        if ($result instanceof PhpTypeInterface) {
+            return $this->getTypeScriptTypeFromPhp($result, $dto, $dtoList);
+        }
+
+        return $result;
     }
 
-    private function handleUnknownType(PhpUnknownType $type, DtoType $dto, DtoList $dtoList): string
+    private function handleUnknownType(PhpUnknownType $type, DtoType $dto, DtoList $dtoList): string|PhpTypeInterface
     {
-        /** @var UnknownTypeResolverInterface $unknownTypeResolver */
         foreach ($this->unknownTypeResolvers as $unknownTypeResolver) {
             if ($unknownTypeResolver->supports($type, $dto, $dtoList)) {
                 return $unknownTypeResolver->resolve($type, $dto, $dtoList);

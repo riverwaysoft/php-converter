@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests;
 
+use App\Tests\SnapshotComparator\DartSnapshotComparator;
+use App\Tests\SnapshotComparator\TypeScriptSnapshotComparator;
 use PHPUnit\Framework\TestCase;
 use Riverwaysoft\DtoConverter\Ast\Converter;
 use Riverwaysoft\DtoConverter\Bridge\ApiPlatform\ApiPlatformInputTypeResolver;
@@ -13,11 +15,11 @@ use Riverwaysoft\DtoConverter\ClassFilter\PhpAttributeFilter;
 use Riverwaysoft\DtoConverter\CodeProvider\FileSystemCodeProvider;
 use Riverwaysoft\DtoConverter\Language\Dart\DartGenerator;
 use Riverwaysoft\DtoConverter\Language\Dart\DartImportGenerator;
-use Riverwaysoft\DtoConverter\Language\TypeScript\ClassNameTypeResolver;
-use Riverwaysoft\DtoConverter\Language\TypeScript\DateTimeTypeResolver;
 use Riverwaysoft\DtoConverter\Language\TypeScript\TypeScriptGenerator;
 use Riverwaysoft\DtoConverter\Language\TypeScript\TypeScriptGeneratorOptions;
 use Riverwaysoft\DtoConverter\Language\TypeScript\TypeScriptImportGenerator;
+use Riverwaysoft\DtoConverter\Language\UnknownTypeResolver\ClassNameTypeResolver;
+use Riverwaysoft\DtoConverter\Language\UnknownTypeResolver\DateTimeTypeResolver;
 use Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter\DtoTypeDependencyCalculator;
 use Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter\EntityPerClassOutputWriter;
 use Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter\KebabCaseFileNameGenerator;
@@ -466,6 +468,7 @@ CODE;
                 )
             ),
             [
+                new DateTimeTypeResolver(),
                 new ClassNameTypeResolver(),
             ]
         );
@@ -489,6 +492,7 @@ CODE;
                 )
             ),
             [
+                new DateTimeTypeResolver(),
                 new ClassNameTypeResolver(),
             ],
             new OutputFilesProcessor([

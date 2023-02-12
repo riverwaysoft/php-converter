@@ -5,13 +5,13 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
+use Riverwaysoft\DtoConverter\Ast\Converter;
 use Riverwaysoft\DtoConverter\ClassFilter\PhpAttributeFilter;
 use Riverwaysoft\DtoConverter\Cli\ConvertCommand;
 use Riverwaysoft\DtoConverter\CodeProvider\FileSystemCodeProvider;
-use Riverwaysoft\DtoConverter\Ast\Converter;
-use Riverwaysoft\DtoConverter\Language\TypeScript\ClassNameTypeResolver;
-use Riverwaysoft\DtoConverter\Language\TypeScript\DateTimeTypeResolver;
 use Riverwaysoft\DtoConverter\Language\TypeScript\TypeScriptGenerator;
+use Riverwaysoft\DtoConverter\Language\UnknownTypeResolver\ClassNameTypeResolver;
+use Riverwaysoft\DtoConverter\Language\UnknownTypeResolver\DateTimeTypeResolver;
 use Riverwaysoft\DtoConverter\OutputDiffCalculator\OutputDiffCalculator;
 use Riverwaysoft\DtoConverter\OutputWriter\SingleFileOutputWriter\SingleFileOutputWriter;
 use Symfony\Component\Console\Application;

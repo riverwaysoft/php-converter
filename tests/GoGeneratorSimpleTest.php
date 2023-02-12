@@ -6,7 +6,7 @@ namespace App\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Riverwaysoft\DtoConverter\Ast\Converter;
-use Riverwaysoft\DtoConverter\Language\TypeScript\ClassNameTypeResolver;
+use Riverwaysoft\DtoConverter\Language\UnknownTypeResolver\ClassNameTypeResolver;
 use Riverwaysoft\DtoConverter\OutputWriter\SingleFileOutputWriter\SingleFileOutputWriter;
 use Spatie\Snapshots\Drivers\TextDriver;
 use Spatie\Snapshots\MatchesSnapshots;
