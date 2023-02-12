@@ -11,7 +11,7 @@ class Category {
     required this.title,
     required this.rating,
     required this.recipes,
-  })
+  }) {}
 }
 
 enum ColorEnum {
@@ -33,7 +33,7 @@ class Recipe {
     this.url,
     required this.isCooked,
     required this.weight,
-  })
+  }) {}
 }
 
 class User {
@@ -47,5 +47,5 @@ class User {
     this.bestFriend,
     required this.friends,
     required this.themeColor,
-  })
+  }) {}
 }

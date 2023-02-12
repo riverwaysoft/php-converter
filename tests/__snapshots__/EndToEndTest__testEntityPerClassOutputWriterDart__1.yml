@@ -10,7 +10,7 @@
           FullName({
             required this.firstName,
             required this.lastName,
-          })
+          }) {}
         }
     empty: false
 -
@@ -27,7 +27,7 @@
           Profile({
             this.name,
             required this.age,
-          })
+          }) {}
         }
     empty: false
 -
@@ -44,6 +44,6 @@
           UserCreate({
             required this.id,
             this.profile,
-          })
+          }) {}
         }
     empty: false

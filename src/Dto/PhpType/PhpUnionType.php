@@ -42,7 +42,10 @@ class PhpUnionType implements PhpTypeInterface
         /** @var PhpTypeInterface|null $notNullType */
         $notNullType = null;
         foreach ($this->getTypes() as $type) {
-            if ($type instanceof PhpUnknownType || ($type instanceof PhpBaseType && !$type->equalsTo(PhpBaseType::null()))) {
+            $isUnknown = $type instanceof PhpUnknownType;
+            $isBaseNotNull = $type instanceof PhpBaseType && !$type->equalsTo(PhpBaseType::null());
+            $isBaseOrArray = $isBaseNotNull || $type instanceof PhpListType;
+            if ($isUnknown || $isBaseOrArray) {
                 $notNullType = $type;
                 break;
             }

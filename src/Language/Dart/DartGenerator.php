@@ -38,11 +38,6 @@ class DartGenerator implements LanguageGeneratorInterface
         $this->outputWriter->reset();
 
         foreach ($dtoList->getList() as $dto) {
-            // Dart only supports numeric enum
-            if ($dto->getExpressionType()->isAnyEnum() && !$dto->isNumericEnum()) {
-                continue;
-            }
-
             $this->outputWriter->writeType($this->convertToDartType($dto, $dtoList), $dto);
         }
 
@@ -53,7 +48,7 @@ class DartGenerator implements LanguageGeneratorInterface
     {
         if ($dto->getExpressionType()->equals(ExpressionType::class())) {
             return sprintf(
-                "class %s {%s\n\n  %s({%s\n  })\n}",
+                "class %s {%s\n\n  %s({%s\n  }) {}\n}",
                 $dto->getName(),
                 $this->convertToDartProperties($dto, $dtoList),
                 $dto->getName(),
@@ -61,7 +56,7 @@ class DartGenerator implements LanguageGeneratorInterface
             );
         }
 
-        if ($dto->getExpressionType()->equals(ExpressionType::enumNonStandard())) {
+        if ($dto->getExpressionType()->isAnyEnum()) {
             return sprintf("enum %s {%s\n}", $dto->getName(), $this->convertEnumToTypeScriptProperties($dto->getProperties()));
         }
 
