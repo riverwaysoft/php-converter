@@ -123,7 +123,7 @@ class DartGenerator implements LanguageGeneratorInterface
         $result = $this->handleUnknownType($type, $dto, $dtoList);
 
         if ($result instanceof PhpTypeInterface) {
-            return $this->getDartTypeFromPhp($type, $dto, $dtoList);
+            return $this->getDartTypeFromPhp($result, $dto, $dtoList);
         }
 
         return $result;
