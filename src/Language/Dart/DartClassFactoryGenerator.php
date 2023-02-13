@@ -52,7 +52,11 @@ class DartClassFactoryGenerator
         }
 
         if ($type instanceof PhpListType) {
-            $class = $type->getType()->getName();
+            $collectionType = $type->getType();
+            if (!($collectionType instanceof PhpUnknownType)) {
+                throw new \Exception('Only class instance can be converted to collection');
+            }
+            $class = $collectionType->getName();
             return sprintf("List<%s>.from(json['%s'].map((e) => %s.fromJson(e)))", $class, $propertyName, $class);
         }
 
