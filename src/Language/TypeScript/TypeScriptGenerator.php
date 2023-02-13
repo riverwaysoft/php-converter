@@ -30,8 +30,8 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
         private OutputWriterInterface $outputWriter,
         /** @var UnknownTypeResolverInterface[] $unknownTypeResolvers */
         private array $unknownTypeResolvers = [],
+        private ?OutputFilesProcessor $outputFilesProcessor = null,
         ?TypeScriptGeneratorOptions $options = null,
-        private ?OutputFilesProcessor $outputFilesProcessor = null
     ) {
         $this->options = $options ?? new TypeScriptGeneratorOptions(useTypesInsteadOfEnums: false);
         $this->outputFilesProcessor = $this->outputFilesProcessor ?? new OutputFilesProcessor();
