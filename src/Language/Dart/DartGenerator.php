@@ -23,13 +23,20 @@ use Webmozart\Assert\Assert;
 
 class DartGenerator implements LanguageGeneratorInterface
 {
+    private DartGeneratorOptions $options;
+
     public function __construct(
         private OutputWriterInterface $outputWriter,
         /** @var UnknownTypeResolverInterface[] */
         private array $unknownTypeResolvers = [],
-        private ?OutputFilesProcessor $outputFilesProcessor = null
+        private ?OutputFilesProcessor $outputFilesProcessor = null,
+        ?DartGeneratorOptions $options = null,
     ) {
         $this->outputFilesProcessor = $this->outputFilesProcessor ?? new OutputFilesProcessor();
+        $this->options = $options ?? new DartGeneratorOptions(
+            addEquitable: false,
+            addFactory: false,
+        );
     }
 
     /** @inheritDoc */
@@ -44,12 +51,20 @@ class DartGenerator implements LanguageGeneratorInterface
         return $this->outputFilesProcessor->process($this->outputWriter->getTypes());
     }
 
+    private function generateEquitableHeader(): string
+    {
+        return $this->options->addEquitable ?
+            ' extends Equatable'
+            : '';
+    }
+
     private function convertToDartType(DtoType $dto, DtoList $dtoList): string
     {
         if ($dto->getExpressionType()->equals(ExpressionType::class())) {
             return sprintf(
-                "class %s {%s\n\n  %s({%s\n  }) {}\n}",
+                "class %s%s {%s\n\n  %s({%s\n  }) {}\n}",
                 $dto->getName(),
+                $this->generateEquitableHeader(),
                 $this->convertToDartProperties($dto, $dtoList),
                 $dto->getName(),
                 $this->generateConstructor($dto->getProperties()),

@@ -1,0 +1,257 @@
+[
+    {
+        "name": "Activity",
+        "expressionType": {
+            "type": "class"
+        },
+        "properties": [
+            {
+                "type": {
+                    "name": "string"
+                },
+                "name": "id"
+            },
+            {
+                "type": {
+                    "name": "string"
+                },
+                "name": "createdAt"
+            }
+        ]
+    },
+    {
+        "name": "FullName",
+        "expressionType": {
+            "type": "class"
+        },
+        "properties": [
+            {
+                "type": {
+                    "name": "string"
+                },
+                "name": "firstName"
+            },
+            {
+                "type": {
+                    "name": "string"
+                },
+                "name": "lastName"
+            }
+        ]
+    },
+    {
+        "name": "NumberEnum",
+        "expressionType": {
+            "type": "enum-non-standard"
+        },
+        "properties": [
+            {
+                "name": "VIEW",
+                "value": 0
+            },
+            {
+                "name": "EDIT",
+                "value": 1
+            },
+            {
+                "name": "CREATE",
+                "value": 2
+            }
+        ]
+    },
+    {
+        "name": "PermissionsEnum",
+        "expressionType": {
+            "type": "enum-non-standard"
+        },
+        "properties": [
+            {
+                "name": "VIEW",
+                "value": "view"
+            },
+            {
+                "name": "EDIT",
+                "value": "edit"
+            }
+        ]
+    },
+    {
+        "name": "Profile",
+        "expressionType": {
+            "type": "class"
+        },
+        "properties": [
+            {
+                "type": {
+                    "types": [
+                        {
+                            "name": "FullName"
+                        },
+                        {
+                            "name": "null"
+                        }
+                    ]
+                },
+                "name": "name"
+            },
+            {
+                "type": {
+                    "name": "int"
+                },
+                "name": "age"
+            }
+        ]
+    },
+    {
+        "name": "User",
+        "expressionType": {
+            "type": "class"
+        },
+        "properties": [
+            {
+                "type": {
+                    "name": "string"
+                },
+                "name": "id"
+            },
+            {
+                "type": {
+                    "types": [
+                        {
+                            "name": "User"
+                        },
+                        {
+                            "name": "null"
+                        }
+                    ]
+                },
+                "name": "bestFriend"
+            },
+            {
+                "type": {
+                    "array": {
+                        "name": "User"
+                    }
+                },
+                "name": "friends"
+            },
+            {
+                "type": {
+                    "name": "self"
+                },
+                "name": "selfProperty"
+            },
+            {
+                "type": {
+                    "name": "self"
+                },
+                "name": "selfConstructor"
+            }
+        ]
+    },
+    {
+        "name": "UserCreate",
+        "expressionType": {
+            "type": "class"
+        },
+        "properties": [
+            {
+                "type": {
+                    "name": "string"
+                },
+                "name": "id"
+            },
+            {
+                "type": {
+                    "name": "PermissionsEnum"
+                },
+                "name": "permissions"
+            },
+            {
+                "type": {
+                    "types": [
+                        {
+                            "name": "Profile"
+                        },
+                        {
+                            "name": "null"
+                        }
+                    ]
+                },
+                "name": "profile"
+            },
+            {
+                "type": {
+                    "name": "int"
+                },
+                "name": "age"
+            },
+            {
+                "type": {
+                    "types": [
+                        {
+                            "name": "string"
+                        },
+                        {
+                            "name": "null"
+                        }
+                    ]
+                },
+                "name": "name"
+            },
+            {
+                "type": {
+                    "name": "float"
+                },
+                "name": "latitude"
+            },
+            {
+                "type": {
+                    "name": "float"
+                },
+                "name": "longitude"
+            },
+            {
+                "type": {
+                    "name": "array"
+                },
+                "name": "achievements"
+            },
+            {
+                "type": {
+                    "array": {
+                        "name": "string"
+                    }
+                },
+                "name": "tags"
+            },
+            {
+                "type": {
+                    "array": {
+                        "name": "Activity"
+                    }
+                },
+                "name": "activities"
+            },
+            {
+                "type": {
+                    "name": "mixed"
+                },
+                "name": "mixed"
+            },
+            {
+                "type": {
+                    "types": [
+                        {
+                            "name": "bool"
+                        },
+                        {
+                            "name": "null"
+                        }
+                    ]
+                },
+                "name": "isApproved"
+            }
+        ]
+    }
+]
