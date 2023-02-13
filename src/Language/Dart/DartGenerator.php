@@ -23,20 +23,15 @@ use Webmozart\Assert\Assert;
 
 class DartGenerator implements LanguageGeneratorInterface
 {
-    private DartGeneratorOptions $options;
-
     public function __construct(
         private OutputWriterInterface $outputWriter,
         /** @var UnknownTypeResolverInterface[] */
         private array $unknownTypeResolvers = [],
         private ?OutputFilesProcessor $outputFilesProcessor = null,
-        ?DartGeneratorOptions $options = null,
+        private ?DartClassFactoryGenerator $classFactoryGenerator = null,
+        private ?DartEquitableGenerator $equitableGenerator = null,
     ) {
         $this->outputFilesProcessor = $this->outputFilesProcessor ?? new OutputFilesProcessor();
-        $this->options = $options ?? new DartGeneratorOptions(
-            addEquitable: false,
-            addFactory: false,
-        );
     }
 
     /** @inheritDoc */
@@ -51,23 +46,20 @@ class DartGenerator implements LanguageGeneratorInterface
         return $this->outputFilesProcessor->process($this->outputWriter->getTypes());
     }
 
-    private function generateEquitableHeader(): string
-    {
-        return $this->options->addEquitable ?
-            ' extends Equatable'
-            : '';
-    }
+
 
     private function convertToDartType(DtoType $dto, DtoList $dtoList): string
     {
         if ($dto->getExpressionType()->equals(ExpressionType::class())) {
             return sprintf(
-                "class %s%s {%s\n\n  %s({%s\n  }) {}\n}",
+                "class %s%s {%s\n\n  %s({%s\n  }) {}\n%s%s}",
                 $dto->getName(),
-                $this->generateEquitableHeader(),
+                $this->equitableGenerator ? $this->equitableGenerator->generateEquitableHeader($dto) : '',
                 $this->convertToDartProperties($dto, $dtoList),
                 $dto->getName(),
                 $this->generateConstructor($dto->getProperties()),
+                $this->classFactoryGenerator ? $this->classFactoryGenerator->generateClassFactory($dto, $dtoList) : '',
+                $this->equitableGenerator ? $this->equitableGenerator->generateEquitableId($dto) : '',
             );
         }
 

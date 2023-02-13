@@ -14,17 +14,6 @@ class DtoType implements \JsonSerializable
     ) {
     }
 
-    public function isNumericEnum(): bool
-    {
-        foreach ($this->properties as $property) {
-            if (!($property instanceof DtoEnumProperty && $property->isNumeric())) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     public function getName(): string
     {
         return $this->name;
