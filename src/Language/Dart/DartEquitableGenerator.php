@@ -7,7 +7,7 @@ use Riverwaysoft\DtoConverter\Dto\DtoType;
 
 class DartEquitableGenerator
 {
-    public function __construct(private string|null $includePattern = null)
+    public function __construct(private string|null $excludePattern = null)
     {
 
     }
@@ -23,7 +23,7 @@ class DartEquitableGenerator
 
     private function doesntMatch(DtoType $dto): bool
     {
-        return $this->includePattern && !preg_match(pattern: $this->includePattern, subject: $dto->getName());
+        return $this->excludePattern && preg_match(pattern: $this->excludePattern, subject: $dto->getName());
     }
 
     public function generateEquitableId(DtoType $dto): string

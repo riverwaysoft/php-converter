@@ -5,6 +5,7 @@ namespace Riverwaysoft\DtoConverter\Language\Dart;
 use Riverwaysoft\DtoConverter\Dto\DtoEnumProperty;
 use Riverwaysoft\DtoConverter\Dto\DtoList;
 use Riverwaysoft\DtoConverter\Dto\DtoType;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpBaseType;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpListType;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeInterface;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnionType;
@@ -13,7 +14,7 @@ use Webmozart\Assert\Assert;
 
 class DartClassFactoryGenerator
 {
-    public function __construct(private string|null $includePattern = null)
+    public function __construct(private string|null $excludePattern = null)
     {
 
     }
@@ -24,15 +25,15 @@ class DartClassFactoryGenerator
             return '';
         }
 
-        if ($this->includePattern && !preg_match(pattern: $this->includePattern, subject: $dto->getName())) {
-           return '';
+        if ($this->excludePattern && preg_match(pattern: $this->excludePattern, subject: $dto->getName())) {
+            return '';
         }
 
         $factoryProperties = '';
 
         foreach ($dto->getProperties() as $property) {
             Assert::false($property instanceof DtoEnumProperty, "Dart factories only work in a class context, not enum");
-            $propertyValue = $this->resolveFactoryProperty($property->getName(), $property->getType(), $dtoList);
+            $propertyValue = $this->resolveFactoryProperty($property->getName(), $property->getType(), $dto, $dtoList);
             $factoryProperties .= sprintf("      %s: %s,\n", $property->getName(), $propertyValue);
         }
 
@@ -45,19 +46,36 @@ class DartClassFactoryGenerator
         );
     }
 
-    private function resolveFactoryProperty(string $propertyName, PhpTypeInterface $type, DtoList $dtoList): string
+    private function resolveFactoryProperty(string $propertyName, PhpTypeInterface $type, DtoType $dto, DtoList $dtoList): string
     {
         if ($type instanceof PhpUnionType && $type->isNullable()) {
-            return sprintf("json['{$propertyName}'] != null ? %s : null", $this->resolveFactoryProperty($propertyName, $type->getFirstNotNullType(), $dtoList));
+            return sprintf("json['{$propertyName}'] != null ? %s : null", $this->resolveFactoryProperty($propertyName, $type->getFirstNotNullType(), $dto, $dtoList));
         }
 
         if ($type instanceof PhpListType) {
             $collectionType = $type->getType();
-            if (!($collectionType instanceof PhpUnknownType)) {
-                throw new \Exception('Only class instance can be converted to collection');
+
+            if ($collectionType instanceof PhpUnknownType) {
+                $collectionInnerType = $collectionType->getName();
+                return sprintf("List<%s>.from(json['%s'].map((e) => %s.fromJson(e)))", $collectionInnerType, $propertyName, $collectionInnerType);
             }
-            $class = $collectionType->getName();
-            return sprintf("List<%s>.from(json['%s'].map((e) => %s.fromJson(e)))", $class, $propertyName, $class);
+
+            if ($collectionType instanceof PhpBaseType) {
+                $dartType = match (true) {
+                    $collectionType->equalsTo(PhpBaseType::int()) => 'int',
+                    $collectionType->equalsTo(PhpBaseType::float()) => 'double',
+                    $collectionType->equalsTo(PhpBaseType::string()) => 'String',
+                    $collectionType->equalsTo(PhpBaseType::bool()) => 'bool',
+                    $collectionType->equalsTo(PhpBaseType::mixed()), $collectionType->equalsTo(PhpBaseType::iterable()), $collectionType->equalsTo(PhpBaseType::array()) => 'Object',
+                    $collectionType->equalsTo(PhpBaseType::null()) => 'null',
+                    $collectionType->equalsTo(PhpBaseType::self()) => $dto->getName(),
+                    default => throw new \Exception(sprintf("Unknown base PHP type: %s", $type->jsonSerialize()))
+                };
+
+                return sprintf("List<%s>.from(json['%s'])", $dartType, $propertyName);
+            }
+
+            throw new \Exception(sprintf("Only PHP base types and class instance can be converted to collection. Property: %s#%s", $dto->getName(), $propertyName));
         }
 
         if ($type instanceof PhpUnknownType) {
