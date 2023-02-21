@@ -83,7 +83,11 @@ class DartClassFactoryGenerator
                 return sprintf("DateTime.parse(json['%s'])", $propertyName);
             }
 
-            if ($dtoList->getDtoByType($type->getName())?->getExpressionType()->isAnyEnum()) {
+            $dtoType = $dtoList->getDtoByType($type->getName());
+            if ($dtoType?->getExpressionType()->isAnyEnum()) {
+                if ($dtoType->isStringEnum()) {
+                    return sprintf("%s.values.byName(json['%s'])", $type->getName(), $propertyName);
+                }
                 return sprintf("%s.values[json['%s']]", $type->getName(), $propertyName);
             }
 

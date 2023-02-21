@@ -30,6 +30,20 @@ class DtoType implements \JsonSerializable
         return $this->properties;
     }
 
+    public function isStringEnum(): bool
+    {
+        $isEveryPropertyString = true;
+
+        foreach ($this->properties as $property) {
+            if (gettype($property->getValue()) !== 'string') {
+                $isEveryPropertyString = false;
+                break;
+            }
+        }
+
+        return $this->expressionType->equals(ExpressionType::enum()) && $isEveryPropertyString;
+    }
+
     public function jsonSerialize(): mixed
     {
         return [

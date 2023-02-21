@@ -124,6 +124,31 @@ class User
     /** @var User[]|null */
     public array|null $friendsOptional;
     public ColorEnum $themeColor;
+    public DayOfTheWeekEnumBackedInt $enumInt;
+    public DayOfTheWeekEnumBackedString $enumString;
+}
+
+enum DayOfTheWeekEnumBackedInt: int
+{
+    case NONE = 0;
+    case MONDAY = 1;
+    case TUESDAY = 2;
+    case WEDNESDAY = 3;
+    case THURSDAY = 4;
+    case FRIDAY = 5;
+    case SATURDAY = 6;
+    case SUNDAY = 7;
+}
+
+enum DayOfTheWeekEnumBackedString: string
+{
+    case MONDAY = 'MONDAY';
+    case TUESDAY = 'TUESDAY';
+    case WEDNESDAY = 'WEDNESDAY';
+    case THURSDAY = 'THURSDAY';
+    case FRIDAY='FRIDAY';
+    case SATURDAY='SATURDAY';
+    case SUNDAY = 'SUNDAY';
 }
 
 #[Dto]
