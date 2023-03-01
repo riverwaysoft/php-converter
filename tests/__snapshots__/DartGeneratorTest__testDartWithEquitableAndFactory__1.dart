@@ -116,9 +116,9 @@ class User extends Equatable {
       recipeRequired: Recipe.fromJson(json['recipeRequired']),
       friendsRequired: List<User>.from(json['friendsRequired'].map((e) => User.fromJson(e))),
       friendsOptional: json['friendsOptional'] != null ? List<User>.from(json['friendsOptional'].map((e) => User.fromJson(e))) : null,
-      themeColor: ColorEnum.values[json['themeColor']]],
-      colors: List<ColorEnum>.from(json['colors'].map((e) => ColorEnum.values[e]])),
-      enumInt: DayOfTheWeekEnumBackedInt.values[json['enumInt']]],
+      themeColor: ColorEnum.values[json['themeColor']],
+      colors: List<ColorEnum>.from(json['colors'].map((e) => ColorEnum.values[e])),
+      enumInt: DayOfTheWeekEnumBackedInt.values[json['enumInt']],
       enumString: DayOfTheWeekEnumBackedString.values.byName(json['enumString']),
     );
   }

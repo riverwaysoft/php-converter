@@ -101,7 +101,7 @@ class DartClassFactoryGenerator
                 if ($dtoType->isStringEnum()) {
                     return sprintf("%s.values.byName({$mapArgumentName})", $type->getName(), $propertyName);
                 }
-                return sprintf("%s.values[{$mapArgumentName}]]", $type->getName(), $propertyName);
+                return sprintf("%s.values[{$mapArgumentName}]", $type->getName(), $propertyName);
             }
 
             return sprintf("%s.fromJson({$mapArgumentName})", $type->getName(), $propertyName);
