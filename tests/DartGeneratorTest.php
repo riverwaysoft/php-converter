@@ -124,6 +124,8 @@ class User
     /** @var User[]|null */
     public array|null $friendsOptional;
     public ColorEnum $themeColor;
+    /** @var ColorEnum[] */
+    public array $colors;
     public DayOfTheWeekEnumBackedInt $enumInt;
     public DayOfTheWeekEnumBackedString $enumString;
 }

@@ -9,7 +9,6 @@ class DartEquitableGenerator
 {
     public function __construct(private string|null $excludePattern = null)
     {
-
     }
 
     public function generateEquitableHeader(DtoType $dto): string
@@ -33,7 +32,7 @@ class DartEquitableGenerator
         }
 
         $properties = $dto->getProperties();
-        $propertiesNames = array_map(fn(DtoClassProperty $property) => $property->getName(), $properties);
+        $propertiesNames = array_map(fn (DtoClassProperty $property) => $property->getName(), $properties);
         $propertiesString = implode(separator: ', ', array: $propertiesNames);
 
         return sprintf("\n  @override

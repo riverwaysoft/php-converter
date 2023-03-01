@@ -16,7 +16,6 @@ class DartClassFactoryGenerator
 {
     public function __construct(private string|null $excludePattern = null)
     {
-
     }
 
     public function generateClassFactory(DtoType $dto, DtoList $dtoList): string
@@ -37,7 +36,8 @@ class DartClassFactoryGenerator
             $factoryProperties .= sprintf("      %s: %s,\n", $property->getName(), $propertyValue);
         }
 
-        return sprintf("\n  factory %s.fromJson(Map<String, dynamic> json) {
+        return sprintf(
+            "\n  factory %s.fromJson(Map<String, dynamic> json) {
     return %s(\n%s    );
   }\n",
             $dto->getName(),
@@ -46,10 +46,18 @@ class DartClassFactoryGenerator
         );
     }
 
-    private function resolveFactoryProperty(string $propertyName, PhpTypeInterface $type, DtoType $dto, DtoList $dtoList): string
-    {
+    private function resolveFactoryProperty(
+        string $propertyName,
+        PhpTypeInterface $type,
+        DtoType $dto,
+        DtoList $dtoList,
+        string $mapArgumentName = "json['%s']",
+    ): string {
         if ($type instanceof PhpUnionType && $type->isNullable()) {
-            return sprintf("json['{$propertyName}'] != null ? %s : null", $this->resolveFactoryProperty($propertyName, $type->getFirstNotNullType(), $dto, $dtoList));
+            return sprintf(
+                "json['{$propertyName}'] != null ? %s : null",
+                $this->resolveFactoryProperty($propertyName, $type->getFirstNotNullType(), $dto, $dtoList)
+            );
         }
 
         if ($type instanceof PhpListType) {
@@ -57,7 +65,12 @@ class DartClassFactoryGenerator
 
             if ($collectionType instanceof PhpUnknownType) {
                 $collectionInnerType = $collectionType->getName();
-                return sprintf("List<%s>.from(json['%s'].map((e) => %s.fromJson(e)))", $collectionInnerType, $propertyName, $collectionInnerType);
+                return sprintf(
+                    "List<%s>.from(json['%s'].map((e) => %s))",
+                    $collectionInnerType,
+                    $propertyName,
+                    $this->resolveFactoryProperty($collectionInnerType, $collectionType, $dto, $dtoList, 'e'),
+                );
             }
 
             if ($collectionType instanceof PhpBaseType) {
@@ -86,14 +99,14 @@ class DartClassFactoryGenerator
             $dtoType = $dtoList->getDtoByType($type->getName());
             if ($dtoType?->getExpressionType()->isAnyEnum()) {
                 if ($dtoType->isStringEnum()) {
-                    return sprintf("%s.values.byName(json['%s'])", $type->getName(), $propertyName);
+                    return sprintf("%s.values.byName({$mapArgumentName})", $type->getName(), $propertyName);
                 }
-                return sprintf("%s.values[json['%s']]", $type->getName(), $propertyName);
+                return sprintf("%s.values[{$mapArgumentName}]]", $type->getName(), $propertyName);
             }
 
-            return sprintf("%s.fromJson(json['%s'])", $type->getName(), $propertyName);
+            return sprintf("%s.fromJson({$mapArgumentName})", $type->getName(), $propertyName);
         }
 
-        return sprintf("json['%s']", $propertyName);
+        return sprintf($mapArgumentName, $propertyName);
     }
 }

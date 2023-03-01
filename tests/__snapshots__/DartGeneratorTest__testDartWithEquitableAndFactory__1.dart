@@ -91,6 +91,7 @@ class User extends Equatable {
   final List<User> friendsRequired;
   final List<User>? friendsOptional;
   final ColorEnum themeColor;
+  final List<ColorEnum> colors;
   final DayOfTheWeekEnumBackedInt enumInt;
   final DayOfTheWeekEnumBackedString enumString;
 
@@ -102,6 +103,7 @@ class User extends Equatable {
     required this.friendsRequired,
     this.friendsOptional,
     required this.themeColor,
+    required this.colors,
     required this.enumInt,
     required this.enumString,
   }) {}
@@ -114,14 +116,15 @@ class User extends Equatable {
       recipeRequired: Recipe.fromJson(json['recipeRequired']),
       friendsRequired: List<User>.from(json['friendsRequired'].map((e) => User.fromJson(e))),
       friendsOptional: json['friendsOptional'] != null ? List<User>.from(json['friendsOptional'].map((e) => User.fromJson(e))) : null,
-      themeColor: ColorEnum.values[json['themeColor']],
-      enumInt: DayOfTheWeekEnumBackedInt.values[json['enumInt']],
+      themeColor: ColorEnum.values[json['themeColor']]],
+      colors: List<ColorEnum>.from(json['colors'].map((e) => ColorEnum.values[e]])),
+      enumInt: DayOfTheWeekEnumBackedInt.values[json['enumInt']]],
       enumString: DayOfTheWeekEnumBackedString.values.byName(json['enumString']),
     );
   }
 
   @override
-  List<dynamic> get props => [id, bestFriend, favoriteRecipe, recipeRequired, friendsRequired, friendsOptional, themeColor, enumInt, enumString];
+  List<dynamic> get props => [id, bestFriend, favoriteRecipe, recipeRequired, friendsRequired, friendsOptional, themeColor, colors, enumInt, enumString];
 }
 
 class UserCreateInput {
