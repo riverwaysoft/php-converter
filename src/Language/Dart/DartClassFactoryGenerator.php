@@ -10,11 +10,15 @@ use Riverwaysoft\DtoConverter\Dto\PhpType\PhpListType;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeInterface;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnionType;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnknownType;
+use Riverwaysoft\DtoConverter\Language\UnknownTypeResolver\InlineTypeResolver;
 use Webmozart\Assert\Assert;
 
 class DartClassFactoryGenerator
 {
-    public function __construct(private string|null $excludePattern = null)
+    public function __construct(
+        private string|null $excludePattern = null,
+        private InlineTypeResolver|null $inlineTypeResolver = null,
+    )
     {
     }
 
@@ -102,6 +106,13 @@ class DartClassFactoryGenerator
                     return sprintf("%s.values.byName({$mapArgumentName})", $type->getName(), $propertyName);
                 }
                 return sprintf("%s.values[{$mapArgumentName}]", $type->getName(), $propertyName);
+            }
+
+            if ($this->inlineTypeResolver?->supports($type, $dto, $dtoList)) {
+                $resolved = $this->inlineTypeResolver->resolve($type, $dto, $dtoList);
+                if ($resolved instanceof PhpTypeInterface) {
+                    return $this->resolveFactoryProperty($propertyName, $resolved, $dto, $dtoList, $mapArgumentName);
+                }
             }
 
             return sprintf("%s.fromJson({$mapArgumentName})", $type->getName(), $propertyName);
