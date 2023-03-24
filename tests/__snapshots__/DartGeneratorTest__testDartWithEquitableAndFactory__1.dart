@@ -12,7 +12,7 @@ class Category extends Equatable {
     required this.title,
     required this.rating,
     required this.recipes,
-  }) {}
+  });
 
   factory Category.fromJson(Map<String, dynamic> json) {
     return Category(
@@ -67,7 +67,7 @@ class Recipe extends Equatable {
     this.url,
     required this.isCooked,
     required this.weight,
-  }) {}
+  });
 
   factory Recipe.fromJson(Map<String, dynamic> json) {
     return Recipe(
@@ -81,6 +81,11 @@ class Recipe extends Equatable {
 
   @override
   List<dynamic> get props => [id, imageUrl, url, isCooked, weight];
+}
+
+class SomeEmptyClas {
+
+  
 }
 
 class User extends Equatable {
@@ -106,7 +111,7 @@ class User extends Equatable {
     required this.colors,
     required this.enumInt,
     required this.enumString,
-  }) {}
+  });
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
@@ -134,5 +139,5 @@ class UserCreateInput {
   UserCreateInput({
     this.promotedAt,
     required this.name,
-  }) {}
+  });
 }

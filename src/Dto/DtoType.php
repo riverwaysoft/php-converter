@@ -44,6 +44,11 @@ class DtoType implements \JsonSerializable
         return $this->expressionType->equals(ExpressionType::enum()) && $isEveryPropertyString;
     }
 
+    public function isEmpty(): bool
+    {
+        return count($this->properties) === 0;
+    }
+
     public function jsonSerialize(): mixed
     {
         return [

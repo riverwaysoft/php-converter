@@ -46,20 +46,19 @@ class DartGenerator implements LanguageGeneratorInterface
         return $this->outputFilesProcessor->process($this->outputWriter->getTypes());
     }
 
-
-
     private function convertToDartType(DtoType $dto, DtoList $dtoList): string
     {
         if ($dto->getExpressionType()->equals(ExpressionType::class())) {
+            // https://dart-lang.github.io/linter/lints/empty_constructor_bodies.html
+            $isEmpty = $dto->isEmpty();
             return sprintf(
-                "class %s%s {%s\n\n  %s({%s\n  }) {}\n%s%s}",
+                "class %s%s {%s\n\n  %s\n%s%s}",
                 $dto->getName(),
-                $this->equitableGenerator ? $this->equitableGenerator->generateEquitableHeader($dto) : '',
+                $this->equitableGenerator && !$isEmpty ? $this->equitableGenerator->generateEquitableHeader($dto) : '',
                 $this->convertToDartProperties($dto, $dtoList),
-                $dto->getName(),
-                $this->generateConstructor($dto->getProperties()),
-                $this->classFactoryGenerator ? $this->classFactoryGenerator->generateClassFactory($dto, $dtoList) : '',
-                $this->equitableGenerator ? $this->equitableGenerator->generateEquitableId($dto) : '',
+                !$isEmpty ? $this->generateConstructor($dto) : '',
+                $this->classFactoryGenerator && !$isEmpty ? $this->classFactoryGenerator->generateClassFactory($dto, $dtoList) : '',
+                $this->equitableGenerator && !$isEmpty ? $this->equitableGenerator->generateEquitableId($dto) : '',
             );
         }
 
@@ -83,12 +82,11 @@ class DartGenerator implements LanguageGeneratorInterface
         return $string;
     }
 
-    /** @param DtoClassProperty[] $properties */
-    private function generateConstructor(array $properties): string
+    private function generateConstructor(DtoType $dtoType): string
     {
         $string = '';
 
-        foreach ($properties as $property) {
+        foreach ($dtoType->getProperties() as $property) {
             $string .= sprintf(
                 "\n    %sthis.%s,",
                 $property->getType() instanceof PhpUnionType && $property->getType()->isNullable() ? '' : 'required ',
@@ -96,7 +94,7 @@ class DartGenerator implements LanguageGeneratorInterface
             );
         }
 
-        return $string;
+        return sprintf("%s({%s\n  });", $dtoType->getName(), $string);
     }
 
     private function getDartTypeFromPhp(PhpTypeInterface $type, DtoType $dto, DtoList $dtoList): string

@@ -95,6 +95,10 @@ final class ColorEnum extends Enum
     private const BLUE = 2;
 }
 
+class SomeEmptyClas {
+
+}
+
 class Category
 {
     public string $id;

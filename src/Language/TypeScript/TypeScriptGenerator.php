@@ -24,7 +24,7 @@ use Webmozart\Assert\Assert;
 
 class TypeScriptGenerator implements LanguageGeneratorInterface
 {
-    private ?TypeScriptGeneratorOptions $options;
+    private TypeScriptGeneratorOptions $options;
 
     public function __construct(
         private OutputWriterInterface $outputWriter,
