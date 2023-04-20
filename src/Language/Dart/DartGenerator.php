@@ -117,7 +117,7 @@ class DartGenerator implements LanguageGeneratorInterface
                 $type->equalsTo(PhpBaseType::float()) => 'double',
                 $type->equalsTo(PhpBaseType::string()) => 'String',
                 $type->equalsTo(PhpBaseType::bool()) => 'bool',
-                $type->equalsTo(PhpBaseType::mixed()), $type->equalsTo(PhpBaseType::iterable()), $type->equalsTo(PhpBaseType::array()) => 'Object',
+                $type->equalsTo(PhpBaseType::mixed()), $type->equalsTo(PhpBaseType::iterable()), $type->equalsTo(PhpBaseType::array()) => 'dynamic',
                 $type->equalsTo(PhpBaseType::null()) => 'null',
                 $type->equalsTo(PhpBaseType::self()) => $dto->getName(),
                 default => throw new \Exception(sprintf("Unknown base PHP type: %s", $type->jsonSerialize()))

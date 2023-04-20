@@ -82,7 +82,7 @@ class DartClassFactoryGenerator
                     $collectionType->equalsTo(PhpBaseType::float()) => 'double',
                     $collectionType->equalsTo(PhpBaseType::string()) => 'String',
                     $collectionType->equalsTo(PhpBaseType::bool()) => 'bool',
-                    $collectionType->equalsTo(PhpBaseType::mixed()), $collectionType->equalsTo(PhpBaseType::iterable()), $collectionType->equalsTo(PhpBaseType::array()) => 'Object',
+                    $collectionType->equalsTo(PhpBaseType::mixed()), $collectionType->equalsTo(PhpBaseType::iterable()), $collectionType->equalsTo(PhpBaseType::array()) => 'dynamic',
                     $collectionType->equalsTo(PhpBaseType::null()) => 'null',
                     $collectionType->equalsTo(PhpBaseType::self()) => $dto->getName(),
                     default => throw new \Exception(sprintf("Unknown base PHP type: %s", $type->jsonSerialize()))
