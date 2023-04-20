@@ -103,8 +103,10 @@ class DartClassFactoryGenerator
             $dtoType = $dtoList->getDtoByType($type->getName());
             if ($dtoType?->getExpressionType()->isAnyEnum()) {
                 if ($dtoType->isStringEnum()) {
+                    /** @noinspection PhpFormatFunctionParametersMismatchInspection */
                     return sprintf("%s.values.byName({$mapArgumentName})", $type->getName(), $propertyName);
                 }
+                /** @noinspection PhpFormatFunctionParametersMismatchInspection */
                 return sprintf("%s.values[{$mapArgumentName}]", $type->getName(), $propertyName);
             }
 
@@ -114,7 +116,7 @@ class DartClassFactoryGenerator
                     return $this->resolveFactoryProperty($propertyName, $resolved, $dto, $dtoList, $mapArgumentName);
                 }
             }
-
+            /** @noinspection PhpFormatFunctionParametersMismatchInspection */
             return sprintf("%s.fromJson({$mapArgumentName})", $type->getName(), $propertyName);
         }
 
