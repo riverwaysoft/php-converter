@@ -41,11 +41,13 @@ class User {
   final User? bestFriend;
   final List<User> friends;
   final ColorEnum themeColor;
+  final dynamic stringOrInteger;
 
   User({
     required this.id,
     this.bestFriend,
     required this.friends,
     required this.themeColor,
+    required this.stringOrInteger,
   });
 }

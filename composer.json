@@ -12,6 +12,7 @@
         "test:update-snapshots": "vendor/bin/phpunit tests -d --update-snapshots",
         "cs:src": "vendor/bin/php-cs-fixer fix src",
         "cs:tests": "vendor/bin/php-cs-fixer fix tests",
+        "cs": ["@cs:src", "@cs:tests"],
         "phpstan": "vendor/bin/phpstan analyse src tests bin",
         "php-parser-dump": "vendor/bin/php-parse tests/fixtures/NestedDto.php"
     },

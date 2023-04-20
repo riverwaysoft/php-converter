@@ -64,6 +64,7 @@ class User
     /** @var User[] */
     public array $friends;
     public ColorEnum $themeColor;
+    public string|int $stringOrInteger;
 }
 CODE;
 

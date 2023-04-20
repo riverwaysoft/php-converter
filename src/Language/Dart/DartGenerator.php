@@ -101,7 +101,9 @@ class DartGenerator implements LanguageGeneratorInterface
     {
         if ($type instanceof PhpUnionType) {
             Assert::greaterThan($type->getTypes(), 2, "Dart does not support union types");
-            Assert::true($type->isNullable(), "Dart only support nullable union types");
+            if (!$type->isNullable()) {
+                return $this->getDartTypeFromPhp(PhpBaseType::mixed(), $dto, $dtoList);
+            }
             $notNullType = $type->getFirstNotNullType();
             return sprintf('%s?', $this->getDartTypeFromPhp($notNullType, $dto, $dtoList));
         }
