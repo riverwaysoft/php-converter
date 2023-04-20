@@ -16,6 +16,7 @@
         "php-parser-dump": "vendor/bin/php-parse tests/fixtures/NestedDto.php"
     },
     "require": {
+        "php": ">=8.0",
         "nikic/php-parser": "^4.10",
         "webmozart/assert": "^1.10",
         "jfcherng/php-diff": "^6.10",
