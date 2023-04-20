@@ -18,8 +18,7 @@ class DartClassFactoryGenerator
     public function __construct(
         private string|null $excludePattern = null,
         private InlineTypeResolver|null $inlineTypeResolver = null,
-    )
-    {
+    ) {
     }
 
     public function generateClassFactory(DtoType $dto, DtoList $dtoList): string
