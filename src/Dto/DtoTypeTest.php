@@ -8,17 +8,18 @@ use Riverwaysoft\DtoConverter\Dto\PhpType\PhpBaseType;
 class DtoTypeTest extends TestCase
 {
     /** @dataProvider provideEmptyDto */
-    public function testIsEmpty(DtoType $dto, bool $isEmptyExpected)
+    public function testIsEmpty(DtoType $dto, bool $isEmptyExpected): void
     {
         $this->assertEquals($isEmptyExpected, $dto->isEmpty());
     }
 
     /** @dataProvider provideStringEnumDto */
-    public function testIsStringEnum(DtoType $dto, bool $isStringExpected)
+    public function testIsStringEnum(DtoType $dto, bool $isStringExpected): void
     {
         $this->assertEquals($isStringExpected, $dto->isStringEnum());
     }
 
+    /** @return \Generator<array{0: DtoType, 1: bool}> */
     public function provideEmptyDto(): iterable
     {
         yield [new DtoType(
@@ -51,6 +52,7 @@ class DtoTypeTest extends TestCase
         ), false];
     }
 
+    /** @return \Generator<array{0: DtoType, 1: bool}> */
     public function provideStringEnumDto(): iterable
     {
         yield [new DtoType(
