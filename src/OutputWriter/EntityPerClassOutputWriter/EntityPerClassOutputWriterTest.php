@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests;
+namespace Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter;
 
 use PHPUnit\Framework\TestCase;
 use Riverwaysoft\DtoConverter\Dto\DtoClassProperty;
@@ -12,9 +12,6 @@ use Riverwaysoft\DtoConverter\Dto\PhpType\PhpBaseType;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnionType;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnknownType;
 use Riverwaysoft\DtoConverter\Language\TypeScript\TypeScriptImportGenerator;
-use Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter\DtoTypeDependencyCalculator;
-use Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter\EntityPerClassOutputWriter;
-use Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter\KebabCaseFileNameGenerator;
 use Spatie\Snapshots\MatchesSnapshots;
 
 class EntityPerClassOutputWriterTest extends TestCase

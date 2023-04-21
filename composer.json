@@ -8,7 +8,9 @@
         }
     ],
     "scripts": {
-        "test": "vendor/bin/phpunit tests",
+        "test:e2e": "vendor/bin/phpunit tests",
+        "test:unit": "vendor/bin/phpunit src",
+        "test": ["@test:unit", "@test:e2e"],
         "test:update-snapshots": "vendor/bin/phpunit tests -d --update-snapshots",
         "cs:src": "vendor/bin/php-cs-fixer fix src",
         "cs:tests": "vendor/bin/php-cs-fixer fix tests",

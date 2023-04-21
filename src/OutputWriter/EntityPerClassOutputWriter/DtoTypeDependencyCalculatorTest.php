@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests;
+namespace Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter;
 
 use PHPUnit\Framework\TestCase;
 use Riverwaysoft\DtoConverter\Dto\DtoClassProperty;
@@ -11,7 +11,6 @@ use Riverwaysoft\DtoConverter\Dto\ExpressionType;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpBaseType;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnionType;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnknownType;
-use Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter\DtoTypeDependencyCalculator;
 
 class DtoTypeDependencyCalculatorTest extends TestCase
 {
@@ -20,8 +19,8 @@ class DtoTypeDependencyCalculatorTest extends TestCase
         $dependencyCalculator = new DtoTypeDependencyCalculator();
 
         $dto = new DtoType(
-            'Profile',
-            ExpressionType::class(),
+            name: 'Profile',
+            expressionType: ExpressionType::class(),
             properties: [
                 new DtoClassProperty(
                     type: new PhpUnionType(

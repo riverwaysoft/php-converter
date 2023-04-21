@@ -2,10 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Tests;
+namespace Riverwaysoft\DtoConverter\Ast;
 
 use PHPUnit\Framework\TestCase;
-use Riverwaysoft\DtoConverter\Ast\PhpDocTypeParser;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpBaseType;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpListType;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeFactory;
