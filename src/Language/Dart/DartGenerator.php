@@ -23,6 +23,8 @@ use Webmozart\Assert\Assert;
 
 class DartGenerator implements LanguageGeneratorInterface
 {
+    private DartEnumValidator $dartEnumValidator;
+
     public function __construct(
         private OutputWriterInterface $outputWriter,
         /** @var UnknownTypeResolverInterface[] */
@@ -32,6 +34,7 @@ class DartGenerator implements LanguageGeneratorInterface
         private ?DartEquitableGenerator $equitableGenerator = null,
     ) {
         $this->outputFilesProcessor = $this->outputFilesProcessor ?? new OutputFilesProcessor();
+        $this->dartEnumValidator = new DartEnumValidator();
     }
 
     /** @inheritDoc */
@@ -63,6 +66,7 @@ class DartGenerator implements LanguageGeneratorInterface
         }
 
         if ($dto->getExpressionType()->isAnyEnum()) {
+            $this->dartEnumValidator->assertIsValidEnumForDart($dto);
             return sprintf("enum %s {%s\n}", $dto->getName(), $this->convertEnumToTypeScriptProperties($dto->getProperties()));
         }
 
