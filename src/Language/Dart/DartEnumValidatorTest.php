@@ -11,6 +11,10 @@ class DartEnumValidatorTest extends TestCase
 {
     public function testValidationForDart(): void
     {
+        if (PHP_VERSION_ID < 80100) {
+            $this->markTestSkipped('Test requires PHP 8.1');
+        }
+
         $dartEnumValidator = new DartEnumValidator();
 
         $enumValid = new DtoType(
@@ -35,6 +39,11 @@ class DartEnumValidatorTest extends TestCase
     /** @dataProvider provideInvalidData */
     public function testInvalidEnumForDart(DtoType $enumInvalid, string $message): void
     {
+        if (PHP_VERSION_ID < 80100) {
+            $this->markTestSkipped('Test requires PHP 8.1');
+        }
+
+
         $dartEnumValidator = new DartEnumValidator();
 
         $this->expectExceptionMessage($message);
