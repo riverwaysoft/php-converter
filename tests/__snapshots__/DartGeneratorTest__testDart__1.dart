@@ -25,7 +25,7 @@ class Recipe {
   final String? imageUrl;
   final String? url;
   final bool isCooked;
-  final double weight;
+  final num weight;
 
   Recipe({
     required this.id,

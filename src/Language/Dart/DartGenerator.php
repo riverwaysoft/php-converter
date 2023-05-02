@@ -116,7 +116,7 @@ class DartGenerator implements LanguageGeneratorInterface
             /** @var PhpBaseType $type */
             return match (true) {
                 $type->equalsTo(PhpBaseType::int()) => 'int',
-                $type->equalsTo(PhpBaseType::float()) => 'double',
+                $type->equalsTo(PhpBaseType::float()) => 'num',
                 $type->equalsTo(PhpBaseType::string()) => 'String',
                 $type->equalsTo(PhpBaseType::bool()) => 'bool',
                 $type->equalsTo(PhpBaseType::mixed()), $type->equalsTo(PhpBaseType::iterable()), $type->equalsTo(PhpBaseType::array()) => 'dynamic',

@@ -79,7 +79,7 @@ class DartClassFactoryGenerator
             if ($collectionType instanceof PhpBaseType) {
                 $dartType = match (true) {
                     $collectionType->equalsTo(PhpBaseType::int()) => 'int',
-                    $collectionType->equalsTo(PhpBaseType::float()) => 'double',
+                    $collectionType->equalsTo(PhpBaseType::float()) => 'num',
                     $collectionType->equalsTo(PhpBaseType::string()) => 'String',
                     $collectionType->equalsTo(PhpBaseType::bool()) => 'bool',
                     $collectionType->equalsTo(PhpBaseType::mixed()), $collectionType->equalsTo(PhpBaseType::iterable()), $collectionType->equalsTo(PhpBaseType::array()) => 'dynamic',
