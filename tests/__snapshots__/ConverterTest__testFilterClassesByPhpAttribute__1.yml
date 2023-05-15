@@ -1,3 +1,0 @@
-list:
-    - { url: /api/users, method: { type: get }, input: null, output: { name: User } }
-    - { url: /api/users, method: { type: post }, input: { name: CreateUserInput }, output: { name: User } }

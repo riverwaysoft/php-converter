@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Riverwaysoft\DtoConverter\Dto\ApiClient;
 
-class ApiEndpointList
+class ApiEndpointList implements \JsonSerializable
 {
     /** @var array<string, ApiEndpoint> */
     private array $apiEndpointMap = [];
@@ -15,25 +15,29 @@ class ApiEndpointList
     {
         $values = array_values($this->apiEndpointMap);
         // Force stable alphabetical order of types
-        usort(array: $values, callback: fn (ApiEndpoint $a, ApiEndpoint $b) => $a->url <=> $b->url);
+        usort(array: $values, callback: fn (ApiEndpoint $a, ApiEndpoint $b) => $a->route <=> $b->route);
 
         return $values;
     }
 
     public function add(ApiEndpoint $apiEndpoint): void
     {
-        $apiEndpointHash = $apiEndpoint->url . $apiEndpoint->method->getType();
+        $apiEndpointHash = $apiEndpoint->route . $apiEndpoint->method->getType();
         if (!empty($this->apiEndpointMap[$apiEndpointHash])) {
-            throw new \Exception(sprintf("Non-unique api endpoint with url %s and method %s", $apiEndpoint->url, $apiEndpoint->method->getType()));
+            throw new \Exception(sprintf(
+                "Non-unique api endpoint with route %s and method %s",
+                $apiEndpoint->route,
+                $apiEndpoint->method->getType(),
+            ));
         }
 
         $this->apiEndpointMap[$apiEndpointHash] = $apiEndpoint;
     }
 
-    public function merge(self $list): void
+    public function jsonSerialize(): mixed
     {
-        foreach ($list->apiEndpointMap as $apiEndpoint) {
-            $this->add($apiEndpoint);
-        }
+        return [
+            'map' => $this->getList(),
+        ];
     }
 }

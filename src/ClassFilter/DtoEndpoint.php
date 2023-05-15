@@ -11,12 +11,5 @@ class DtoEndpoint
         public string|null $returnMany,
         public string|null $returnOne,
     ) {
-        // TODO: checks if this code gets executed
-        if ($this->returnMany && $this->returnOne) {
-            throw new \Exception('DtoEndpoint should either have $returnMany or $returnOne');
-        }
-        if (!$this->returnMany && !$this->returnOne) {
-            throw new \Exception('DtoEndpoint requires $returnMany or $returnOne to be not empty');
-        }
     }
 }

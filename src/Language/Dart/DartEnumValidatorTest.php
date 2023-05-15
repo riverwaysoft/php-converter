@@ -50,7 +50,7 @@ class DartEnumValidatorTest extends TestCase
         $dartEnumValidator->assertIsValidEnumForDart($enumInvalid);
     }
 
-    private function provideInvalidData(): \Generator
+    public function provideInvalidData(): \Generator
     {
         yield [
             new DtoType(

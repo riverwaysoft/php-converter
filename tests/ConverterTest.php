@@ -232,54 +232,28 @@ class CreateUserInput {
 }
 
 class SomeController {
-  #[DtoEndpoint(returnOne: User::class)]
+  #[DtoEndpoint(returnMany: User::class)]
   #[Route('/api/users', methods: ['GET'])]
-  public function getUserMethodsArray() {
-  
-  }
+  public function getUserMethodsArray() {}
   
   #[DtoEndpoint(returnOne: User::class)]
   #[Route('/api/users', methods: ['POST'])]
   public function createUser(
     #[Input] CreateUserInput $input,
-  ) {
+  ) {}
   
-  }
+  #[DtoEndpoint(returnOne: User::class)]
+  #[Route('/api/users/{id}', methods: ['GET'])]
+  public function getUser(User $id) {}
   
-//  #[DtoEndpoint(returnOne: User::class)]
-//  #[Route('/api/users_create')]
-//  public function createUserShouldThrow(
-//    #[Input] CreateUserInput $input,
-//  ) {
-//  
-//  }
+  #[Route('/api/users_reversed_order', methods: ['GET'])]
+  #[DtoEndpoint(returnMany: User::class)]
+  public function getUserMethodsArrayReversedOrder() {}
 
-  
-  // same url and same method should throw
-//  #[DtoEndpoint(returnOne: User::class)]
-//  #[Route(name: '/api/users', methods: ['GET'])]
-//  public function getUserWithNamedKey() {
-//  
-//  }
-  
-//  #[Route('/api/users', methods: ['GET'])]
-//  #[DtoEndpoint(returnOne: User::class)]
-//  public function getUserMethodsArrayReversedOrder() {
-//  
-//  }
-
-//  #[DtoEndpoint()]
-//  public function getUsersWithoutOutputTypeShouldThrow() {
-//  
-//  }
-  
-//    #[DtoEndpoint(returnOne: User::class)]
-//  #[Route('/api/users', methods: 'GET')]
-//  public function getUserMethodsString() {
-//  
-//  }
+  #[DtoEndpoint(returnOne: User::class)]
+  #[Route('/api/users_methods_string', methods: 'GET')]
+  public function getUserMethodsString() {}
 }
-
 CODE;
 
         $converter = new Converter(new PhpAttributeFilter('Dto'));
@@ -291,8 +265,108 @@ CODE;
         $this->assertTrue($result->dtoList->hasDtoWithType('ColorEnum'));
         $this->assertFalse($result->dtoList->hasDtoWithType('IgnoreMe'));
 
-        $this->assertMatchesSnapshot($result->apiEndpointList);
+        $this->assertMatchesJsonSnapshot(json_encode($result->apiEndpointList));
     }
+
+    /** @dataProvider provideInvalidControllers */
+    public function testTheFollowingCodeShouldThrow(string $invalidControllerActionCode, string $expectedError): void
+    {
+        $codeWithDateTime = <<<'CODE'
+<?php
+
+use \Riverwaysoft\DtoConverter\ClassFilter\DtoEndpoint;
+
+#[\Attribute(\Attribute::TARGET_CLASS)]
+class Dto
+{
+
+}
+
+#[\Attribute(\Attribute::TARGET_METHOD)]
+class Route {
+  public function __construct(
+     public string|array $path = null,
+     public array|string $methods = [],
+  ) {}
+}
+
+#[\Attribute(\Attribute::TARGET_PARAMETER)]
+class Input {
+  
+}
+
+#[Dto]
+class User
+{
+    public string $id;
+    public ?User $bestFriend;
+}
+
+#[Dto]
+class CreateUserInput {
+  public string $id;
+}
+
+class SomeController {
+CODE;
+
+        $codeWithDateTime .= "\n" . $invalidControllerActionCode . '}';
+
+        $converter = new Converter(new PhpAttributeFilter('Dto'));
+        $this->expectExceptionMessage($expectedError);
+        $converter->convert([$codeWithDateTime]);
+    }
+
+    public function provideInvalidControllers(): \Generator
+    {
+        yield [
+            <<<'CODE'
+#[DtoEndpoint(returnOne: User::class)]
+#[Route('/api/users/{id}', methods: ['GET'])]
+public function getUserRouteAndMethodParamDontMatch(User $user) {
+}
+CODE,
+            'Route /api/users/{id} has parameter id, but there are no method params with this name. Available parameters: user',
+        ];
+
+        yield [
+            <<<'CODE'
+  #[DtoEndpoint(returnOne: User::class)]
+  #[Route('/api/users_create')]
+  public function createUserShouldThrow(
+    #[Input] CreateUserInput $input,
+  ) {
+  }
+CODE,
+            '#[Route()] argument "methods" is required'
+        ];
+
+        yield [
+            <<<'CODE'
+  #[DtoEndpoint(returnOne: User::class)]
+  #[Route(name: '/api/users', methods: ['GET'])]
+  public function getUserWithNamedKey() {
+  
+  }
+  
+  #[DtoEndpoint(returnOne: User::class)]
+  #[Route(name: '/api/users', methods: ['GET'])]
+  public function anotherMethod() {
+  
+  }
+CODE,
+            'Non-unique api endpoint with route /api/users and method get',
+        ];
+
+        yield [
+            <<<'CODE'
+  #[DtoEndpoint()]
+  public function shouldThrow() {}
+CODE,
+            '#[DtoEndpoint] is used on a method, that does not have #[Route] attribute',
+        ];
+    }
+
 
     public function testPhp81EnumsFailedWhenNonBacked(): void
     {

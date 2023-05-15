@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Riverwaysoft\DtoConverter\OutputWriter\SingleFileOutputWriter;
 
+use Riverwaysoft\DtoConverter\Dto\ApiClient\ApiEndpoint;
 use Riverwaysoft\DtoConverter\Dto\DtoType;
 use Riverwaysoft\DtoConverter\OutputWriter\OutputFile;
 use Riverwaysoft\DtoConverter\OutputWriter\OutputWriterInterface;
@@ -22,6 +23,11 @@ class SingleFileOutputWriter implements OutputWriterInterface
     {
         $content = sprintf("%s%s\n", $this->outputFile->isEmpty() ? '' : "\n", $languageType);
         $this->outputFile->appendContent($content);
+    }
+
+    public function writeApiEndpoint(string $languageEndpoint, ApiEndpoint $apiEndpoint): void
+    {
+        $this->outputFile->appendContent($languageEndpoint);
     }
 
     /** @return OutputFile[] */

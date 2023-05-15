@@ -9,17 +9,20 @@ use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeInterface;
 class ApiEndpoint implements \JsonSerializable
 {
     public function __construct(
-        public string $url,
+        public string $route,
         public ApiEndpointMethod $method,
         public ?PhpTypeInterface $input,
         public ?PhpTypeInterface $output,
+        /** @var string[] */
+        public array $routeParams = [],
     ) {
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         return [
-            'url' => $this->url,
+            'route' => $this->route,
+            'routeParams' => $this->routeParams,
             'method' => $this->method->getType(),
             'input' => $this->input,
             'output' => $this->output,

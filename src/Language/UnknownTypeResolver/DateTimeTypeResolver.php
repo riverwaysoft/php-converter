@@ -12,12 +12,12 @@ use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnknownType;
 
 class DateTimeTypeResolver implements UnknownTypeResolverInterface
 {
-    public function supports(PhpUnknownType $type, DtoType $dto, DtoList $dtoList): bool
+    public function supports(PhpUnknownType $type, DtoType|null $dto, DtoList $dtoList): bool
     {
         return $type->getName() === 'DateTime' || $type->getName() === 'DateTimeImmutable';
     }
 
-    public function resolve(PhpUnknownType $type, DtoType $dto, DtoList $dtoList): string|PhpTypeInterface
+    public function resolve(PhpUnknownType $type, DtoType|null $dto, DtoList $dtoList): string|PhpTypeInterface
     {
         return PhpBaseType::string();
     }

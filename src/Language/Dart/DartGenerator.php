@@ -141,7 +141,7 @@ class DartGenerator implements LanguageGeneratorInterface
         return $result;
     }
 
-    private function handleUnknownType(PhpUnknownType $type, DtoType $dto, DtoList $dtoList): string|PhpTypeInterface
+    private function handleUnknownType(PhpUnknownType $type, DtoType|null $dto, DtoList $dtoList): string|PhpTypeInterface
     {
         foreach ($this->unknownTypeResolvers as $unknownTypeResolver) {
             if ($unknownTypeResolver->supports($type, $dto, $dtoList)) {
@@ -149,7 +149,7 @@ class DartGenerator implements LanguageGeneratorInterface
             }
         }
 
-        throw UnsupportedTypeException::forType($type, $dto->getName());
+        throw UnsupportedTypeException::forType($type, $dto?->getName() ?? '');
     }
 
     /** @param DtoEnumProperty[] $properties */

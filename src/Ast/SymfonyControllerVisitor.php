@@ -11,7 +11,7 @@ use PhpParser\NodeVisitorAbstract;
 use Riverwaysoft\DtoConverter\Dto\ApiClient\ApiEndpoint;
 use Riverwaysoft\DtoConverter\Dto\ApiClient\ApiEndpointList;
 use Riverwaysoft\DtoConverter\Dto\ApiClient\ApiEndpointMethod;
-use Riverwaysoft\DtoConverter\Dto\DtoType;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpBaseType;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpListType;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeFactory;
 
@@ -33,7 +33,7 @@ class SymfonyControllerVisitor extends NodeVisitorAbstract
         return null;
     }
 
-    private function findAttribute(Node|Node\Param $node, string $name): Attribute|null
+    private function findAttribute(ClassMethod|Node\Param $node, string $name): Attribute|null
     {
         $attrGroups = $node instanceof Node\Param ? $node->attrGroups : $node->getAttrGroups();
 
@@ -67,11 +67,20 @@ class SymfonyControllerVisitor extends NodeVisitorAbstract
             throw new \Exception('#[DtoEndpoint] is used on a method, that does not have #[Route] attribute');
         }
 
-        $url = null;
+        $route = null;
         if ($routeAttribute->args[0]->name === null) {
-            $urlNode = $routeAttribute->args[0]->value;
-            if ($urlNode instanceof Node\Scalar\String_) {
-                $url = $urlNode->value;
+            $routeNode = $routeAttribute->args[0]->value;
+            if ($routeNode instanceof Node\Scalar\String_) {
+                $route = $routeNode->value;
+            }
+        }
+
+        if (!$route) {
+            $nameArg = $this->getAttributeArgumentByName($routeAttribute, 'name');
+            if ($nameArg?->value instanceof Node\Scalar\String_) {
+                $route = $nameArg->value->value;
+            } else {
+                throw new \Exception('Could not find route path. Make sure your route looks like this #[Route(\'/api/users\')] or #[Route(name: \'/api/users/\')]');
             }
         }
 
@@ -86,13 +95,15 @@ class SymfonyControllerVisitor extends NodeVisitorAbstract
                 if ($methodString instanceof Node\Scalar\String_) {
                     $method = $methodString->value;
                 }
+            } elseif ($methodArg->value instanceof Node\Scalar\String_) {
+                $method = $methodArg->value->value;
             } else {
                 throw new \Exception('Only array argument "methods" is supported');
             }
         }
 
         if (!$method) {
-            throw new \Exception('#[Route()] argument methods is required');
+            throw new \Exception('#[Route()] argument "methods" is required');
         }
 
         $dtoReturnAttribute = $this->findAttribute($node, 'DtoEndpoint');
@@ -100,7 +111,7 @@ class SymfonyControllerVisitor extends NodeVisitorAbstract
             throw new \Exception('Should not be reached, checked earlier');
         }
 
-        $outputType = null;
+        $outputType = PhpBaseType::null();
         if ($arg = $this->getAttributeArgumentByName($dtoReturnAttribute, 'returnOne')) {
             if (!($arg->value instanceof Node\Expr\ClassConstFetch)) {
                 throw new \Exception('Argument of returnOne should be a class string');
@@ -115,20 +126,56 @@ class SymfonyControllerVisitor extends NodeVisitorAbstract
         }
 
         $inputType = null;
-
+        $routeParams = $this->parseRoute($route);
+        /** @var string[] $excessiveRouteParams */
+        $excessiveRouteParams = array_flip($routeParams);
         foreach ($node->params as $param) {
             $maybeDtoInputAttribute = $this->findAttribute($param, 'Input');
             if ($maybeDtoInputAttribute) {
+                if ($inputType) {
+                    throw new \Exception('Multiple #[Input] on controller action are not supported');
+                }
                 $inputType = $this->phpTypeFactory->create($param->type->parts[0]);
-                break;
+            }
+
+            if (isset($excessiveRouteParams[$param->var->name])) {
+                unset($excessiveRouteParams[$param->var->name]);
             }
         }
 
+        if (!empty($excessiveRouteParams)) {
+            throw new \Exception(sprintf(
+                'Route %s has parameter %s, but there are no method params with this name. Available parameters: %s',
+                $route,
+                array_key_first($excessiveRouteParams),
+                implode(', ', array_map(
+                    fn (Node\Param $param): string => $param->var->name,
+                    $node->params,
+                ))
+            ));
+        }
+
         $this->apiEndpointList->add(new ApiEndpoint(
-            url: $url,
+            route: $route,
             method: ApiEndpointMethod::fromString($method),
             input: $inputType,
             output: $outputType,
+            routeParams: $routeParams,
         ));
+    }
+
+    /** @return string[] */
+    private function parseRoute(string $route): array
+    {
+        $pattern = '/\{([^\/}]+)\}/';
+        /** @var string[] $params */
+        $params = [];
+
+        preg_match_all($pattern, $route, $matches);
+        foreach ($matches[1] as $param) {
+            $params[] = $param;
+        }
+
+        return $params;
     }
 }

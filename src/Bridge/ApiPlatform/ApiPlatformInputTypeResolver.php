@@ -12,6 +12,7 @@ use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeInterface;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnknownType;
 use Riverwaysoft\DtoConverter\Language\UnknownTypeResolver\UnknownTypeResolverInterface;
 use Riverwaysoft\DtoConverter\Language\UnsupportedTypeException;
+use Webmozart\Assert\Assert;
 
 class ApiPlatformInputTypeResolver implements UnknownTypeResolverInterface
 {
@@ -23,13 +24,15 @@ class ApiPlatformInputTypeResolver implements UnknownTypeResolverInterface
     ) {
     }
 
-    public function supports(PhpUnknownType $type, DtoType $dto, DtoList $dtoList): bool
+    public function supports(PhpUnknownType $type, DtoType|null $dto, DtoList $dtoList): bool
     {
-        return $this->isApiPlatformInput($dto) && $this->isPropertyTypeClass($type) && !$this->isInput($type);
+        return $dto && $this->isApiPlatformInput($dto) && $this->isPropertyTypeClass($type) && !$this->isInput($type);
     }
 
-    public function resolve(PhpUnknownType $type, DtoType $dto, DtoList $dtoList): string|PhpTypeInterface
+    public function resolve(PhpUnknownType $type, DtoType|null $dto, DtoList $dtoList): string|PhpTypeInterface
     {
+        Assert::notNull($dto, 'ApiPlatformInputTypeResolver should be called only for DTO. It was called for generating API Client');
+
         if ($this->isPropertyEnum($type)) {
             if (!$dtoList->hasDtoWithType($type->getName())) {
                 throw UnsupportedTypeException::forType($type, $dto->getName());

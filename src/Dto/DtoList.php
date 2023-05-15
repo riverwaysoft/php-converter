@@ -27,13 +27,6 @@ class DtoList
         return $values;
     }
 
-    public function merge(self $list): void
-    {
-        foreach ($list->dtoMap as $dto) {
-            $this->add($dto);
-        }
-    }
-
     public function hasDtoWithType(string $type): bool
     {
         return $this->getDtoByType($type) !== null;

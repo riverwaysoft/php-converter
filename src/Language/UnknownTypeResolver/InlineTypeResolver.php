@@ -17,12 +17,12 @@ class InlineTypeResolver implements UnknownTypeResolverInterface
     ) {
     }
 
-    public function supports(PhpUnknownType $type, DtoType $dto, DtoList $dtoList): bool
+    public function supports(PhpUnknownType $type, DtoType|null $dto, DtoList $dtoList): bool
     {
         return !empty($this->map[$type->getName()]);
     }
 
-    public function resolve(PhpUnknownType $type, DtoType $dto, DtoList $dtoList): string|PhpTypeInterface
+    public function resolve(PhpUnknownType $type, DtoType|null $dto, DtoList $dtoList): string|PhpTypeInterface
     {
         $result = $this->map[$type->getName()];
         if (!$result) {
