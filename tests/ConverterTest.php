@@ -37,7 +37,7 @@ class Profile {
 CODE;
 
         $normalized = (new Converter())->convert([$codeNestedDto]);
-        $this->assertMatchesJsonSnapshot($normalized->getList());
+        $this->assertMatchesJsonSnapshot($normalized->dtoList->getList());
     }
 
     public function testFilterClassesByDocBlock(): void
@@ -93,11 +93,11 @@ CODE;
         $converter = new Converter(new DocBlockCommentFilter('@DTO'));
         $result = $converter->convert([$codeWithDateTime]);
 
-        $this->assertTrue($result->hasDtoWithType('User'));
-        $this->assertTrue($result->hasDtoWithType('Recipe'));
-        $this->assertTrue($result->hasDtoWithType('Category'));
-        $this->assertTrue($result->hasDtoWithType('ColorEnum'));
-        $this->assertFalse($result->hasDtoWithType('IgnoreMe'));
+        $this->assertTrue($result->dtoList->hasDtoWithType('User'));
+        $this->assertTrue($result->dtoList->hasDtoWithType('Recipe'));
+        $this->assertTrue($result->dtoList->hasDtoWithType('Category'));
+        $this->assertTrue($result->dtoList->hasDtoWithType('ColorEnum'));
+        $this->assertFalse($result->dtoList->hasDtoWithType('IgnoreMe'));
     }
 
     public function testExcludeFilterClassesByDocBlock(): void
@@ -150,11 +150,11 @@ CODE;
         $converter = new Converter($classesWithoutIgnoreFilter);
         $result = $converter->convert([$codeWithDateTime]);
 
-        $this->assertTrue($result->hasDtoWithType('User'));
-        $this->assertTrue($result->hasDtoWithType('Recipe'));
-        $this->assertTrue($result->hasDtoWithType('Category'));
-        $this->assertTrue($result->hasDtoWithType('ColorEnum'));
-        $this->assertFalse($result->hasDtoWithType('IgnoreMe'));
+        $this->assertTrue($result->dtoList->hasDtoWithType('User'));
+        $this->assertTrue($result->dtoList->hasDtoWithType('Recipe'));
+        $this->assertTrue($result->dtoList->hasDtoWithType('Category'));
+        $this->assertTrue($result->dtoList->hasDtoWithType('ColorEnum'));
+        $this->assertFalse($result->dtoList->hasDtoWithType('IgnoreMe'));
     }
 
 
@@ -163,10 +163,25 @@ CODE;
         $codeWithDateTime = <<<'CODE'
 <?php
 
+use \Riverwaysoft\DtoConverter\ClassFilter\DtoEndpoint;
+
 #[\Attribute(\Attribute::TARGET_CLASS)]
 class Dto
 {
 
+}
+
+#[\Attribute(\Attribute::TARGET_METHOD)]
+class Route {
+  public function __construct(
+     public string|array $path = null,
+     public array|string $methods = [],
+  ) {}
+}
+
+#[\Attribute(\Attribute::TARGET_PARAMETER)]
+class Input {
+  
 }
 
 #[Dto]
@@ -211,18 +226,147 @@ class User
     public ColorEnum $themeColor;
 }
 
+#[Dto]
+class CreateUserInput {
+  public string $id;
+}
 
+class SomeController {
+  #[DtoEndpoint(returnMany: User::class)]
+  #[Route('/api/users', methods: ['GET'])]
+  public function getUserMethodsArray() {}
+  
+  #[DtoEndpoint(returnOne: User::class)]
+  #[Route('/api/users', methods: ['POST'])]
+  public function createUser(
+    #[Input] CreateUserInput $input,
+  ) {}
+  
+  #[DtoEndpoint(returnOne: User::class)]
+  #[Route('/api/users/{id}', methods: ['GET'])]
+  public function getUser(User $id) {}
+  
+  #[Route('/api/users_reversed_order', methods: ['GET'])]
+  #[DtoEndpoint(returnMany: User::class)]
+  public function getUserMethodsArrayReversedOrder() {}
+
+  #[DtoEndpoint(returnOne: User::class)]
+  #[Route('/api/users_methods_string', methods: 'GET')]
+  public function getUserMethodsString() {}
+}
 CODE;
 
         $converter = new Converter(new PhpAttributeFilter('Dto'));
         $result = $converter->convert([$codeWithDateTime]);
 
-        $this->assertTrue($result->hasDtoWithType('User'));
-        $this->assertTrue($result->hasDtoWithType('Recipe'));
-        $this->assertTrue($result->hasDtoWithType('Category'));
-        $this->assertTrue($result->hasDtoWithType('ColorEnum'));
-        $this->assertFalse($result->hasDtoWithType('IgnoreMe'));
+        $this->assertTrue($result->dtoList->hasDtoWithType('User'));
+        $this->assertTrue($result->dtoList->hasDtoWithType('Recipe'));
+        $this->assertTrue($result->dtoList->hasDtoWithType('Category'));
+        $this->assertTrue($result->dtoList->hasDtoWithType('ColorEnum'));
+        $this->assertFalse($result->dtoList->hasDtoWithType('IgnoreMe'));
+
+        $this->assertMatchesJsonSnapshot(json_encode($result->apiEndpointList));
     }
+
+    /** @dataProvider provideInvalidControllers */
+    public function testTheFollowingCodeShouldThrow(string $invalidControllerActionCode, string $expectedError): void
+    {
+        $codeWithDateTime = <<<'CODE'
+<?php
+
+use \Riverwaysoft\DtoConverter\ClassFilter\DtoEndpoint;
+
+#[\Attribute(\Attribute::TARGET_CLASS)]
+class Dto
+{
+
+}
+
+#[\Attribute(\Attribute::TARGET_METHOD)]
+class Route {
+  public function __construct(
+     public string|array $path = null,
+     public array|string $methods = [],
+  ) {}
+}
+
+#[\Attribute(\Attribute::TARGET_PARAMETER)]
+class Input {
+  
+}
+
+#[Dto]
+class User
+{
+    public string $id;
+    public ?User $bestFriend;
+}
+
+#[Dto]
+class CreateUserInput {
+  public string $id;
+}
+
+class SomeController {
+CODE;
+
+        $codeWithDateTime .= "\n" . $invalidControllerActionCode . '}';
+
+        $converter = new Converter(new PhpAttributeFilter('Dto'));
+        $this->expectExceptionMessage($expectedError);
+        $converter->convert([$codeWithDateTime]);
+    }
+
+    public function provideInvalidControllers(): \Generator
+    {
+        yield [
+            <<<'CODE'
+#[DtoEndpoint(returnOne: User::class)]
+#[Route('/api/users/{id}', methods: ['GET'])]
+public function getUserRouteAndMethodParamDontMatch(User $user) {
+}
+CODE,
+            'Route /api/users/{id} has parameter id, but there are no method params with this name. Available parameters: user',
+        ];
+
+        yield [
+            <<<'CODE'
+  #[DtoEndpoint(returnOne: User::class)]
+  #[Route('/api/users_create')]
+  public function createUserShouldThrow(
+    #[Input] CreateUserInput $input,
+  ) {
+  }
+CODE,
+            '#[Route()] argument "methods" is required'
+        ];
+
+        yield [
+            <<<'CODE'
+  #[DtoEndpoint(returnOne: User::class)]
+  #[Route(name: '/api/users', methods: ['GET'])]
+  public function getUserWithNamedKey() {
+  
+  }
+  
+  #[DtoEndpoint(returnOne: User::class)]
+  #[Route(name: '/api/users', methods: ['GET'])]
+  public function anotherMethod() {
+  
+  }
+CODE,
+            'Non-unique api endpoint with route /api/users and method get',
+        ];
+
+        yield [
+            <<<'CODE'
+  #[DtoEndpoint()]
+  public function shouldThrow() {}
+CODE,
+            '#[DtoEndpoint] is used on a method, that does not have #[Route] attribute',
+        ];
+    }
+
 
     public function testPhp81EnumsFailedWhenNonBacked(): void
     {

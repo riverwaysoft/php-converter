@@ -11,6 +11,6 @@ use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnknownType;
 
 interface UnknownTypeResolverInterface
 {
-    public function supports(PhpUnknownType $type, DtoType $dto, DtoList $dtoList): bool;
-    public function resolve(PhpUnknownType $type, DtoType $dto, DtoList $dtoList): string|PhpTypeInterface;
+    public function supports(PhpUnknownType $type, DtoType|null $dto, DtoList $dtoList): bool;
+    public function resolve(PhpUnknownType $type, DtoType|null $dto, DtoList $dtoList): string|PhpTypeInterface;
 }

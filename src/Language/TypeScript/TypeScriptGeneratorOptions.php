@@ -8,6 +8,7 @@ class TypeScriptGeneratorOptions
 {
     public function __construct(
         public bool $useTypesInsteadOfEnums,
+        public bool $apiClient = false,
     ) {
     }
 }

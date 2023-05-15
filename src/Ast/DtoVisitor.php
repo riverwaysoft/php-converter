@@ -18,7 +18,7 @@ use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeFactory;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeInterface;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnionType;
 
-class AstVisitor extends NodeVisitorAbstract
+class DtoVisitor extends NodeVisitorAbstract
 {
     public function __construct(
         private DtoList $dtoList,
@@ -137,7 +137,7 @@ class AstVisitor extends NodeVisitorAbstract
             }
         }
 
-        $this->dtoList->addDto(new DtoType(
+        $this->dtoList->add(new DtoType(
             name: $node->name->name,
             expressionType: $expressionType,
             properties: $properties,

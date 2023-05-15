@@ -1,0 +1,57 @@
+{
+    "map": [
+        {
+            "route": "\/api\/users",
+            "routeParams": [],
+            "method": "get",
+            "input": null,
+            "output": {
+                "array": {
+                    "name": "User"
+                }
+            }
+        },
+        {
+            "route": "\/api\/users",
+            "routeParams": [],
+            "method": "post",
+            "input": {
+                "name": "CreateUserInput"
+            },
+            "output": {
+                "name": "User"
+            }
+        },
+        {
+            "route": "\/api\/users\/{id}",
+            "routeParams": [
+                "id"
+            ],
+            "method": "get",
+            "input": null,
+            "output": {
+                "name": "User"
+            }
+        },
+        {
+            "route": "\/api\/users_methods_string",
+            "routeParams": [],
+            "method": "get",
+            "input": null,
+            "output": {
+                "name": "User"
+            }
+        },
+        {
+            "route": "\/api\/users_reversed_order",
+            "routeParams": [],
+            "method": "get",
+            "input": null,
+            "output": {
+                "array": {
+                    "name": "User"
+                }
+            }
+        }
+    ]
+}

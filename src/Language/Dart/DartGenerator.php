@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Riverwaysoft\DtoConverter\Language\Dart;
 
-use Riverwaysoft\DtoConverter\Dto\DtoClassProperty;
+use Riverwaysoft\DtoConverter\Ast\ConverterResult;
 use Riverwaysoft\DtoConverter\Dto\DtoEnumProperty;
 use Riverwaysoft\DtoConverter\Dto\DtoList;
 use Riverwaysoft\DtoConverter\Dto\DtoType;
@@ -38,10 +38,11 @@ class DartGenerator implements LanguageGeneratorInterface
     }
 
     /** @inheritDoc */
-    public function generate(DtoList $dtoList): array
+    public function generate(ConverterResult $converterResult): array
     {
         $this->outputWriter->reset();
 
+        $dtoList = $converterResult->dtoList;
         foreach ($dtoList->getList() as $dto) {
             $this->outputWriter->writeType($this->convertToDartType($dto, $dtoList), $dto);
         }
@@ -140,7 +141,7 @@ class DartGenerator implements LanguageGeneratorInterface
         return $result;
     }
 
-    private function handleUnknownType(PhpUnknownType $type, DtoType $dto, DtoList $dtoList): string|PhpTypeInterface
+    private function handleUnknownType(PhpUnknownType $type, DtoType|null $dto, DtoList $dtoList): string|PhpTypeInterface
     {
         foreach ($this->unknownTypeResolvers as $unknownTypeResolver) {
             if ($unknownTypeResolver->supports($type, $dto, $dtoList)) {
@@ -148,7 +149,7 @@ class DartGenerator implements LanguageGeneratorInterface
             }
         }
 
-        throw UnsupportedTypeException::forType($type, $dto->getName());
+        throw UnsupportedTypeException::forType($type, $dto?->getName() ?? '');
     }
 
     /** @param DtoEnumProperty[] $properties */

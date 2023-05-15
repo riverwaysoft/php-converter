@@ -16,7 +16,7 @@
         "cs:tests": "vendor/bin/php-cs-fixer fix tests",
         "cs": ["@cs:src", "@cs:tests"],
         "phpstan": "vendor/bin/phpstan analyse src tests bin",
-        "php-parser-dump": "vendor/bin/php-parse tests/fixtures/NestedDto.php"
+        "php-parser-dump": "vendor/bin/php-parse tests/Fixtures/NestedDto.php"
     },
     "require": {
         "php": ">=8.0",

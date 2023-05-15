@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Riverwaysoft\DtoConverter\Language\TypeScript;
 
+use Jawira\CaseConverter\Convert;
+use Riverwaysoft\DtoConverter\Ast\ConverterResult;
+use Riverwaysoft\DtoConverter\Dto\ApiClient\ApiEndpoint;
 use Riverwaysoft\DtoConverter\Dto\DtoClassProperty;
 use Riverwaysoft\DtoConverter\Dto\DtoEnumProperty;
 use Riverwaysoft\DtoConverter\Dto\DtoList;
@@ -33,20 +36,67 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
         private ?OutputFilesProcessor $outputFilesProcessor = null,
         ?TypeScriptGeneratorOptions $options = null,
     ) {
-        $this->options = $options ?? new TypeScriptGeneratorOptions(useTypesInsteadOfEnums: false);
+        $this->options = $options ?? new TypeScriptGeneratorOptions(useTypesInsteadOfEnums: false, apiClient: false);
         $this->outputFilesProcessor = $this->outputFilesProcessor ?? new OutputFilesProcessor();
     }
 
     /** @return OutputFile[] */
-    public function generate(DtoList $dtoList): array
+    public function generate(ConverterResult $converterResult): array
     {
         $this->outputWriter->reset();
 
+        $dtoList = $converterResult->dtoList;
         foreach ($dtoList->getList() as $dto) {
             $this->outputWriter->writeType($this->convertToTypeScriptType($dto, $dtoList), $dto);
         }
 
+        $apiEndpointList = $converterResult->apiEndpointList;
+        foreach ($apiEndpointList->getList() as $apiEndpoint) {
+            $this->outputWriter->writeApiEndpoint($this->convertToTypeScriptEndpoint($apiEndpoint, $dtoList), $apiEndpoint);
+        }
+
         return $this->outputFilesProcessor->process($this->outputWriter->getTypes());
+    }
+
+    private function convertToTypeScriptEndpoint(ApiEndpoint $apiEndpoint, DtoList $dtoList): string
+    {
+        $string = "export const %s = (%s): %s => {\n%s\n}\n\n";
+
+        $nameOriginal = str_replace('/', '_', $apiEndpoint->route) . '_' . $apiEndpoint->method->getType();
+        $nameOriginal = str_replace(['{', '}'], '', $nameOriginal);
+
+        $name = (new Convert($nameOriginal))->toCamel();
+
+        $params = implode(', ', array_map(
+            fn (string $param): string => "{$param}: string",
+            $apiEndpoint->routeParams,
+        ));
+
+        $inputType = null;
+        if ($apiEndpoint->input) {
+            $inputType = $this->getTypeScriptTypeFromPhp($apiEndpoint->input, null, $dtoList);
+            $params = implode(', ', array_filter([$params, "body: ${inputType}"]));
+        }
+
+        $form = $inputType !== null ? sprintf(', body') : '';
+
+        $outputType = $apiEndpoint->output ? $this->getTypeScriptTypeFromPhp($apiEndpoint->output, null, $dtoList) : 'null';
+
+        $returnType = sprintf('Promise<%s>', $outputType);
+
+        $route = $this->injectJavaScriptInterpolatedVariables($apiEndpoint->route);
+        $body = sprintf('  return axios
+    .%s<%s>(`%s`%s)
+    .then(response => response.data);', $apiEndpoint->method->getType(), $outputType, $route, $form);
+
+        return sprintf($string, $name, $params, $returnType, $body);
+    }
+
+    private function injectJavaScriptInterpolatedVariables(string $route): string
+    {
+        // Regular expression pattern to match parameter placeholders
+        $pattern = '/\{([^\/}]+)\}/';
+        return preg_replace($pattern, '${$1}', $route);
     }
 
     private function convertToTypeScriptType(DtoType $dto, DtoList $dtoList): string
@@ -127,7 +177,7 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
         return implode(' | ', $propertyValues);
     }
 
-    private function getTypeScriptTypeFromPhp(PhpTypeInterface $type, DtoType $dto, DtoList $dtoList): string
+    private function getTypeScriptTypeFromPhp(PhpTypeInterface $type, DtoType|null $dto, DtoList $dtoList): string
     {
         if ($type instanceof PhpUnionType) {
             $types = array_map(fn (PhpTypeInterface $type) => $this->getTypeScriptTypeFromPhp($type, $dto, $dtoList), $type->getTypes());
@@ -161,7 +211,7 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
         return $result;
     }
 
-    private function handleUnknownType(PhpUnknownType $type, DtoType $dto, DtoList $dtoList): string|PhpTypeInterface
+    private function handleUnknownType(PhpUnknownType $type, DtoType|null $dto, DtoList $dtoList): string|PhpTypeInterface
     {
         foreach ($this->unknownTypeResolvers as $unknownTypeResolver) {
             if ($unknownTypeResolver->supports($type, $dto, $dtoList)) {
@@ -169,6 +219,6 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
             }
         }
 
-        throw UnsupportedTypeException::forType($type, $dto->getName());
+        throw UnsupportedTypeException::forType($type, $dto?->getName() ?? '');
     }
 }

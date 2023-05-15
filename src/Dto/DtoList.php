@@ -7,31 +7,24 @@ namespace Riverwaysoft\DtoConverter\Dto;
 class DtoList
 {
     /** @var array<string, DtoType> */
-    private array $dtoList = [];
+    private array $dtoMap = [];
 
-    public function addDto(DtoType $dto): void
+    public function add(DtoType $dto): void
     {
-        if (!empty($this->dtoList[$dto->getName()])) {
-            throw new \Exception(sprintf("Non-unique class name %s ", $dto->getName()));
+        if (!empty($this->dtoMap[$dto->getName()])) {
+            throw new \Exception(sprintf("Non-unique class name %s", $dto->getName()));
         }
-        $this->dtoList[$dto->getName()] = $dto;
+        $this->dtoMap[$dto->getName()] = $dto;
     }
 
     /** @return DtoType[] */
     public function getList(): array
     {
-        $values = array_values($this->dtoList);
+        $values = array_values($this->dtoMap);
         // Force stable alphabetical order of types
-        usort(array: $values, callback: fn ($a, $b) => $a <=> $b);
+        usort(array: $values, callback: fn (DtoType $a, DtoType $b) => $a->getName() <=> $b->getName());
 
         return $values;
-    }
-
-    public function merge(self $list): void
-    {
-        foreach ($list->dtoList as $dto) {
-            $this->addDto($dto);
-        }
     }
 
     public function hasDtoWithType(string $type): bool
@@ -41,7 +34,7 @@ class DtoList
 
     public function getDtoByType(string $type): DtoType|null
     {
-        foreach ($this->dtoList as $dto) {
+        foreach ($this->dtoMap as $dto) {
             if ($dto->getName() === $type) {
                 return $dto;
             }

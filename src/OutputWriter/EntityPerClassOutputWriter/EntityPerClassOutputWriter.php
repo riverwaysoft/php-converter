@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter;
 
+use Riverwaysoft\DtoConverter\Dto\ApiClient\ApiEndpoint;
 use Riverwaysoft\DtoConverter\Dto\DtoType;
 use Riverwaysoft\DtoConverter\Language\ImportGeneratorInterface;
 use Riverwaysoft\DtoConverter\OutputWriter\OutputFile;
@@ -26,6 +27,11 @@ class EntityPerClassOutputWriter implements OutputWriterInterface
         $fileContent = $this->importGenerator->generateFileContent($languageType, $dtoType);
 
         $this->files[] = new OutputFile(relativeName: $relativeName, content: $fileContent);
+    }
+
+    public function writeApiEndpoint(string $languageEndpoint, ApiEndpoint $apiEndpoint): void
+    {
+        throw new \Exception('Not implemented');
     }
 
     public function getTypes(): array
