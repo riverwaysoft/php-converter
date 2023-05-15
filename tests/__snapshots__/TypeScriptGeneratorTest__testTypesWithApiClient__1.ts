@@ -25,15 +25,15 @@ export const apiUsersPost = (body: CreateUserInput): Promise<UserOutput> => {
     .then(response => response.data);
 }
 
-export const apiUsersUserGet = (user: string): Promise<UserOutput> => {
+export const apiUsersUserToUpdatePut = (userToUpdate: string, body: UpdateUserInput): Promise<UserOutput> => {
   return axios
-    .get<UserOutput>(`/api/users/${user}`)
+    .put<UserOutput>(`/api/users/${userToUpdate}`, body)
     .then(response => response.data);
 }
 
-export const apiUsersUserPut = (user: string, body: UpdateUserInput): Promise<UserOutput> => {
+export const apiUsersUserGet = (user: string): Promise<UserOutput> => {
   return axios
-    .put<UserOutput>(`/api/users/${user}`, body)
+    .get<UserOutput>(`/api/users/${user}`)
     .then(response => response.data);
 }
 

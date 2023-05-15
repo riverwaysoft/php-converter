@@ -62,10 +62,8 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
     {
         $string = "export const %s = (%s): %s => {\n%s\n}\n\n";
 
-        $nameOriginal = str_replace('/', '_', $apiEndpoint->route) . '_' . $apiEndpoint->method->getType();
-        $nameOriginal = str_replace(['{', '}'], '', $nameOriginal);
-
-        $name = (new Convert($nameOriginal))->toCamel();
+        $fullRoute = $apiEndpoint->route . '/' . $apiEndpoint->method->getType();
+        $name = $this->normalizeEndpointName($fullRoute);
 
         $params = implode(', ', array_map(
             fn (string $param): string => "{$param}: string",
@@ -90,6 +88,16 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
     .then(response => response.data);', $apiEndpoint->method->getType(), $outputType, $route, $form);
 
         return sprintf($string, $name, $params, $returnType, $body);
+    }
+
+    private function normalizeEndpointName(string $str): string
+    {
+        // Remove slashes and brace
+        $str = str_replace(['/', '{', '}'], ' ', $str);
+        // Convert to camel case
+        $str = ucwords($str);
+        // Remove spaces and convert the first character to lowercase
+        return lcfirst(str_replace(' ', '', $str));
     }
 
     private function injectJavaScriptInterpolatedVariables(string $route): string

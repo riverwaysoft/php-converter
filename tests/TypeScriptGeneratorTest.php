@@ -518,8 +518,8 @@ class UserController {
   public function getUser(#[Input] CreateUserInput $input) {}
   
   #[DtoEndpoint(returnOne: UserOutput::class)]
-  #[Route('/api/users/{user}', methods: ['PUT'])]
-  public function getUser(User $user, #[Input] UpdateUserInput $input) {}
+  #[Route('/api/users/{userToUpdate}', methods: ['PUT'])]
+  public function getUser(User $userToUpdate, #[Input] UpdateUserInput $input) {}
 }
 CODE;
 
