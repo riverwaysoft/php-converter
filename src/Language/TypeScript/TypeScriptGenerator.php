@@ -60,7 +60,7 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
 
     private function convertToTypeScriptEndpoint(ApiEndpoint $apiEndpoint, DtoList $dtoList): string
     {
-        $string = "export const %s = (%s): %s => {\n%s\n}\n\n";
+        $string = "\nexport const %s = (%s): %s => {\n%s\n}\n";
 
         $fullRoute = $apiEndpoint->route . '/' . $apiEndpoint->method->getType();
         $name = $this->normalizeEndpointName($fullRoute);
@@ -85,7 +85,7 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
         $route = $this->injectJavaScriptInterpolatedVariables($apiEndpoint->route);
         $body = sprintf('  return axios
     .%s<%s>(`%s`%s)
-    .then(response => response.data);', $apiEndpoint->method->getType(), $outputType, $route, $form);
+    .then((response) => response.data);', $apiEndpoint->method->getType(), $outputType, $route, $form);
 
         return sprintf($string, $name, $params, $returnType, $body);
     }
