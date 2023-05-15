@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Riverwaysoft\DtoConverter\Language\Dart;
 
-use Riverwaysoft\DtoConverter\Dto\DtoClassProperty;
+use Riverwaysoft\DtoConverter\Ast\ConverterResult;
 use Riverwaysoft\DtoConverter\Dto\DtoEnumProperty;
 use Riverwaysoft\DtoConverter\Dto\DtoList;
 use Riverwaysoft\DtoConverter\Dto\DtoType;
@@ -38,10 +38,11 @@ class DartGenerator implements LanguageGeneratorInterface
     }
 
     /** @inheritDoc */
-    public function generate(DtoList $dtoList): array
+    public function generate(ConverterResult $converterResult): array
     {
         $this->outputWriter->reset();
 
+        $dtoList = $converterResult->dtoList;
         foreach ($dtoList->getList() as $dto) {
             $this->outputWriter->writeType($this->convertToDartType($dto, $dtoList), $dto);
         }

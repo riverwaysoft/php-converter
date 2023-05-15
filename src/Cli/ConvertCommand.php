@@ -51,8 +51,8 @@ class ConvertCommand extends Command
             return Command::SUCCESS;
         }
 
-        $normalized = $this->converter->convert($files);
-        $outputFiles = $this->languageGenerator->generate($normalized);
+        $converterResult = $this->converter->convert($files);
+        $outputFiles = $this->languageGenerator->generate($converterResult);
 
         foreach ($outputFiles as $outputFile) {
             $outputAbsolutePath = rtrim($to, '/') . '/' . $outputFile->getRelativeName();

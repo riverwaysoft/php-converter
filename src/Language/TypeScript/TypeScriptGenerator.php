@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Riverwaysoft\DtoConverter\Language\TypeScript;
 
+use Riverwaysoft\DtoConverter\Ast\ConverterResult;
 use Riverwaysoft\DtoConverter\Dto\DtoClassProperty;
 use Riverwaysoft\DtoConverter\Dto\DtoEnumProperty;
 use Riverwaysoft\DtoConverter\Dto\DtoList;
@@ -38,10 +39,11 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
     }
 
     /** @return OutputFile[] */
-    public function generate(DtoList $dtoList): array
+    public function generate(ConverterResult $converterResult): array
     {
         $this->outputWriter->reset();
 
+        $dtoList = $converterResult->dtoList;
         foreach ($dtoList->getList() as $dto) {
             $this->outputWriter->writeType($this->convertToTypeScriptType($dto, $dtoList), $dto);
         }

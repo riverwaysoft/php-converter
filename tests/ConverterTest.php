@@ -37,7 +37,7 @@ class Profile {
 CODE;
 
         $normalized = (new Converter())->convert([$codeNestedDto]);
-        $this->assertMatchesJsonSnapshot($normalized->getList());
+        $this->assertMatchesJsonSnapshot($normalized->dtoList->getList());
     }
 
     public function testFilterClassesByDocBlock(): void
@@ -93,11 +93,11 @@ CODE;
         $converter = new Converter(new DocBlockCommentFilter('@DTO'));
         $result = $converter->convert([$codeWithDateTime]);
 
-        $this->assertTrue($result->hasDtoWithType('User'));
-        $this->assertTrue($result->hasDtoWithType('Recipe'));
-        $this->assertTrue($result->hasDtoWithType('Category'));
-        $this->assertTrue($result->hasDtoWithType('ColorEnum'));
-        $this->assertFalse($result->hasDtoWithType('IgnoreMe'));
+        $this->assertTrue($result->dtoList->hasDtoWithType('User'));
+        $this->assertTrue($result->dtoList->hasDtoWithType('Recipe'));
+        $this->assertTrue($result->dtoList->hasDtoWithType('Category'));
+        $this->assertTrue($result->dtoList->hasDtoWithType('ColorEnum'));
+        $this->assertFalse($result->dtoList->hasDtoWithType('IgnoreMe'));
     }
 
     public function testExcludeFilterClassesByDocBlock(): void
@@ -150,11 +150,11 @@ CODE;
         $converter = new Converter($classesWithoutIgnoreFilter);
         $result = $converter->convert([$codeWithDateTime]);
 
-        $this->assertTrue($result->hasDtoWithType('User'));
-        $this->assertTrue($result->hasDtoWithType('Recipe'));
-        $this->assertTrue($result->hasDtoWithType('Category'));
-        $this->assertTrue($result->hasDtoWithType('ColorEnum'));
-        $this->assertFalse($result->hasDtoWithType('IgnoreMe'));
+        $this->assertTrue($result->dtoList->hasDtoWithType('User'));
+        $this->assertTrue($result->dtoList->hasDtoWithType('Recipe'));
+        $this->assertTrue($result->dtoList->hasDtoWithType('Category'));
+        $this->assertTrue($result->dtoList->hasDtoWithType('ColorEnum'));
+        $this->assertFalse($result->dtoList->hasDtoWithType('IgnoreMe'));
     }
 
 
@@ -163,10 +163,25 @@ CODE;
         $codeWithDateTime = <<<'CODE'
 <?php
 
+use \Riverwaysoft\DtoConverter\ClassFilter\DtoEndpoint;
+
 #[\Attribute(\Attribute::TARGET_CLASS)]
 class Dto
 {
 
+}
+
+#[\Attribute(\Attribute::TARGET_METHOD)]
+class Route {
+  public function __construct(
+     public string|array $path = null,
+     public array|string $methods = [],
+  ) {}
+}
+
+#[\Attribute(\Attribute::TARGET_PARAMETER)]
+class Input {
+  
 }
 
 #[Dto]
@@ -211,17 +226,72 @@ class User
     public ColorEnum $themeColor;
 }
 
+#[Dto]
+class CreateUserInput {
+  public string $id;
+}
+
+class SomeController {
+  #[DtoEndpoint(returnOne: User::class)]
+  #[Route('/api/users', methods: ['GET'])]
+  public function getUserMethodsArray() {
+  
+  }
+  
+  #[DtoEndpoint(returnOne: User::class)]
+  #[Route('/api/users', methods: ['POST'])]
+  public function createUser(
+    #[Input] CreateUserInput $input,
+  ) {
+  
+  }
+  
+//  #[DtoEndpoint(returnOne: User::class)]
+//  #[Route('/api/users_create')]
+//  public function createUserShouldThrow(
+//    #[Input] CreateUserInput $input,
+//  ) {
+//  
+//  }
+
+  
+  // same url and same method should throw
+//  #[DtoEndpoint(returnOne: User::class)]
+//  #[Route(name: '/api/users', methods: ['GET'])]
+//  public function getUserWithNamedKey() {
+//  
+//  }
+  
+//  #[Route('/api/users', methods: ['GET'])]
+//  #[DtoEndpoint(returnOne: User::class)]
+//  public function getUserMethodsArrayReversedOrder() {
+//  
+//  }
+
+//  #[DtoEndpoint()]
+//  public function getUsersWithoutOutputTypeShouldThrow() {
+//  
+//  }
+  
+//    #[DtoEndpoint(returnOne: User::class)]
+//  #[Route('/api/users', methods: 'GET')]
+//  public function getUserMethodsString() {
+//  
+//  }
+}
 
 CODE;
 
         $converter = new Converter(new PhpAttributeFilter('Dto'));
         $result = $converter->convert([$codeWithDateTime]);
 
-        $this->assertTrue($result->hasDtoWithType('User'));
-        $this->assertTrue($result->hasDtoWithType('Recipe'));
-        $this->assertTrue($result->hasDtoWithType('Category'));
-        $this->assertTrue($result->hasDtoWithType('ColorEnum'));
-        $this->assertFalse($result->hasDtoWithType('IgnoreMe'));
+        $this->assertTrue($result->dtoList->hasDtoWithType('User'));
+        $this->assertTrue($result->dtoList->hasDtoWithType('Recipe'));
+        $this->assertTrue($result->dtoList->hasDtoWithType('Category'));
+        $this->assertTrue($result->dtoList->hasDtoWithType('ColorEnum'));
+        $this->assertFalse($result->dtoList->hasDtoWithType('IgnoreMe'));
+
+        $this->assertMatchesSnapshot($result->apiEndpointList);
     }
 
     public function testPhp81EnumsFailedWhenNonBacked(): void

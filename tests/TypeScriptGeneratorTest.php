@@ -73,7 +73,7 @@ class CloudNotify {
 CODE;
 
         $normalized = (new Converter())->convert([$codeAttribute]);
-        $this->assertMatchesJsonSnapshot($normalized->getList());
+        $this->assertMatchesJsonSnapshot($normalized->dtoList->getList());
         $results = (new TypeScriptGenerator(
             outputWriter: new SingleFileOutputWriter('generated.ts'),
             unknownTypeResolvers: [],
@@ -149,7 +149,7 @@ CODE;
         $converter = new Converter();
         $fileProvider = new FileSystemCodeProvider('/\.php$/');
         $result = $converter->convert($fileProvider->getListings(__DIR__ . '/Fixtures'));
-        $this->assertMatchesJsonSnapshot($result->getList());
+        $this->assertMatchesJsonSnapshot($result->dtoList->getList());
         $results = (new TypeScriptGenerator(
             new SingleFileOutputWriter('generated.ts'),
             [new ClassNameTypeResolver()],
