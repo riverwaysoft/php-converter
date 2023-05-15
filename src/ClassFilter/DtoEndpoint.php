@@ -8,8 +8,8 @@ namespace Riverwaysoft\DtoConverter\ClassFilter;
 class DtoEndpoint
 {
     public function __construct(
-        public string|null $returnMany,
-        public string|null $returnOne,
+        public string|null $returnMany = null,
+        public string|null $returnOne = null,
     ) {
     }
 }
