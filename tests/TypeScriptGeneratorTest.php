@@ -518,7 +518,7 @@ class UserController {
   public function getUser(#[Input] CreateUserInput $input) {}
   
   #[DtoEndpoint(returnOne: UserOutput::class)]
-  #[Route('/api/users_update/{userToUpdate}', methods: ['PUT'])]
+  #[Route('/api/users_update-it/{userToUpdate}', methods: ['PUT'])]
   public function getUser(User $userToUpdate, #[Input] UpdateUserInput $input) {}
 }
 CODE;
@@ -537,7 +537,6 @@ CODE;
             ]),
             new TypeScriptGeneratorOptions(
                 useTypesInsteadOfEnums: false,
-                apiClient: true,
             )
         );
         $results = ($typeScriptGenerator)->generate($result);

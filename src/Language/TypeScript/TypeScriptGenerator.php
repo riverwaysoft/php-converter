@@ -36,7 +36,7 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
         private ?OutputFilesProcessor $outputFilesProcessor = null,
         ?TypeScriptGeneratorOptions $options = null,
     ) {
-        $this->options = $options ?? new TypeScriptGeneratorOptions(useTypesInsteadOfEnums: false, apiClient: false);
+        $this->options = $options ?? new TypeScriptGeneratorOptions(useTypesInsteadOfEnums: false);
         $this->outputFilesProcessor = $this->outputFilesProcessor ?? new OutputFilesProcessor();
     }
 
@@ -93,7 +93,7 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
     private function normalizeEndpointName(string $str): string
     {
         // Remove slashes and brace
-        $str = str_replace(['/', '{', '}', '_'], ' ', $str);
+        $str = str_replace(['/', '{', '}', '_', '-'], ' ', $str);
         // Convert to camel case
         $str = ucwords($str);
         // Remove spaces and convert the first character to lowercase

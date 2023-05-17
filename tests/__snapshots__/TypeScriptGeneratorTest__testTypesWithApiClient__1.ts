@@ -32,8 +32,8 @@ export const apiUsersUserGet = (user: string): Promise<UserOutput> => {
     .then((response) => response.data);
 }
 
-export const apiUsersUpdateUserToUpdatePut = (userToUpdate: string, body: UpdateUserInput): Promise<UserOutput> => {
+export const apiUsersUpdateItUserToUpdatePut = (userToUpdate: string, body: UpdateUserInput): Promise<UserOutput> => {
   return axios
-    .put<UserOutput>(`/api/users_update/${userToUpdate}`, body)
+    .put<UserOutput>(`/api/users_update-it/${userToUpdate}`, body)
     .then((response) => response.data);
 }
