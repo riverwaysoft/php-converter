@@ -73,7 +73,7 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
         $inputType = null;
         if ($apiEndpoint->input) {
             $inputType = $this->getTypeScriptTypeFromPhp($apiEndpoint->input, null, $dtoList);
-            $params = implode(', ', array_filter([$params, "body: ${inputType}"]));
+            $params = implode(', ', array_filter([$params, "body: {$inputType}"]));
         }
 
         $form = $inputType !== null ? sprintf(', body') : '';
