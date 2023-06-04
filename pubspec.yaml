@@ -1,0 +1,10 @@
+name: dto_converter
+
+dependencies:
+  equatable: '^2.0.3'
+
+environment:
+  sdk: '^2.12.0'
+
+
+
