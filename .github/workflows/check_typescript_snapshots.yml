@@ -1,4 +1,4 @@
-name: Check TypeScript snapshots
+name: Check generated TypeScript snapshots
 
 on:
   push:
