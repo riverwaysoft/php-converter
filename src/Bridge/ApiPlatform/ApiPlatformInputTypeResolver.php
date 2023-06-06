@@ -16,12 +16,16 @@ use Webmozart\Assert\Assert;
 
 class ApiPlatformInputTypeResolver implements UnknownTypeResolverInterface
 {
+    private ApiPlatformIriGenerator $apiPlatformIriGenerator;
+
     public function __construct(
         /** @var array<string, string> */
         private array $classMap = [],
         // https://www.typescriptlang.org/docs/handbook/2/template-literal-types.html
         private bool $useTypeScriptTemplateLiteral = false,
+        private bool $useApiPlatformIriGenerator = false,
     ) {
+        $this->apiPlatformIriGenerator = new ApiPlatformIriGenerator();
     }
 
     public function supports(PhpUnknownType $type, DtoType|null $dto, DtoList $dtoList): bool
@@ -62,7 +66,11 @@ class ApiPlatformInputTypeResolver implements UnknownTypeResolverInterface
         }
 
         if ($this->useTypeScriptTemplateLiteral) {
-            return '`/api/${string}`';
+            if ($this->useApiPlatformIriGenerator) {
+                $pluralizedTypeName = $this->apiPlatformIriGenerator->generate($type);
+                return sprintf('`/api/%s/${string}`', $pluralizedTypeName);
+            }
+            return'`/api/${string}`';
         }
 
         return PhpBaseType::string();

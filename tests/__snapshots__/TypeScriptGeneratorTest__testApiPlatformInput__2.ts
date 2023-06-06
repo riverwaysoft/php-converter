@@ -16,11 +16,11 @@ export type ProfileOutput = {
 };
 
 export type UserCreateInput = {
-  profile: `/api/${string}`;
+  profile: `/api/profiles/${string}`;
   promotedAt: string | null;
   userTheme: ColorEnum;
-  industriesUnion: `/api/${string}`[] | null;
-  industriesNullable: `/api/${string}`[] | null;
+  industriesUnion: `/api/industries/${string}`[] | null;
+  industriesNullable: `/api/industries/${string}`[] | null;
   money: { currency: string; amount: number };
   gender: { value: GenderEnum };
   location: { lat: string; lan: string };
