@@ -327,7 +327,7 @@ CODE;
                 new ApiPlatformInputTypeResolver([
                     'LocationEmbeddable' => '{ lat: string; lan: string }',
                     'Money' => '{ currency: string; amount: number }',
-                ], true),
+                ], true, true),
                 new ClassNameTypeResolver(),
             ],
             new OutputFilesProcessor([
