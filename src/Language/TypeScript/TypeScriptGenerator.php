@@ -193,7 +193,11 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
         }
 
         if ($type instanceof PhpListType) {
-            return sprintf('%s[]', $this->getTypeScriptTypeFromPhp($type->getType(), $dto, $dtoList));
+            $listType = $this->getTypeScriptTypeFromPhp($type->getType(), $dto, $dtoList);
+            if ($type->getType() instanceof PhpUnionType) {
+                return sprintf('(%s)[]', $listType);
+            }
+            return sprintf('%s[]', $listType);
         }
 
         if ($type instanceof PhpBaseType) {

@@ -24,4 +24,5 @@ export type UserCreateInput = {
   money: { currency: string; amount: number };
   gender: { value: GenderEnum };
   location: { lat: string; lan: string };
+  mixedArray: (number | string | null)[];
 };

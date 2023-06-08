@@ -295,6 +295,8 @@ class UserCreateInput
     public Money $money;
     public GenderEnum $gender;
     public LocationEmbeddable $location;
+    /** @var (int|string|null)[] */
+    public array $mixedArray;
 }
 
 CODE;

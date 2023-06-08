@@ -84,6 +84,14 @@ class PhpDocTypeParserTest extends TestCase
                 ),
             ],
             [
+                'array with union inside',
+                '/** @var (int|string)[] */',
+                new PhpListType(new PhpUnionType([
+                    PhpBaseType::int(),
+                    PhpBaseType::string(),
+                ]),),
+            ],
+            [
                 '@var is required',
                 '/** int[]|null */',
                 null,
