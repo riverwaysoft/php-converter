@@ -89,7 +89,7 @@ class PhpDocTypeParserTest extends TestCase
                 new PhpListType(new PhpUnionType([
                     PhpBaseType::int(),
                     PhpBaseType::string(),
-                ]),),
+                ]), ),
             ],
             [
                 '@var is required',
