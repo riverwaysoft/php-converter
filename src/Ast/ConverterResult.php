@@ -9,9 +9,22 @@ use Riverwaysoft\DtoConverter\Dto\DtoList;
 
 class ConverterResult
 {
-    public function __construct(
-        public DtoList $dtoList,
-        public ApiEndpointList|null $apiEndpointList = null
-    ) {
+    public DtoList $dtoList;
+    public ApiEndpointList $apiEndpointList;
+
+    public function __construct()
+    {
+        $this->dtoList = new DtoList();
+        $this->apiEndpointList = new ApiEndpointList();
+    }
+
+    public function merge(self $result): void
+    {
+        foreach ($result->dtoList->getList() as $anotherDto) {
+            $this->dtoList->add($anotherDto);
+        }
+        foreach ($result->apiEndpointList->getList() as $anotherEndpoint) {
+            $this->apiEndpointList->add($anotherEndpoint);
+        }
     }
 }

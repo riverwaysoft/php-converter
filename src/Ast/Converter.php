@@ -19,41 +19,39 @@ use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeFactory;
 class Converter
 {
     private Parser $parser;
-    private PhpDocTypeParser $phpDocTypeParser;
-    private PhpTypeFactory $phpTypeFactory;
 
     public function __construct(
         private ?ClassFilterInterface $dtoClassFilter = null,
     ) {
-        $this->phpTypeFactory = new PhpTypeFactory();
         $this->parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
-        $this->phpDocTypeParser = new PhpDocTypeParser($this->phpTypeFactory);
     }
 
     /** @param string[]|iterable $listings */
     public function convert(iterable $listings): ConverterResult
     {
-        $dtoList = new DtoList();
-        $apiEndpointList = new ApiEndpointList();
+        $converterResult = new ConverterResult();
+
+        /** @var ConverterVisitor[] $visitors */
+        $visitors = [
+           new DtoVisitor($this->dtoClassFilter),
+           new SymfonyControllerVisitor('DtoEndpoint'),
+        ];
 
         foreach ($listings as $listing) {
-            $this->normalize($listing, $dtoList, $apiEndpointList);
+            $ast = $this->parser->parse($listing);
+            $traverser = new NodeTraverser();
+
+            foreach ($visitors as $visitor) {
+                $traverser->addVisitor($visitor);
+            }
+
+            $traverser->traverse($ast);
+
+            foreach ($visitors as $visitor) {
+                $converterResult->merge($visitor->popResult());
+            }
         }
 
-        return new ConverterResult(
-            dtoList: $dtoList,
-            apiEndpointList: $apiEndpointList,
-        );
-    }
-
-    private function normalize(string $code, DtoList $dtoList, ApiEndpointList $apiEndpointList): void
-    {
-        $ast = $this->parser->parse($code);
-        $dtoVisitor = new DtoVisitor($dtoList, $this->phpDocTypeParser, $this->phpTypeFactory, $this->dtoClassFilter);
-        $symfonyControllerVisitor = new SymfonyControllerVisitor('DtoEndpoint', $apiEndpointList, $this->phpTypeFactory);
-        $traverser = new NodeTraverser();
-        $traverser->addVisitor($dtoVisitor);
-        $traverser->addVisitor($symfonyControllerVisitor);
-        $traverser->traverse($ast);
+        return $converterResult;
     }
 }

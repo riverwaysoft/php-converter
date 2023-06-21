@@ -7,21 +7,20 @@ namespace Riverwaysoft\DtoConverter\Ast;
 use PhpParser\Node;
 use PhpParser\Node\Attribute;
 use PhpParser\Node\Stmt\ClassMethod;
-use PhpParser\NodeVisitorAbstract;
 use Riverwaysoft\DtoConverter\Dto\ApiClient\ApiEndpoint;
-use Riverwaysoft\DtoConverter\Dto\ApiClient\ApiEndpointList;
 use Riverwaysoft\DtoConverter\Dto\ApiClient\ApiEndpointMethod;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpBaseType;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpListType;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeFactory;
 
-class SymfonyControllerVisitor extends NodeVisitorAbstract
+class SymfonyControllerVisitor extends ConverterVisitor
 {
+    private ConverterResult $converterResult;
+
     public function __construct(
         private string $attribute,
-        private ApiEndpointList $apiEndpointList,
-        private PhpTypeFactory $phpTypeFactory,
     ) {
+        $this->converterResult = new ConverterResult();
     }
 
     public function leaveNode(Node $node)
@@ -116,13 +115,13 @@ class SymfonyControllerVisitor extends NodeVisitorAbstract
             if (!($arg->value instanceof Node\Expr\ClassConstFetch)) {
                 throw new \Exception('Argument of returnOne should be a class string');
             }
-            $outputType = $this->phpTypeFactory->create($arg->value->class->parts[0]);
+            $outputType = PhpTypeFactory::create($arg->value->class->parts[0]);
         }
         if ($arg = $this->getAttributeArgumentByName($dtoReturnAttribute, 'returnMany')) {
             if (!($arg->value instanceof Node\Expr\ClassConstFetch)) {
                 throw new \Exception('Argument of returnMany should be a class string');
             }
-            $outputType = new PhpListType($this->phpTypeFactory->create($arg->value->class->parts[0]));
+            $outputType = new PhpListType(PhpTypeFactory::create($arg->value->class->parts[0]));
         }
 
         $inputType = null;
@@ -135,7 +134,7 @@ class SymfonyControllerVisitor extends NodeVisitorAbstract
                 if ($inputType) {
                     throw new \Exception('Multiple #[Input] on controller action are not supported');
                 }
-                $inputType = $this->phpTypeFactory->create($param->type->parts[0]);
+                $inputType = PhpTypeFactory::create($param->type->parts[0]);
             }
 
             if (isset($excessiveRouteParams[$param->var->name])) {
@@ -155,7 +154,7 @@ class SymfonyControllerVisitor extends NodeVisitorAbstract
             ));
         }
 
-        $this->apiEndpointList->add(new ApiEndpoint(
+        $this->converterResult->apiEndpointList->add(new ApiEndpoint(
             route: $route,
             method: ApiEndpointMethod::fromString($method),
             input: $inputType,
@@ -177,5 +176,10 @@ class SymfonyControllerVisitor extends NodeVisitorAbstract
         }
 
         return $params;
+    }
+
+    public function popResult(): ConverterResult
+    {
+        return $this->converterResult;
     }
 }

@@ -25,7 +25,7 @@ class PhpDocTypeParser
     private Lexer $lexer;
     private PhpDocParser $phpDocParser;
 
-    public function __construct(private PhpTypeFactory $phpTypeFactory)
+    public function __construct()
     {
         $this->lexer = new Lexer();
         $constExprParser = new ConstExprParser();
@@ -62,7 +62,7 @@ class PhpDocTypeParser
     private function convertToDto(TypeNode $node): PhpTypeInterface|null
     {
         if ($node instanceof IdentifierTypeNode) {
-            return $this->phpTypeFactory->create($node->name);
+            return PhpTypeFactory::create($node->name);
         }
         if ($node instanceof ArrayTypeNode) {
             return new PhpListType($this->convertToDto($node->type));
