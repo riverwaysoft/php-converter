@@ -2,11 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\Ast;
+namespace Riverwaysoft\DtoConverter\Bridge\Symfony;
 
 use PhpParser\Node;
 use PhpParser\Node\Attribute;
 use PhpParser\Node\Stmt\ClassMethod;
+use Riverwaysoft\DtoConverter\Ast\ConverterResult;
+use Riverwaysoft\DtoConverter\Ast\ConverterVisitor;
 use Riverwaysoft\DtoConverter\Dto\ApiClient\ApiEndpoint;
 use Riverwaysoft\DtoConverter\Dto\ApiClient\ApiEndpointMethod;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpBaseType;
@@ -18,6 +20,7 @@ class SymfonyControllerVisitor extends ConverterVisitor
     private ConverterResult $converterResult;
 
     public function __construct(
+        // TODO: consider using class filter interface?
         private string $attribute,
     ) {
         $this->converterResult = new ConverterResult();

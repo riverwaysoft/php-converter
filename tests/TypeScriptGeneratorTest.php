@@ -7,7 +7,9 @@ namespace App\Tests;
 use App\Tests\SnapshotComparator\TypeScriptSnapshotComparator;
 use PHPUnit\Framework\TestCase;
 use Riverwaysoft\DtoConverter\Ast\Converter;
+use Riverwaysoft\DtoConverter\Ast\DtoVisitor;
 use Riverwaysoft\DtoConverter\Bridge\ApiPlatform\ApiPlatformInputTypeResolver;
+use Riverwaysoft\DtoConverter\Bridge\Symfony\SymfonyControllerVisitor;
 use Riverwaysoft\DtoConverter\ClassFilter\PhpAttributeFilter;
 use Riverwaysoft\DtoConverter\CodeProvider\FileSystemCodeProvider;
 use Riverwaysoft\DtoConverter\Language\TypeScript\TypeScriptGenerator;
@@ -72,7 +74,7 @@ class CloudNotify {
 }
 CODE;
 
-        $normalized = (new Converter())->convert([$codeAttribute]);
+        $normalized = (new Converter([new DtoVisitor()]))->convert([$codeAttribute]);
         $this->assertMatchesJsonSnapshot($normalized->dtoList->getList());
         $results = (new TypeScriptGenerator(
             outputWriter: new SingleFileOutputWriter('generated.ts'),
@@ -88,7 +90,7 @@ CODE;
 
     public function testNestedDtoConvert(): void
     {
-        $normalized = (new Converter())->convert([$this->codeNestedDto]);
+        $normalized = (new Converter([new DtoVisitor()]))->convert([$this->codeNestedDto]);
         $results = (new TypeScriptGenerator(
             outputWriter: new SingleFileOutputWriter('generated.ts'),
             unknownTypeResolvers: [new ClassNameTypeResolver()],
@@ -130,7 +132,7 @@ class User
 }
 CODE;
 
-        $normalized = (new Converter())->convert([$code]);
+        $normalized = (new Converter([new DtoVisitor()]))->convert([$code]);
         $typeScriptGenerator = new TypeScriptGenerator(
             new SingleFileOutputWriter('generated.ts'),
             [new ClassNameTypeResolver()],
@@ -146,7 +148,7 @@ CODE;
 
     public function testNormalizationDirectory(): void
     {
-        $converter = new Converter();
+        $converter = new Converter([new DtoVisitor()]);
         $fileProvider = new FileSystemCodeProvider('/\.php$/');
         $result = $converter->convert($fileProvider->getListings(__DIR__ . '/Fixtures'));
         $this->assertMatchesJsonSnapshot($result->dtoList->getList());
@@ -185,7 +187,7 @@ class UserCreateConstructor
 }
 CODE;
 
-        $converter = new Converter();
+        $converter = new Converter([new DtoVisitor()]);
         $result = $converter->convert([$codeWithDateTime]);
         $typeScriptGenerator = new TypeScriptGenerator(
             new SingleFileOutputWriter('generated.ts'),
@@ -201,7 +203,7 @@ CODE;
 
     public function testEntityPerClassOutputWriterTypeScript(): void
     {
-        $normalized = (new Converter())->convert([$this->codeNestedDto]);
+        $normalized = (new Converter([new DtoVisitor()]))->convert([$this->codeNestedDto]);
 
         $fileNameGenerator = new KebabCaseFileNameGenerator('.ts');
         $typeScriptGenerator = new TypeScriptGenerator(
@@ -301,7 +303,7 @@ class UserCreateInput
 
 CODE;
 
-        $converter = new Converter(new PhpAttributeFilter('Dto'));
+        $converter = new Converter([new DtoVisitor(new PhpAttributeFilter('Dto'))]);
         $result = $converter->convert([$codeWithDateTime]);
         $typeScriptGenerator = new TypeScriptGenerator(
             new SingleFileOutputWriter('generated.ts'),
@@ -362,7 +364,7 @@ class A
 class B {}
 CODE;
 
-        $converter = new Converter(new PhpAttributeFilter('Dto'));
+        $converter = new Converter([new DtoVisitor(new PhpAttributeFilter('Dto'))]);
         $result = $converter->convert([$codeWithDateTime]);
         $typeScriptGenerator = new TypeScriptGenerator(new SingleFileOutputWriter('generated.ts'), [new ClassNameTypeResolver(), new DateTimeTypeResolver()]);
 
@@ -392,7 +394,7 @@ final class GenderEnum extends Enum
 
 CODE;
 
-        $converter = new Converter(new PhpAttributeFilter('Dto'));
+        $converter = new Converter([new DtoVisitor(new PhpAttributeFilter('Dto'))]);
         $result = $converter->convert([$codeWithDateTime]);
         $typeScriptGenerator = new TypeScriptGenerator(new SingleFileOutputWriter('generated.ts'), [new ClassNameTypeResolver(), new DateTimeTypeResolver()]);
 
@@ -447,7 +449,7 @@ class User {
 }
 CODE;
 
-        $converter = new Converter(new PhpAttributeFilter('Dto'));
+        $converter = new Converter([new DtoVisitor(new PhpAttributeFilter('Dto'))]);
         $result = $converter->convert([$codeWithDateTime]);
 
         $typeScriptGenerator = new TypeScriptGenerator(
@@ -525,7 +527,10 @@ class UserController {
 }
 CODE;
 
-        $converter = new Converter(new PhpAttributeFilter('Dto'));
+        $converter = new Converter([
+            new DtoVisitor(new PhpAttributeFilter('Dto')),
+            new SymfonyControllerVisitor('DtoEndpoint'),
+        ]);
         $result = $converter->convert([$codeWithDateTime]);
 
         $typeScriptGenerator = new TypeScriptGenerator(

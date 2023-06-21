@@ -6,6 +6,8 @@ declare(strict_types=1);
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use Riverwaysoft\DtoConverter\Ast\Converter;
+use Riverwaysoft\DtoConverter\Ast\DtoVisitor;
+use Riverwaysoft\DtoConverter\Bridge\Symfony\SymfonyControllerVisitor;
 use Riverwaysoft\DtoConverter\ClassFilter\PhpAttributeFilter;
 use Riverwaysoft\DtoConverter\Cli\ConvertCommand;
 use Riverwaysoft\DtoConverter\CodeProvider\FileSystemCodeProvider;
@@ -21,9 +23,10 @@ $application = new Application();
 
 $application->add(
     new ConvertCommand(
-        new Converter(
-            new PhpAttributeFilter('Dto'),
-        ),
+        new Converter([
+           new DtoVisitor(new PhpAttributeFilter('Dto')),
+           new SymfonyControllerVisitor('DtoEndpoint'),
+        ]),
         new TypeScriptGenerator(
             new SingleFileOutputWriter('generated.ts'),
             [

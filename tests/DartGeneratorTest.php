@@ -7,6 +7,7 @@ namespace App\Tests;
 use App\Tests\SnapshotComparator\DartSnapshotComparator;
 use PHPUnit\Framework\TestCase;
 use Riverwaysoft\DtoConverter\Ast\Converter;
+use Riverwaysoft\DtoConverter\Ast\DtoVisitor;
 use Riverwaysoft\DtoConverter\Language\Dart\DartClassFactoryGenerator;
 use Riverwaysoft\DtoConverter\Language\Dart\DartEquitableGenerator;
 use Riverwaysoft\DtoConverter\Language\Dart\DartGenerator;
@@ -68,7 +69,7 @@ class User
 }
 CODE;
 
-        $normalized = (new Converter())->convert([$codeDart]);
+        $normalized = (new Converter([new DtoVisitor()]))->convert([$codeDart]);
 
         $results = (new DartGenerator(
             new SingleFileOutputWriter('generated.dart'),
@@ -166,7 +167,7 @@ class UserCreateInput
 }
 CODE;
 
-        $normalized = (new Converter())->convert([$codeDart]);
+        $normalized = (new Converter([new DtoVisitor()]))->convert([$codeDart]);
 
         $results = (new DartGenerator(
             new SingleFileOutputWriter('generated.dart'),
@@ -207,7 +208,7 @@ class Profile {
     public int $age;
 }
 CODE;
-        $normalized = (new Converter())->convert([$codeNestedDto]);
+        $normalized = (new Converter([new DtoVisitor()]))->convert([$codeNestedDto]);
 
         $fileNameGenerator = new SnakeCaseFileNameGenerator('.dart');
         $dartGenerator = new DartGenerator(

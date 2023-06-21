@@ -21,7 +21,8 @@ class Converter
     private Parser $parser;
 
     public function __construct(
-        private ?ClassFilterInterface $dtoClassFilter = null,
+        /** @var ConverterVisitor[] */
+        private array $visitors,
     ) {
         $this->parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
     }
@@ -31,23 +32,17 @@ class Converter
     {
         $converterResult = new ConverterResult();
 
-        /** @var ConverterVisitor[] $visitors */
-        $visitors = [
-           new DtoVisitor($this->dtoClassFilter),
-           new SymfonyControllerVisitor('DtoEndpoint'),
-        ];
-
         foreach ($listings as $listing) {
             $ast = $this->parser->parse($listing);
             $traverser = new NodeTraverser();
 
-            foreach ($visitors as $visitor) {
+            foreach ($this->visitors as $visitor) {
                 $traverser->addVisitor($visitor);
             }
 
             $traverser->traverse($ast);
 
-            foreach ($visitors as $visitor) {
+            foreach ($this->visitors as $visitor) {
                 $converterResult->merge($visitor->popResult());
             }
         }
