@@ -12,6 +12,12 @@ export type AdminZoneChatOutput = {
   isAdmin: boolean;
 };
 
+export type AdminZoneChatUpdateInput = {
+};
+
+export type ChatMessageWithAttachmentsOutput = {
+};
+
 export type ChatOutput = {
   id: string;
 };
@@ -19,6 +25,30 @@ export type ChatOutput = {
 export const apiChatsGet = (): Promise<ChatOutput> => {
   return axios
     .get<ChatOutput>(`/api/chats`)
+    .then((response) => response.data);
+}
+
+export const apiChatsIdGet = (id: string): Promise<ChatOutput> => {
+  return axios
+    .get<ChatOutput>(`/api/chats/${id}`)
+    .then((response) => response.data);
+}
+
+export const apiChatsIdMarkAsReadPut = (id: string): Promise<ChatOutput> => {
+  return axios
+    .put<ChatOutput>(`/api/chats/${id}/mark_as_read`)
+    .then((response) => response.data);
+}
+
+export const apiChatsIdMessagesWithAttachmentsGet = (id: string): Promise<ChatMessageWithAttachmentsOutput> => {
+  return axios
+    .get<ChatMessageWithAttachmentsOutput>(`/api/chats/${id}/messages_with_attachments`)
+    .then((response) => response.data);
+}
+
+export const apiChatsIdMutePut = (id: string): Promise<ChatOutput> => {
+  return axios
+    .put<ChatOutput>(`/api/chats/${id}/mute`)
     .then((response) => response.data);
 }
 
@@ -31,5 +61,17 @@ export const apiChatsAdminZoneGet = (): Promise<AdminZoneChatOutput> => {
 export const apiChatsAdminZonePost = (body: AdminZoneChatCreateInput): Promise<AdminZoneChatOutput> => {
   return axios
     .post<AdminZoneChatOutput>(`/api/chats_admin_zone`, body)
+    .then((response) => response.data);
+}
+
+export const apiChatsAdminZoneIdPut = (id: string, body: AdminZoneChatUpdateInput): Promise<AdminZoneChatOutput> => {
+  return axios
+    .put<AdminZoneChatOutput>(`/api/chats_admin_zone/${id}`, body)
+    .then((response) => response.data);
+}
+
+export const apiChatsAdminZoneIdGet = (id: string): Promise<AdminZoneChatOutput> => {
+  return axios
+    .get<AdminZoneChatOutput>(`/api/chats_admin_zone/${id}`)
     .then((response) => response.data);
 }

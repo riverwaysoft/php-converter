@@ -576,6 +576,14 @@ class ChatOutput {
   }
 }
 
+#[Dto]
+class ChatMessageWithAttachmentsOutput {
+
+}
+
+#[Dto]
+class AdminZoneChatUpdateInput {}
+
 
 #[\Attribute(\Attribute::TARGET_CLASS)]
 class ApiResource {
@@ -618,35 +626,35 @@ class ApiResource {
             'output' => AdminZoneChatOutput::class,
         ]
     ],
-//    itemOperations: [
-//        "get" => ["security" => "is_granted('ROLE_CHAT_ITEM_ACCESS', object)"],
-//        "chat_messages_with_attachments" => ["method" => "GET", "output" => ChatMessageWithAttachmentsOutput::class, "path" => "/chats/{id}/messages_with_attachments", "controller" => ChatMessageAttachmentsController::class],
-//        "mark_as_read" => [
-//            "path" => "/chats/{id}/mark_as_read",
-//            "method" => "PUT",
-//            "input" => false,
-//            "controller" => MarkChatAsReadAction::class,
-//            "security" => "is_granted('ROLE_CHAT_ITEM_ACCESS', object)"
-//        ],
-//        "mute" => [
-//            'path' => '/chats/{id}/mute',
-//            'method' => 'PUT',
-//            'input' => false,
-//            "controller" => MuteChatController::class,
-//            "security" => "is_granted('ROLE_CHAT_ITEM_ACCESS', object)"
-//        ],
-//        "admin_update" => [
-//            "path" => '/chats_admin_zone/{id}',
-//            'method' => 'PUT',
-//            'input' => AdminZoneChatUpdateInput::class,
-//            'output' => AdminZoneChatOutput::class,
-//        ],
-//        "admin_get" => [
-//            "path" => '/chats_admin_zone/{id}',
-//            'method' => 'GET',
-//            'output' => AdminZoneChatOutput::class,
-//        ]
-//    ],
+    itemOperations: [
+        "get" => ["security" => "is_granted('ROLE_CHAT_ITEM_ACCESS', object)"],
+        "chat_messages_with_attachments" => ["method" => "GET", "output" => ChatMessageWithAttachmentsOutput::class, "path" => "/chats/{id}/messages_with_attachments", "controller" => ChatMessageAttachmentsController::class],
+        "mark_as_read" => [
+            "path" => "/chats/{id}/mark_as_read",
+            "method" => "PUT",
+            "input" => false,
+            "controller" => MarkChatAsReadAction::class,
+            "security" => "is_granted('ROLE_CHAT_ITEM_ACCESS', object)"
+        ],
+        "mute" => [
+            'path' => '/chats/{id}/mute',
+            'method' => 'PUT',
+            'input' => false,
+            "controller" => MuteChatController::class,
+            "security" => "is_granted('ROLE_CHAT_ITEM_ACCESS', object)"
+        ],
+        "admin_update" => [
+            "path" => '/chats_admin_zone/{id}',
+            'method' => 'PUT',
+            'input' => AdminZoneChatUpdateInput::class,
+            'output' => AdminZoneChatOutput::class,
+        ],
+        "admin_get" => [
+            "path" => '/chats_admin_zone/{id}',
+            'method' => 'GET',
+            'output' => AdminZoneChatOutput::class,
+        ]
+    ],
     output: ChatOutput::class
 )]
 #[DtoResource]

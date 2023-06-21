@@ -4,17 +4,15 @@ declare(strict_types=1);
 
 namespace Riverwaysoft\DtoConverter\Bridge\ApiPlatform;
 
-use Doctrine\Inflector\Inflector;
-use Doctrine\Inflector\InflectorFactory;
 use PhpParser\Node;
 use PhpParser\Node\Attribute;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Enum_;
 use Riverwaysoft\DtoConverter\Ast\ConverterResult;
 use Riverwaysoft\DtoConverter\Ast\ConverterVisitor;
+use Riverwaysoft\DtoConverter\Bridge\Symfony\SymfonyRoutingParser;
 use Riverwaysoft\DtoConverter\ClassFilter\ClassFilterInterface;
 use Riverwaysoft\DtoConverter\Dto\ApiClient\ApiEndpoint;
-use Riverwaysoft\DtoConverter\Dto\ApiClient\ApiEndpointList;
 use Riverwaysoft\DtoConverter\Dto\ApiClient\ApiEndpointMethod;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeFactory;
 
@@ -22,7 +20,7 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
 {
     private ApiPlatformIriGenerator $iriGenerator;
     private ConverterResult $converterResult;
-    const API_PLATFORM_ATTRIBUTE = 'ApiResource';
+    public const API_PLATFORM_ATTRIBUTE = 'ApiResource';
 
     public function __construct(private ?ClassFilterInterface $classFilter = null)
     {
@@ -43,7 +41,9 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
             }
 
             $collectionOperationsArg = $this->getAttributeArgumentByName($apiResourceAttribute, 'collectionOperations');
-            if ($collectionOperationsArg?->value instanceof Node\Expr\Array_) {
+            $itemOperationsArg = $this->getAttributeArgumentByName($apiResourceAttribute, 'itemOperations');
+
+            if ($collectionOperationsArg?->value instanceof Node\Expr\Array_ || $itemOperationsArg?->value instanceof Node\Expr\Array_) {
                 // Main output
                 $mainOutput = null;
                 $outputNode = $this->getAttributeArgumentByName($apiResourceAttribute, 'output');
@@ -61,38 +61,67 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
                     $mainInput = $inputNode->value->class->parts[array_key_last($inputNode->value->class->parts)];
                 }
 
-                foreach ($collectionOperationsArg->value->items as $item) {
-                    if (!($item->value instanceof Node\Expr\Array_)) {
-                        continue;
+                if ($collectionOperationsArg?->value instanceof Node\Expr\Array_) {
+                    foreach ($collectionOperationsArg->value->items as $item) {
+                        $apiEndpoint = $this->createApiEndpoint($item, true, $node, $mainOutput, $mainInput);
+                        if ($apiEndpoint) {
+                            $this->converterResult->apiEndpointList->add($apiEndpoint);
+                        }
                     }
-                    if (!($item->key instanceof Node\Scalar\String_)) {
-                        continue;
+                }
+
+                if ($itemOperationsArg?->value instanceof Node\Expr\Array_) {
+                    foreach ($itemOperationsArg->value->items as $item) {
+                        $apiEndpoint = $this->createApiEndpoint($item, false, $node, $mainOutput, $mainInput);
+                        if ($apiEndpoint) {
+                            $this->converterResult->apiEndpointList->add($apiEndpoint);
+                        }
                     }
-
-                    $method = $this->findArrayAttributeValueByKey('method', $item->value->items) ?? $item->key->value;
-                    $method = ApiEndpointMethod::fromString($method);
-
-                    $route = $this->findArrayAttributeValueByKey('path', $item->value->items) ?? $this->iriGenerator->generate($node->name->name);
-                    $route = '/api/'.ltrim($route, '/');
-
-                    $output = $this->findArrayAttributeValueByKey('output', $item->value->items) ?? $mainOutput;
-                    $outputType = PhpTypeFactory::create($output);
-
-                    $input = $this->findArrayAttributeValueByKey('input', $item->value->items) ?? $mainInput;
-                    $inputType = $input !== null ? PhpTypeFactory::create($input) : null;
-
-                    $this->converterResult->apiEndpointList->add(new ApiEndpoint(
-                        route: $route,
-                        method: $method,
-                        input: $inputType,
-                        output: $outputType,
-                        routeParams: [],
-                    ));
                 }
             }
         }
 
         return null;
+    }
+
+    private function createApiEndpoint(Node\Expr\ArrayItem $item, bool $isCollection, Class_ $node, string $mainOutput, string|null $mainInput): null|ApiEndpoint
+    {
+        if (!($item->value instanceof Node\Expr\Array_)) {
+            return null;
+        }
+        if (!($item->key instanceof Node\Scalar\String_)) {
+            return null;
+        }
+
+        $method = $this->findArrayAttributeValueByKey('method', $item->value->items) ?? $item->key->value;
+        $method = ApiEndpointMethod::fromString($method);
+
+        $route = $this->findArrayAttributeValueByKey('path', $item->value->items);
+        $routeParams = [];
+        if (!$route) {
+            $route = $this->iriGenerator->generate($node->name->name);
+            if (!$isCollection) {
+                $route = rtrim($route, '/') . '/{id}';
+                $routeParams[] = 'id';
+            }
+        } else {
+            $routeParams = SymfonyRoutingParser::parseRoute($route);
+        }
+        $route = '/api/'.ltrim($route, '/');
+
+        $output = $this->findArrayAttributeValueByKey('output', $item->value->items) ?? $mainOutput;
+        $outputType = PhpTypeFactory::create($output);
+
+        $input = $this->findArrayAttributeValueByKey('input', $item->value->items) ?? $mainInput;
+        $inputType = $input !== null ? PhpTypeFactory::create($input) : null;
+
+        return new ApiEndpoint(
+            route: $route,
+            method: $method,
+            input: $inputType,
+            output: $outputType,
+            routeParams: $routeParams,
+        );
     }
 
     /**
@@ -107,6 +136,12 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
                 }
                 if ($arrayItem->value instanceof Node\Expr\ClassConstFetch) {
                     return $arrayItem->value->class->parts[array_key_last($arrayItem->value->class->parts)];
+                }
+                // Handle ['input' => false]
+                if ($arrayItem->value instanceof Node\Expr\ConstFetch) {
+                    if ($arrayItem->value->name->parts[array_key_last($arrayItem->value->name->parts)] === 'false') {
+                        return null;
+                    }
                 }
 
                 throw new \Exception('Expected to have string value for key '.$arrayItem->key->value);

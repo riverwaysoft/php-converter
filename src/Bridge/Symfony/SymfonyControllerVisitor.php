@@ -128,7 +128,7 @@ class SymfonyControllerVisitor extends ConverterVisitor
         }
 
         $inputType = null;
-        $routeParams = $this->parseRoute($route);
+        $routeParams = SymfonyRoutingParser::parseRoute($route);
         /** @var string[] $excessiveRouteParams */
         $excessiveRouteParams = array_flip($routeParams);
         foreach ($node->params as $param) {
@@ -164,21 +164,6 @@ class SymfonyControllerVisitor extends ConverterVisitor
             output: $outputType,
             routeParams: $routeParams,
         ));
-    }
-
-    /** @return string[] */
-    private function parseRoute(string $route): array
-    {
-        $pattern = '/\{([^\/}]+)\}/';
-        /** @var string[] $params */
-        $params = [];
-
-        preg_match_all($pattern, $route, $matches);
-        foreach ($matches[1] as $param) {
-            $params[] = $param;
-        }
-
-        return $params;
     }
 
     public function popResult(): ConverterResult
