@@ -6,6 +6,7 @@ namespace App\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Riverwaysoft\DtoConverter\Ast\Converter;
+use Riverwaysoft\DtoConverter\Ast\DtoVisitor;
 use Riverwaysoft\DtoConverter\Language\UnknownTypeResolver\ClassNameTypeResolver;
 use Riverwaysoft\DtoConverter\OutputWriter\SingleFileOutputWriter\SingleFileOutputWriter;
 use Spatie\Snapshots\Drivers\TextDriver;
@@ -47,7 +48,7 @@ CODE;
 
     public function testDart(): void
     {
-        $normalized = (new Converter())->convert([$this->codePhp]);
+        $normalized = (new Converter([new DtoVisitor()]))->convert([$this->codePhp]);
         $results = (new GoGeneratorSimple(new SingleFileOutputWriter('generated.go'), [new ClassNameTypeResolver()]))->generate($normalized);
 
         $this->assertCount(1, $results);

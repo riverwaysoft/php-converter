@@ -7,25 +7,25 @@ namespace Riverwaysoft\DtoConverter\Ast;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Enum_;
-use PhpParser\NodeVisitorAbstract;
 use Riverwaysoft\DtoConverter\ClassFilter\ClassFilterInterface;
 use Riverwaysoft\DtoConverter\Dto\DtoClassProperty;
 use Riverwaysoft\DtoConverter\Dto\DtoEnumProperty;
-use Riverwaysoft\DtoConverter\Dto\DtoList;
 use Riverwaysoft\DtoConverter\Dto\DtoType;
 use Riverwaysoft\DtoConverter\Dto\ExpressionType;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeFactory;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeInterface;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnionType;
 
-class DtoVisitor extends NodeVisitorAbstract
+class DtoVisitor extends ConverterVisitor
 {
+    private PhpDocTypeParser $phpDocTypeParser;
+    private ConverterResult $converterResult;
+
     public function __construct(
-        private DtoList $dtoList,
-        private PhpDocTypeParser $phpDocTypeParser,
-        private PhpTypeFactory $phpTypeFactory,
         private ?ClassFilterInterface $classFilter = null
     ) {
+        $this->phpDocTypeParser = new PhpDocTypeParser();
+        $this->converterResult = new ConverterResult();
     }
 
     public function leaveNode(Node $node)
@@ -63,7 +63,7 @@ class DtoVisitor extends NodeVisitorAbstract
             ? $param->parts[0]
             : $param->name;
 
-        return $this->phpTypeFactory->create($typeName);
+        return PhpTypeFactory::create($typeName);
     }
 
     private function createDtoType(Class_|Enum_ $node): void
@@ -137,7 +137,7 @@ class DtoVisitor extends NodeVisitorAbstract
             }
         }
 
-        $this->dtoList->add(new DtoType(
+        $this->converterResult->dtoList->add(new DtoType(
             name: $node->name->name,
             expressionType: $expressionType,
             properties: $properties,
@@ -157,5 +157,12 @@ class DtoVisitor extends NodeVisitorAbstract
         return $isMyCLabsEnum
             ? ExpressionType::enumNonStandard()
             : ExpressionType::class();
+    }
+
+    public function popResult(): ConverterResult
+    {
+        $result = $this->converterResult;
+        $this->converterResult = new ConverterResult();
+        return $result;
     }
 }

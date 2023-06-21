@@ -17,7 +17,7 @@ class PhpDocTypeParserTest extends TestCase
     /** @dataProvider getData */
     public function testBasicScenario(string $explanation, string $input, PhpTypeInterface|null $expected): void
     {
-        $parser = new PhpDocTypeParser(new PhpTypeFactory());
+        $parser = new PhpDocTypeParser();
         $result = $parser->parse($input);
         $this->assertEquals($result, $expected, sprintf("Assert failed. Data row: '%s'", $explanation));
     }

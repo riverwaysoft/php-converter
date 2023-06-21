@@ -18,9 +18,9 @@ class ApiPlatformIriGenerator
         $this->inflector = InflectorFactory::create()->build();
     }
 
-    public function generate(PhpUnknownType $type): string
+    public function generate(string $typeName): string
     {
-        $pluralized = $this->inflector->pluralize($type->getName());
+        $pluralized = $this->inflector->pluralize($typeName);
         return (new Convert($pluralized))->toSnake();
     }
 }

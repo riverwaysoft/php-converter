@@ -6,6 +6,8 @@ namespace App\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Riverwaysoft\DtoConverter\Ast\Converter;
+use Riverwaysoft\DtoConverter\Ast\DtoVisitor;
+use Riverwaysoft\DtoConverter\Bridge\Symfony\SymfonyControllerVisitor;
 use Riverwaysoft\DtoConverter\ClassFilter\DocBlockCommentFilter;
 use Riverwaysoft\DtoConverter\ClassFilter\NegationFilter;
 use Riverwaysoft\DtoConverter\ClassFilter\PhpAttributeFilter;
@@ -36,7 +38,7 @@ class Profile {
 }
 CODE;
 
-        $normalized = (new Converter())->convert([$codeNestedDto]);
+        $normalized = (new Converter([new DtoVisitor()]))->convert([$codeNestedDto]);
         $this->assertMatchesJsonSnapshot($normalized->dtoList->getList());
     }
 
@@ -90,7 +92,7 @@ class User
 
 CODE;
 
-        $converter = new Converter(new DocBlockCommentFilter('@DTO'));
+        $converter = new Converter([new DtoVisitor(new DocBlockCommentFilter('@DTO'))]);
         $result = $converter->convert([$codeWithDateTime]);
 
         $this->assertTrue($result->dtoList->hasDtoWithType('User'));
@@ -147,7 +149,7 @@ class User
 CODE;
 
         $classesWithoutIgnoreFilter = new NegationFilter(new DocBlockCommentFilter('@ignore'));
-        $converter = new Converter($classesWithoutIgnoreFilter);
+        $converter = new Converter([new DtoVisitor($classesWithoutIgnoreFilter)]);
         $result = $converter->convert([$codeWithDateTime]);
 
         $this->assertTrue($result->dtoList->hasDtoWithType('User'));
@@ -256,7 +258,10 @@ class SomeController {
 }
 CODE;
 
-        $converter = new Converter(new PhpAttributeFilter('Dto'));
+        $converter = new Converter([
+            new DtoVisitor(new PhpAttributeFilter('Dto')),
+            new SymfonyControllerVisitor('DtoEndpoint'),
+        ]);
         $result = $converter->convert([$codeWithDateTime]);
 
         $this->assertTrue($result->dtoList->hasDtoWithType('User'));
@@ -312,7 +317,10 @@ CODE;
 
         $codeWithDateTime .= "\n" . $invalidControllerActionCode . '}';
 
-        $converter = new Converter(new PhpAttributeFilter('Dto'));
+        $converter = new Converter([
+            new DtoVisitor(new PhpAttributeFilter('Dto')),
+            new SymfonyControllerVisitor('DtoEndpoint'),
+        ]);
         $this->expectExceptionMessage($expectedError);
         $converter->convert([$codeWithDateTime]);
     }
@@ -387,7 +395,7 @@ enum Color
 }
 CODE;
 
-        $converter = new Converter(new PhpAttributeFilter('Dto'));
+        $converter = new Converter([new DtoVisitor(new PhpAttributeFilter('Dto'))]);
         $this->expectExceptionMessageMatches('/^Non-backed enums are not supported because they are not serializable. Please use backed enums/');
         $converter->convert([$codeWithDateTime]);
     }

@@ -67,7 +67,7 @@ class ApiPlatformInputTypeResolver implements UnknownTypeResolverInterface
 
         if ($this->useTypeScriptTemplateLiteral) {
             if ($this->useApiPlatformIriGenerator) {
-                $pluralizedTypeName = $this->apiPlatformIriGenerator->generate($type);
+                $pluralizedTypeName = $this->apiPlatformIriGenerator->generate($type->getName());
                 return sprintf('`/api/%s/${string}`', $pluralizedTypeName);
             }
             return'`/api/${string}`';

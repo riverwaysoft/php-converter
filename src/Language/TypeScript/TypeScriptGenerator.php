@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Riverwaysoft\DtoConverter\Language\TypeScript;
 
-use Jawira\CaseConverter\Convert;
 use Riverwaysoft\DtoConverter\Ast\ConverterResult;
 use Riverwaysoft\DtoConverter\Dto\ApiClient\ApiEndpoint;
 use Riverwaysoft\DtoConverter\Dto\DtoClassProperty;
@@ -92,8 +91,8 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
 
     private function normalizeEndpointName(string $str): string
     {
-        // Remove slashes and brace
-        $str = str_replace(['/', '{', '}', '_', '-'], ' ', $str);
+        // Remove slashes and braces
+        $str = preg_replace('/[^a-zA-Z0-9]/', ' ', $str);
         // Convert to camel case
         $str = ucwords($str);
         // Remove spaces and convert the first character to lowercase
