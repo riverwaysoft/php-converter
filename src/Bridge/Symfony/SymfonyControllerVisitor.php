@@ -168,6 +168,8 @@ class SymfonyControllerVisitor extends ConverterVisitor
 
     public function popResult(): ConverterResult
     {
-        return $this->converterResult;
+        $result = $this->converterResult;
+        $this->converterResult = new ConverterResult();
+        return $result;
     }
 }
