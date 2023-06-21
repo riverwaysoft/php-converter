@@ -24,7 +24,7 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
     private ConverterResult $converterResult;
     const API_PLATFORM_ATTRIBUTE = 'ApiResource';
 
-    public function __construct(private ClassFilterInterface $classFilter)
+    public function __construct(private ?ClassFilterInterface $classFilter = null)
     {
         $this->converterResult = new ConverterResult();
         $this->iriGenerator = new ApiPlatformIriGenerator();

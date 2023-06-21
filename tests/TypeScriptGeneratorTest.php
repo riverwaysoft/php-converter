@@ -537,7 +537,7 @@ CODE;
         $this->assertMatchesGeneratedTypeScriptApi($result);
     }
 
-    public function testApiClientGenerationWithApiPlatformResource()
+    public function testApiClientGenerationWithApiPlatformResource(): void
     {
         $code = <<<'CODE'
 <?php
