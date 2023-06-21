@@ -7,7 +7,9 @@ namespace App\Tests;
 use App\Tests\SnapshotComparator\TypeScriptSnapshotComparator;
 use PHPUnit\Framework\TestCase;
 use Riverwaysoft\DtoConverter\Ast\Converter;
+use Riverwaysoft\DtoConverter\Ast\ConverterResult;
 use Riverwaysoft\DtoConverter\Ast\DtoVisitor;
+use Riverwaysoft\DtoConverter\Bridge\ApiPlatform\ApiPlatformDtoResourceVisitor;
 use Riverwaysoft\DtoConverter\Bridge\ApiPlatform\ApiPlatformInputTypeResolver;
 use Riverwaysoft\DtoConverter\Bridge\Symfony\SymfonyControllerVisitor;
 use Riverwaysoft\DtoConverter\ClassFilter\PhpAttributeFilter;
@@ -532,7 +534,137 @@ CODE;
             new SymfonyControllerVisitor('DtoEndpoint'),
         ]);
         $result = $converter->convert([$codeWithDateTime]);
+        $this->assertMatchesGeneratedTypeScriptApi($result);
+    }
 
+    public function testApiClientGenerationWithApiPlatformResource()
+    {
+        $code = <<<'CODE'
+<?php
+
+use \Riverwaysoft\DtoConverter\ClassFilter\Dto;
+use \Riverwaysoft\DtoConverter\Bridge\ApiPlatform\DtoResource;
+
+#[\Attribute(\Attribute::TARGET_PARAMETER)]
+class Input {
+  
+}
+
+#[Dto]
+class AdminZoneChatOutput {
+  public function __construct(
+    public string $id,
+    public bool $isAdmin,
+  ) {
+  }
+}
+
+#[Dto]
+class AdminZoneChatCreateInput {
+  public function __construct(
+    public string $id,
+    public bool $isAdmin,
+  ) {
+  }
+}
+
+#[Dto]
+class ChatOutput {
+  public function __construct(
+    public string $id,
+  ) {
+  }
+}
+
+
+#[\Attribute(\Attribute::TARGET_CLASS)]
+class ApiResource {
+// Copied from API Platform source
+  public function __construct(
+        $description = null,
+        ?array $collectionOperations = null,
+        ?string $iri = null,
+        ?array $itemOperations = null,
+        ?string $shortName = null,
+        ?array $subresourceOperations = null,
+        ?array $cacheHeaders = null,
+        ?string $deprecationReason = null,
+        ?bool $elasticsearch = null,
+        ?bool $fetchPartial = null,
+        ?bool $forceEager = null,
+        ?array $formats = null,
+        ?array $filters = null,
+        ?array $hydraContext = null,
+        $input = null,
+        ?array $openapiContext = null,
+        ?array $order = null,
+        $output = null,
+        ?string $routePrefix = null,
+  ) {}
+}
+
+#[ApiResource(
+    collectionOperations: [
+        "get" => ["security" => "is_granted('ROLE_CHAT_LIST_ACCESS')"],
+        "admin_get" => [
+            "path" => "/chats_admin_zone",
+            "method" => "GET",
+            'output' => AdminZoneChatOutput::class,
+        ],
+        "admin_create" => [
+            "path" => "/chats_admin_zone",
+            "method" => 'POST',
+            'input' => AdminZoneChatCreateInput::class,
+            'output' => AdminZoneChatOutput::class,
+        ]
+    ],
+//    itemOperations: [
+//        "get" => ["security" => "is_granted('ROLE_CHAT_ITEM_ACCESS', object)"],
+//        "chat_messages_with_attachments" => ["method" => "GET", "output" => ChatMessageWithAttachmentsOutput::class, "path" => "/chats/{id}/messages_with_attachments", "controller" => ChatMessageAttachmentsController::class],
+//        "mark_as_read" => [
+//            "path" => "/chats/{id}/mark_as_read",
+//            "method" => "PUT",
+//            "input" => false,
+//            "controller" => MarkChatAsReadAction::class,
+//            "security" => "is_granted('ROLE_CHAT_ITEM_ACCESS', object)"
+//        ],
+//        "mute" => [
+//            'path' => '/chats/{id}/mute',
+//            'method' => 'PUT',
+//            'input' => false,
+//            "controller" => MuteChatController::class,
+//            "security" => "is_granted('ROLE_CHAT_ITEM_ACCESS', object)"
+//        ],
+//        "admin_update" => [
+//            "path" => '/chats_admin_zone/{id}',
+//            'method' => 'PUT',
+//            'input' => AdminZoneChatUpdateInput::class,
+//            'output' => AdminZoneChatOutput::class,
+//        ],
+//        "admin_get" => [
+//            "path" => '/chats_admin_zone/{id}',
+//            'method' => 'GET',
+//            'output' => AdminZoneChatOutput::class,
+//        ]
+//    ],
+    output: ChatOutput::class
+)]
+#[DtoResource]
+class Chat
+{}
+CODE;
+
+        $converter = new Converter([
+            new DtoVisitor(new PhpAttributeFilter('Dto')),
+            new ApiPlatformDtoResourceVisitor(new PhpAttributeFilter('DtoResource')),
+        ]);
+
+        $result = $converter->convert([$code]);
+        $this->assertMatchesGeneratedTypeScriptApi($result);
+    }
+
+    private function assertMatchesGeneratedTypeScriptApi(ConverterResult $result): void
+    {
         $typeScriptGenerator = new TypeScriptGenerator(
             new SingleFileOutputWriter('generated.ts'),
             [

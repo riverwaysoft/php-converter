@@ -32,6 +32,10 @@ class DtoType implements \JsonSerializable
 
     public function isStringEnum(): bool
     {
+        if (!$this->expressionType->isAnyEnum()) {
+            return false;
+        }
+
         $isEveryPropertyString = true;
 
         foreach ($this->properties as $property) {

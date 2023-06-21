@@ -13,8 +13,8 @@ class ApiPlatformIriGeneratorTest extends TestCase
     {
         $generator = new ApiPlatformIriGenerator();
 
-        $this->assertEquals('food_categories', $generator->generate(new PhpUnknownType('FoodCategory')));
-        $this->assertEquals('users', $generator->generate(new PhpUnknownType('User')));
-        $this->assertEquals('food_analyze_rule_categories', $generator->generate(new PhpUnknownType('FoodAnalyzeRuleCategory')));
+        $this->assertEquals('food_categories', $generator->generate((new PhpUnknownType('FoodCategory'))->getName()));
+        $this->assertEquals('users', $generator->generate((new PhpUnknownType('User'))->getName()));
+        $this->assertEquals('food_analyze_rule_categories', $generator->generate((new PhpUnknownType('FoodAnalyzeRuleCategory'))->getName()));
     }
 }
