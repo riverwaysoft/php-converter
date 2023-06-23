@@ -10,8 +10,7 @@ class PhpTypeFactory
     public static function create(
         string $typeName,
         array $context = [],
-    ): PhpBaseType|PhpUnknownType
-    {
+    ): PhpBaseType|PhpUnknownType {
         return match ($typeName) {
             'int', => PhpBaseType::int(),
             'float' => PhpBaseType::float(),

@@ -131,7 +131,7 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
         $outputType = PhpTypeFactory::create($output, $outputTypeContext);
 
         $input = $this->findArrayAttributeValueByKey('input', $item->value->items) ?? $mainInput;
-        $inputType = $input !== null ? PhpTypeFactory::create($input) : null;
+        $inputType = $input !== null ? new ApiEndpointParam(name: 'body', type: PhpTypeFactory::create($input)) : null;
 
         return new ApiEndpoint(
             route: $route,

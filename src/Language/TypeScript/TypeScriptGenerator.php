@@ -72,8 +72,8 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
 
         $inputType = null;
         if ($apiEndpoint->input) {
-            $inputType = $this->getTypeScriptTypeFromPhp($apiEndpoint->input, null, $dtoList);
-            $params = array_merge($params, ["body: {$inputType}"]);
+            $inputType = $this->getTypeScriptTypeFromPhp($apiEndpoint->input->type, null, $dtoList);
+            $params = array_merge($params, ["{$apiEndpoint->input->name}: {$inputType}"]);
         }
 
         if (count($apiEndpoint->queryParams)) {
@@ -86,7 +86,17 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
 
         $params = implode(', ', array_filter($params));
 
-        $form = $inputType !== null ? ', body' : '';
+
+        $formParams = [];
+        if ($apiEndpoint->input) {
+            $formParams[] = $apiEndpoint->input->name;
+        }
+        if ($apiEndpoint->queryParams) {
+            $message = sprintf("Multiple query params are not supported. Context: %s", json_encode($apiEndpoint->queryParams));
+            Assert::count($apiEndpoint->queryParams, 1, $message);
+            $formParams[] = sprintf('{ params: %s }', $apiEndpoint->queryParams[0]->name);
+        }
+        $formParamsAsString = $formParams ? sprintf(", %s", implode(', ', $formParams)) : '';
 
         $outputType = $apiEndpoint->output ? $this->getTypeScriptTypeFromPhp($apiEndpoint->output, null, $dtoList) : 'null';
 
@@ -95,7 +105,7 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
         $route = $this->injectJavaScriptInterpolatedVariables($apiEndpoint->route);
         $body = sprintf('  return axios
     .%s<%s>(`%s`%s)
-    .then((response) => response.data);', $apiEndpoint->method->getType(), $outputType, $route, $form);
+    .then((response) => response.data);', $apiEndpoint->method->getType(), $outputType, $route, $formParamsAsString);
 
         return sprintf($string, $name, $params, $returnType, $body);
     }

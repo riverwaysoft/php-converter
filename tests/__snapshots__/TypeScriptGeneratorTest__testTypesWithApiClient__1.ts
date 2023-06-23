@@ -6,6 +6,11 @@ export type CreateUserInput = {
   id: string;
 };
 
+export type FilterQuery = {
+  age: number | null;
+  name: string | null;
+};
+
 export type UpdateUserInput = {
   id: string;
 };
@@ -20,9 +25,15 @@ export const apiUsersGet = (): Promise<UserOutput[]> => {
     .then((response) => response.data);
 }
 
-export const apiUsersPost = (body: CreateUserInput): Promise<UserOutput> => {
+export const apiUsersPost = (input: CreateUserInput): Promise<UserOutput> => {
   return axios
-    .post<UserOutput>(`/api/users`, body)
+    .post<UserOutput>(`/api/users`, input)
+    .then((response) => response.data);
+}
+
+export const apiUsersWithFiltersGet = (query: FilterQuery): Promise<UserOutput[]> => {
+  return axios
+    .get<UserOutput[]>(`/api/users-with-filters`, { params: query })
     .then((response) => response.data);
 }
 
@@ -32,9 +43,9 @@ export const apiUsersUserGet = (user: string): Promise<UserOutput> => {
     .then((response) => response.data);
 }
 
-export const apiUsersUpdateItUserToUpdatePut = (userToUpdate: string, body: UpdateUserInput): Promise<UserOutput> => {
+export const apiUsersUpdateItUserToUpdatePut = (userToUpdate: string, input: UpdateUserInput): Promise<UserOutput> => {
   return axios
-    .put<UserOutput>(`/api/users_update-it/${userToUpdate}`, body)
+    .put<UserOutput>(`/api/users_update-it/${userToUpdate}`, input)
     .then((response) => response.data);
 }
 

@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Riverwaysoft\DtoConverter\Dto\ApiClient;
 
-use Riverwaysoft\DtoConverter\Dto\PhpType\PhpBaseType;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeInterface;
 
 class ApiEndpointParam implements \JsonSerializable
 {
     public function __construct(
         public string $name,
-        public PhpBaseType $type,
+        public PhpTypeInterface $type,
     ) {
     }
 

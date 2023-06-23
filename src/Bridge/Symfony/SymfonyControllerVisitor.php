@@ -128,17 +128,34 @@ class SymfonyControllerVisitor extends ConverterVisitor
             $outputType = new PhpListType(PhpTypeFactory::create($arg->value->class->parts[0]));
         }
 
-        $inputType = null;
+        $inputParam = null;
+        /** @var ApiEndpointParam[] $queryParams */
+        $queryParams = [];
         $routeParams = SymfonyRoutingParser::parseRoute($route);
         /** @var string[] $excessiveRouteParams */
         $excessiveRouteParams = array_flip($routeParams);
         foreach ($node->params as $param) {
             $maybeDtoInputAttribute = $this->findAttribute($param, 'Input');
             if ($maybeDtoInputAttribute) {
-                if ($inputType) {
+                if ($inputParam) {
                     throw new \Exception('Multiple #[Input] on controller action are not supported');
                 }
-                $inputType = PhpTypeFactory::create($param->type->parts[0]);
+                $inputParam = new ApiEndpointParam(
+                    name: $param->var->name,
+                    // TODO: class names with full namespace probably aren't supported
+                    type: PhpTypeFactory::create($param->type->parts[0]),
+                );
+            }
+            $maybeDtoQueryAttribute = $this->findAttribute($param, 'Query');
+            if ($maybeDtoQueryAttribute) {
+                if (!empty($queryParams)) {
+                    throw new \Exception('Multiple #[Query] on controller action are not supported');
+                }
+                $queryParams[] = new ApiEndpointParam(
+                    name: $param->var->name,
+                    // TODO: class names with full namespace probably aren't supported
+                    type: PhpTypeFactory::create($param->type->parts[0]),
+                );
             }
 
             if (isset($excessiveRouteParams[$param->var->name])) {
@@ -161,12 +178,13 @@ class SymfonyControllerVisitor extends ConverterVisitor
         $this->converterResult->apiEndpointList->add(new ApiEndpoint(
             route: $route,
             method: ApiEndpointMethod::fromString($method),
-            input: $inputType,
+            input: $inputParam,
             output: $outputType,
             routeParams: array_map(
                 fn (string $paramName) => new ApiEndpointParam($paramName, PhpBaseType::string()),
                 $routeParams,
             ),
+            queryParams: $queryParams,
         ));
     }
 

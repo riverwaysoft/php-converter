@@ -498,6 +498,21 @@ class Input {
   
 }
 
+#[\Attribute(\Attribute::TARGET_PARAMETER)]
+class Query {
+  
+}
+
+#[Dto]
+class FilterQuery {
+  public function __construct(
+    public int|null $age,
+    public string|null $name,
+  ) {
+  
+  }
+}
+
 #[Dto]
 class UserOutput {
     public function __construct(public string $id)
@@ -535,6 +550,10 @@ class UserController {
   #[DtoEndpoint(returnOne: UserOutput::class)]
   #[Route('/api/users_update-it/{userToUpdate}', methods: ['PUT'])]
   public function getUser(User $userToUpdate, #[Input] UpdateUserInput $input) {}
+  
+  #[DtoEndpoint(returnMany: UserOutput::class)]
+  #[Route('/api/users-with-filters', methods: ['GET'])]
+  public function getUsersWithFilters(#[Query] FilterQuery $query) {}
 }
 CODE;
 

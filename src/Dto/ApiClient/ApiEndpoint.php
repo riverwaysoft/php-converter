@@ -11,7 +11,7 @@ class ApiEndpoint implements \JsonSerializable
     public function __construct(
         public string $route,
         public ApiEndpointMethod $method,
-        public ?PhpTypeInterface $input,
+        public ?ApiEndpointParam $input,
         public ?PhpTypeInterface $output,
         /** @var ApiEndpointParam[] */
         public array $routeParams = [],

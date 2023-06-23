@@ -24,7 +24,7 @@ export type ChatOutput = {
 
 export const apiChatsGet = (filters: any): Promise<CollectionResponse<ChatOutput>> => {
   return axios
-    .get<CollectionResponse<ChatOutput>>(`/api/chats`)
+    .get<CollectionResponse<ChatOutput>>(`/api/chats`, { params: filters })
     .then((response) => response.data);
 }
 
@@ -54,7 +54,7 @@ export const apiChatsIdMutePut = (id: string): Promise<ChatOutput> => {
 
 export const apiChatsAdminZoneGet = (filters: any): Promise<CollectionResponse<AdminZoneChatOutput>> => {
   return axios
-    .get<CollectionResponse<AdminZoneChatOutput>>(`/api/chats_admin_zone`)
+    .get<CollectionResponse<AdminZoneChatOutput>>(`/api/chats_admin_zone`, { params: filters })
     .then((response) => response.data);
 }
 

@@ -18,8 +18,11 @@
             "routeParams": [],
             "method": "post",
             "input": {
-                "name": "CreateUserInput",
-                "context": []
+                "name": "input",
+                "type": {
+                    "name": "CreateUserInput",
+                    "context": []
+                }
             },
             "output": {
                 "name": "User",
