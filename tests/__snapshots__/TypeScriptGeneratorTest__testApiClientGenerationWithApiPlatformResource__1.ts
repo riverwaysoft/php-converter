@@ -26,6 +26,7 @@ export type StudentNotesInput = {
 };
 
 export type StudentNotesOutput = {
+  id: string;
 };
 
 export type StudentNotesUpdateInput = {

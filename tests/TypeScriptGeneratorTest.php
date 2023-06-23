@@ -694,7 +694,9 @@ class StudentNotesUpdateInput {}
 #[Dto]
 class StudentNotesInput {}
 #[Dto]
-class StudentNotesOutput {}
+class StudentNotesOutput {
+public string $id;
+}
 
 #[ApiResource(
     collectionOperations: [
