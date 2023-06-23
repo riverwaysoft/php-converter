@@ -14,6 +14,7 @@ use Riverwaysoft\DtoConverter\Dto\DtoType;
 use Riverwaysoft\DtoConverter\Dto\ExpressionType;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpBaseType;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpListType;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpOptionalType;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeInterface;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnionType;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnknownType;
@@ -218,6 +219,10 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
                 return sprintf('(%s)[]', $listType);
             }
             return sprintf('%s[]', $listType);
+        }
+
+        if ($type instanceof PhpOptionalType) {
+            return sprintf('%s | null = null', $this->getTypeScriptTypeFromPhp($type->getType(), $dto, $dtoList));
         }
 
         if ($type instanceof PhpBaseType) {

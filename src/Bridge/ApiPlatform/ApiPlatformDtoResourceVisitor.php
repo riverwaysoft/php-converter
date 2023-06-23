@@ -16,6 +16,7 @@ use Riverwaysoft\DtoConverter\Dto\ApiClient\ApiEndpoint;
 use Riverwaysoft\DtoConverter\Dto\ApiClient\ApiEndpointMethod;
 use Riverwaysoft\DtoConverter\Dto\ApiClient\ApiEndpointParam;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpBaseType;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpOptionalType;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeFactory;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeInterface;
 
@@ -135,7 +136,7 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
 
         // All API Platform GET methods can be filtered
         if ($isCollection && $method->equals(ApiEndpointMethod::get())) {
-            $queryParams[] = new ApiEndpointParam('filters', PhpBaseType::object());
+            $queryParams[] = new ApiEndpointParam('filters', new PhpOptionalType(PhpBaseType::object()));
         }
 
         $output = $arrayItemValue ? ($this->findArrayAttributeValueByKey('output', $arrayItemValue) ?? $mainOutput) : $mainOutput;
@@ -151,7 +152,7 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
             }
         }
 
-        $inputType = $input !== null ? new ApiEndpointParam(name: 'body', type: PhpTypeFactory::create($input)) : null;
+        $inputType = $input !== null ? new ApiEndpointParam('body', PhpTypeFactory::create($input)) : null;
 
         return new ApiEndpoint(
             route: $route,

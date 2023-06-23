@@ -18,7 +18,7 @@ class ApiEndpointParam implements \JsonSerializable
     {
         return [
             'name' => $this->name,
-            'type' => $this->type
+            'type' => $this->type,
         ];
     }
 }
