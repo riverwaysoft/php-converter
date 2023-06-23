@@ -688,6 +688,32 @@ class ApiResource {
 #[DtoResource]
 class Chat
 {}
+
+#[Dto]
+class StudentNotesUpdateInput {}
+#[Dto]
+class StudentNotesInput {}
+#[Dto]
+class StudentNotesOutput {}
+
+#[ApiResource(
+    collectionOperations: [
+        'get',
+        'post'
+    ],
+    itemOperations: [
+        'get',
+        'put' => [
+            'input' => StudentNotesUpdateInput::class
+        ],
+    ],
+    attributes: ['order' => ['createdAt' => 'DESC']],
+    input: StudentNotesInput::class,
+    normalizationContext: ["jsonld_has_context" => false],
+    output: StudentNotesOutput::class,
+)]
+#[DtoResource]
+class StudentNotes {}
 CODE;
 
         $converter = new Converter([
@@ -696,6 +722,9 @@ CODE;
         ]);
 
         $result = $converter->convert([$code]);
+
+        $this->assertCount(13, $result->apiEndpointList->getList());
+
         $this->assertMatchesGeneratedTypeScriptApi($result);
     }
 

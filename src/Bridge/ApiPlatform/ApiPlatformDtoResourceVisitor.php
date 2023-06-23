@@ -35,53 +35,57 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
 
     public function leaveNode(Node $node)
     {
-        if ($node instanceof Class_ || $node instanceof Enum_) {
-            if ($this->classFilter && !$this->classFilter->isMatch($node)) {
-                return null;
+        if (!$node instanceof Class_ && !$node instanceof Enum_) {
+            return null;
+        }
+
+        if ($this->classFilter && !$this->classFilter->isMatch($node)) {
+            return null;
+        }
+
+        $apiResourceAttribute = $this->findAttribute($node, self::API_PLATFORM_ATTRIBUTE);
+        if (!$apiResourceAttribute) {
+            throw new \Exception(sprintf('Class %s does not have #[%s] attribute', $node->name->name, self::API_PLATFORM_ATTRIBUTE));
+        }
+
+        $collectionOperationsArg = $this->getAttributeArgumentByName($apiResourceAttribute, 'collectionOperations');
+        $itemOperationsArg = $this->getAttributeArgumentByName($apiResourceAttribute, 'itemOperations');
+
+        if (!$collectionOperationsArg?->value instanceof Node\Expr\Array_ && !$itemOperationsArg?->value instanceof Node\Expr\Array_) {
+            return null;
+        }
+
+        // Main output
+        $mainOutput = null;
+        $outputNode = $this->getAttributeArgumentByName($apiResourceAttribute, 'output');
+        if ($outputNode?->value instanceof Node\Expr\ClassConstFetch) {
+            $mainOutput = $outputNode->value->class->parts[array_key_last($outputNode->value->class->parts)];
+        }
+        if (!$mainOutput) {
+            throw new \Exception('Invalid output of ApiResource ' . $node->name->name);
+        }
+
+        // Main input
+        $mainInput = null;
+        $inputNode = $this->getAttributeArgumentByName($apiResourceAttribute, 'input');
+        if ($inputNode?->value instanceof Node\Expr\ClassConstFetch) {
+            $mainInput = $inputNode->value->class->parts[array_key_last($inputNode->value->class->parts)];
+        }
+
+        if ($collectionOperationsArg?->value instanceof Node\Expr\Array_) {
+            foreach ($collectionOperationsArg->value->items as $item) {
+                $apiEndpoint = $this->createApiEndpoint($item, true, $node, $mainOutput, $mainInput);
+                if ($apiEndpoint) {
+                    $this->converterResult->apiEndpointList->add($apiEndpoint);
+                }
             }
+        }
 
-            $apiResourceAttribute = $this->findAttribute($node, self::API_PLATFORM_ATTRIBUTE);
-            if (!$apiResourceAttribute) {
-                throw new \Exception(sprintf('Class %s does not have #[%s] attribute', $node->name->name, self::API_PLATFORM_ATTRIBUTE));
-            }
-
-            $collectionOperationsArg = $this->getAttributeArgumentByName($apiResourceAttribute, 'collectionOperations');
-            $itemOperationsArg = $this->getAttributeArgumentByName($apiResourceAttribute, 'itemOperations');
-
-            if ($collectionOperationsArg?->value instanceof Node\Expr\Array_ || $itemOperationsArg?->value instanceof Node\Expr\Array_) {
-                // Main output
-                $mainOutput = null;
-                $outputNode = $this->getAttributeArgumentByName($apiResourceAttribute, 'output');
-                if ($outputNode?->value instanceof Node\Expr\ClassConstFetch) {
-                    $mainOutput = $outputNode->value->class->parts[array_key_last($outputNode->value->class->parts)];
-                }
-                if (!$mainOutput) {
-                    throw new \Exception('Invalid output of ApiResource '. $node->name->name);
-                }
-
-                // Main input
-                $mainInput = null;
-                $inputNode = $this->getAttributeArgumentByName($apiResourceAttribute, 'input');
-                if ($inputNode?->value instanceof Node\Expr\ClassConstFetch) {
-                    $mainInput = $inputNode->value->class->parts[array_key_last($inputNode->value->class->parts)];
-                }
-
-                if ($collectionOperationsArg?->value instanceof Node\Expr\Array_) {
-                    foreach ($collectionOperationsArg->value->items as $item) {
-                        $apiEndpoint = $this->createApiEndpoint($item, true, $node, $mainOutput, $mainInput);
-                        if ($apiEndpoint) {
-                            $this->converterResult->apiEndpointList->add($apiEndpoint);
-                        }
-                    }
-                }
-
-                if ($itemOperationsArg?->value instanceof Node\Expr\Array_) {
-                    foreach ($itemOperationsArg->value->items as $item) {
-                        $apiEndpoint = $this->createApiEndpoint($item, false, $node, $mainOutput, $mainInput);
-                        if ($apiEndpoint) {
-                            $this->converterResult->apiEndpointList->add($apiEndpoint);
-                        }
-                    }
+        if ($itemOperationsArg?->value instanceof Node\Expr\Array_) {
+            foreach ($itemOperationsArg->value->items as $item) {
+                $apiEndpoint = $this->createApiEndpoint($item, false, $node, $mainOutput, $mainInput);
+                if ($apiEndpoint) {
+                    $this->converterResult->apiEndpointList->add($apiEndpoint);
                 }
             }
         }
@@ -91,17 +95,25 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
 
     private function createApiEndpoint(Node\Expr\ArrayItem $item, bool $isCollection, Class_ $node, string $mainOutput, string|null $mainInput): null|ApiEndpoint
     {
-        if (!($item->value instanceof Node\Expr\Array_)) {
-            return null;
+        $arrayItemValue = $item->value instanceof Node\Expr\Array_ ? $item->value->items : null;
+
+        $key = null;
+        if ($item->key instanceof Node\Scalar\String_) {
+            $key = $item->key->value;
+        } else {
+            if ($item->value instanceof Node\Scalar\String_) {
+                $key = $item->value->value;
+            }
         }
-        if (!($item->key instanceof Node\Scalar\String_)) {
+
+        if (!$key) {
             return null;
         }
 
-        $method = $this->findArrayAttributeValueByKey('method', $item->value->items) ?? $item->key->value;
+        $method = $arrayItemValue ? ($this->findArrayAttributeValueByKey('method', $arrayItemValue) ?? $key) : $key;
         $method = ApiEndpointMethod::fromString($method);
 
-        $route = $this->findArrayAttributeValueByKey('path', $item->value->items);
+        $route = $arrayItemValue ? $this->findArrayAttributeValueByKey('path', $arrayItemValue) : null;
         /** @var ApiEndpointParam[] $routeParams */
         $routeParams = [];
         /** @var ApiEndpointParam[] $queryParams */
@@ -126,11 +138,19 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
             $queryParams[] = new ApiEndpointParam('filters', PhpBaseType::object());
         }
 
-        $output = $this->findArrayAttributeValueByKey('output', $item->value->items) ?? $mainOutput;
+        $output = $arrayItemValue ? ($this->findArrayAttributeValueByKey('output', $arrayItemValue) ?? $mainOutput) : $mainOutput;
         $outputTypeContext = $isCollection && $method->equals(ApiEndpointMethod::get()) ? [self::COLLECTION_RESPONSE_CONTEXT_KEY => true] : [];
         $outputType = PhpTypeFactory::create($output, $outputTypeContext);
 
-        $input = $this->findArrayAttributeValueByKey('input', $item->value->items) ?? $mainInput;
+        $input = null;
+        if ($arrayItemValue) {
+            $input = $this->findArrayAttributeValueByKey('input', $arrayItemValue) ?? $mainInput;
+        } else {
+            if (!$method->equals(ApiEndpointMethod::get())) {
+                $input = $mainInput;
+            }
+        }
+
         $inputType = $input !== null ? new ApiEndpointParam(name: 'body', type: PhpTypeFactory::create($input)) : null;
 
         return new ApiEndpoint(

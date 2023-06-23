@@ -22,6 +22,15 @@ export type ChatOutput = {
   id: string;
 };
 
+export type StudentNotesInput = {
+};
+
+export type StudentNotesOutput = {
+};
+
+export type StudentNotesUpdateInput = {
+};
+
 export const apiChatsGet = (filters: any): Promise<CollectionResponse<ChatOutput>> => {
   return axios
     .get<CollectionResponse<ChatOutput>>(`/api/chats`, { params: filters })
@@ -73,6 +82,30 @@ export const apiChatsAdminZoneIdPut = (id: string, body: AdminZoneChatUpdateInpu
 export const apiChatsAdminZoneIdGet = (id: string): Promise<AdminZoneChatOutput> => {
   return axios
     .get<AdminZoneChatOutput>(`/api/chats_admin_zone/${id}`)
+    .then((response) => response.data);
+}
+
+export const apiStudentNotesGet = (filters: any): Promise<CollectionResponse<StudentNotesOutput>> => {
+  return axios
+    .get<CollectionResponse<StudentNotesOutput>>(`/api/student_notes`, { params: filters })
+    .then((response) => response.data);
+}
+
+export const apiStudentNotesPost = (body: StudentNotesInput): Promise<StudentNotesOutput> => {
+  return axios
+    .post<StudentNotesOutput>(`/api/student_notes`, body)
+    .then((response) => response.data);
+}
+
+export const apiStudentNotesIdGet = (id: string): Promise<StudentNotesOutput> => {
+  return axios
+    .get<StudentNotesOutput>(`/api/student_notes/${id}`)
+    .then((response) => response.data);
+}
+
+export const apiStudentNotesIdPut = (id: string, body: StudentNotesUpdateInput): Promise<StudentNotesOutput> => {
+  return axios
+    .put<StudentNotesOutput>(`/api/student_notes/${id}`, body)
     .then((response) => response.data);
 }
 
