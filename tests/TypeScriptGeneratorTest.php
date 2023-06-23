@@ -554,6 +554,14 @@ class UserController {
   #[DtoEndpoint(returnMany: UserOutput::class)]
   #[Route('/api/users-with-filters', methods: ['GET'])]
   public function getUsersWithFilters(#[Query] FilterQuery $query) {}
+  
+  #[DtoEndpoint()]
+  #[Route(path: '/api/route-with-path', methods: ['GET'])]
+  public function routeWithPath() {}
+  
+  #[DtoEndpoint()]
+  #[Route(name: '/api/route-with-name', methods: ['GET'])]
+  public function routeWithName() {}
 }
 CODE;
 
@@ -562,6 +570,7 @@ CODE;
             new SymfonyControllerVisitor('DtoEndpoint'),
         ]);
         $result = $converter->convert([$codeWithDateTime]);
+        $this->assertCount(7, $result->apiEndpointList->getList());
         $this->assertMatchesGeneratedTypeScriptApi($result);
     }
 

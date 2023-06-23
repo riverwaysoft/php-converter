@@ -19,6 +19,18 @@ export type UserOutput = {
   id: string;
 };
 
+export const apiRouteWithNameGet = (): Promise<null> => {
+  return axios
+    .get<null>(`/api/route-with-name`)
+    .then((response) => response.data);
+}
+
+export const apiRouteWithPathGet = (): Promise<null> => {
+  return axios
+    .get<null>(`/api/route-with-path`)
+    .then((response) => response.data);
+}
+
 export const apiUsersGet = (): Promise<UserOutput[]> => {
   return axios
     .get<UserOutput[]>(`/api/users`)

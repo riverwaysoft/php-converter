@@ -82,8 +82,14 @@ class SymfonyControllerVisitor extends ConverterVisitor
             $nameArg = $this->getAttributeArgumentByName($routeAttribute, 'name');
             if ($nameArg?->value instanceof Node\Scalar\String_) {
                 $route = $nameArg->value->value;
-            } else {
-                throw new \Exception('Could not find route path. Make sure your route looks like this #[Route(\'/api/users\')] or #[Route(name: \'/api/users/\')]');
+            }
+            $pathArg = $this->getAttributeArgumentByName($routeAttribute, 'path');
+            if ($pathArg?->value instanceof Node\Scalar\String_) {
+                $route = $pathArg->value->value;
+            }
+
+            if (!$route) {
+                throw new \Exception('Could not find route path. Make sure your route looks like this #[Route(\'/api/users\')] or #[Route(name: \'/api/users/\')] or #[Route(path: \'/api/users/\')]');
             }
         }
 
