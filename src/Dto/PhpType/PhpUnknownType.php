@@ -6,6 +6,7 @@ namespace Riverwaysoft\DtoConverter\Dto\PhpType;
 
 class PhpUnknownType implements PhpTypeInterface
 {
+    /** @param array<string, mixed> $context */
     public function __construct(private string $name, private array $context = [])
     {
     }
@@ -15,6 +16,7 @@ class PhpUnknownType implements PhpTypeInterface
         return $this->name;
     }
 
+    /** @return array<string, mixed> */
     public function getContext(): array
     {
         return $this->context;

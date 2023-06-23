@@ -6,7 +6,11 @@ namespace Riverwaysoft\DtoConverter\Dto\PhpType;
 
 class PhpTypeFactory
 {
-    public static function create(string $typeName, array $context = []): PhpBaseType|PhpUnknownType
+    /** @param array<string, mixed> $context */
+    public static function create(
+        string $typeName,
+        array $context = [],
+    ): PhpBaseType|PhpUnknownType
     {
         return match ($typeName) {
             'int', => PhpBaseType::int(),
