@@ -6,7 +6,8 @@ namespace Riverwaysoft\DtoConverter\Dto\PhpType;
 
 class PhpUnknownType implements PhpTypeInterface
 {
-    public function __construct(private string $name)
+    /** @param array<string, mixed> $context */
+    public function __construct(private string $name, private array $context = [])
     {
     }
 
@@ -15,10 +16,17 @@ class PhpUnknownType implements PhpTypeInterface
         return $this->name;
     }
 
+    /** @return array<string, mixed> */
+    public function getContext(): array
+    {
+        return $this->context;
+    }
+
     public function jsonSerialize(): mixed
     {
         return [
-            'name' => $this->name
+            'name' => $this->name,
+            'context' => $this->context,
         ];
     }
 }

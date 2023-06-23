@@ -14,13 +14,18 @@ use Riverwaysoft\DtoConverter\Bridge\Symfony\SymfonyRoutingParser;
 use Riverwaysoft\DtoConverter\ClassFilter\ClassFilterInterface;
 use Riverwaysoft\DtoConverter\Dto\ApiClient\ApiEndpoint;
 use Riverwaysoft\DtoConverter\Dto\ApiClient\ApiEndpointMethod;
+use Riverwaysoft\DtoConverter\Dto\ApiClient\ApiEndpointParam;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpBaseType;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeFactory;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeInterface;
 
 class ApiPlatformDtoResourceVisitor extends ConverterVisitor
 {
     private ApiPlatformIriGenerator $iriGenerator;
     private ConverterResult $converterResult;
     public const API_PLATFORM_ATTRIBUTE = 'ApiResource';
+    // Is used to wrap output types in CollectionResponse<T>
+    public const COLLECTION_RESPONSE_CONTEXT_KEY = 'isCollectionResponse';
 
     public function __construct(private ?ClassFilterInterface $classFilter = null)
     {
@@ -97,23 +102,36 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
         $method = ApiEndpointMethod::fromString($method);
 
         $route = $this->findArrayAttributeValueByKey('path', $item->value->items);
+        /** @var ApiEndpointParam[] $routeParams */
         $routeParams = [];
+        /** @var ApiEndpointParam[] $queryParams */
+        $queryParams = [];
         if (!$route) {
+            // If the 'route' is missed - generate it by ourselves
             $route = $this->iriGenerator->generate($node->name->name);
             if (!$isCollection) {
-                $route = rtrim($route, '/') . '/{id}';
-                $routeParams[] = 'id';
+                $route = sprintf("%s/{id}", rtrim($route, '/'));
+                $routeParams[] = new ApiEndpointParam('id', PhpBaseType::string());
             }
         } else {
-            $routeParams = SymfonyRoutingParser::parseRoute($route);
+            $routeParams = array_map(
+                fn (string $param) => new ApiEndpointParam($param, PhpBaseType::string()),
+                SymfonyRoutingParser::parseRoute($route),
+            );
         }
-        $route = '/api/'.ltrim($route, '/');
+        $route = sprintf("/api/%s", ltrim($route, '/'));
+
+        // All API Platform GET methods can be filtered
+        if ($isCollection && $method->equals(ApiEndpointMethod::get())) {
+            $queryParams[] = new ApiEndpointParam('filters', PhpBaseType::object());
+        }
 
         $output = $this->findArrayAttributeValueByKey('output', $item->value->items) ?? $mainOutput;
-        $outputType = PhpTypeFactory::create($output);
+        $outputTypeContext = $isCollection && $method->equals(ApiEndpointMethod::get()) ? [self::COLLECTION_RESPONSE_CONTEXT_KEY => true] : [];
+        $outputType = PhpTypeFactory::create($output, $outputTypeContext);
 
         $input = $this->findArrayAttributeValueByKey('input', $item->value->items) ?? $mainInput;
-        $inputType = $input !== null ? PhpTypeFactory::create($input) : null;
+        $inputType = $input !== null ? new ApiEndpointParam(name: 'body', type: PhpTypeFactory::create($input)) : null;
 
         return new ApiEndpoint(
             route: $route,
@@ -121,6 +139,7 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
             input: $inputType,
             output: $outputType,
             routeParams: $routeParams,
+            queryParams: $queryParams,
         );
     }
 

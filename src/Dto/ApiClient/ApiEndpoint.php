@@ -11,10 +11,12 @@ class ApiEndpoint implements \JsonSerializable
     public function __construct(
         public string $route,
         public ApiEndpointMethod $method,
-        public ?PhpTypeInterface $input,
+        public ?ApiEndpointParam $input,
         public ?PhpTypeInterface $output,
-        /** @var string[] */
+        /** @var ApiEndpointParam[] */
         public array $routeParams = [],
+        /** @var ApiEndpointParam[] */
+        public array $queryParams = [],
     ) {
     }
 
@@ -26,6 +28,7 @@ class ApiEndpoint implements \JsonSerializable
             'method' => $this->method->getType(),
             'input' => $this->input,
             'output' => $this->output,
+            'queryParams' => $this->queryParams,
         ];
     }
 }

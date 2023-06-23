@@ -22,9 +22,9 @@ export type ChatOutput = {
   id: string;
 };
 
-export const apiChatsGet = (): Promise<ChatOutput> => {
+export const apiChatsGet = (filters: any): Promise<CollectionResponse<ChatOutput>> => {
   return axios
-    .get<ChatOutput>(`/api/chats`)
+    .get<CollectionResponse<ChatOutput>>(`/api/chats`, { params: filters })
     .then((response) => response.data);
 }
 
@@ -52,9 +52,9 @@ export const apiChatsIdMutePut = (id: string): Promise<ChatOutput> => {
     .then((response) => response.data);
 }
 
-export const apiChatsAdminZoneGet = (): Promise<AdminZoneChatOutput> => {
+export const apiChatsAdminZoneGet = (filters: any): Promise<CollectionResponse<AdminZoneChatOutput>> => {
   return axios
-    .get<AdminZoneChatOutput>(`/api/chats_admin_zone`)
+    .get<CollectionResponse<AdminZoneChatOutput>>(`/api/chats_admin_zone`, { params: filters })
     .then((response) => response.data);
 }
 
@@ -75,3 +75,11 @@ export const apiChatsAdminZoneIdGet = (id: string): Promise<AdminZoneChatOutput>
     .get<AdminZoneChatOutput>(`/api/chats_admin_zone/${id}`)
     .then((response) => response.data);
 }
+
+export type CollectionResponse<Resource extends {id: string}> = {
+  'hydra:member': Resource[];
+  'hydra:totalItems': number;
+  'hydra:view': { '@id': string; 'hydra:last': string };
+  'hydra:search': { 'hydra:mapping': any[] };
+  'hydra:last': string;
+};

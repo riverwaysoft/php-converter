@@ -6,6 +6,7 @@ namespace Riverwaysoft\DtoConverter\Language\TypeScript;
 
 use Riverwaysoft\DtoConverter\Ast\ConverterResult;
 use Riverwaysoft\DtoConverter\Dto\ApiClient\ApiEndpoint;
+use Riverwaysoft\DtoConverter\Dto\ApiClient\ApiEndpointParam;
 use Riverwaysoft\DtoConverter\Dto\DtoClassProperty;
 use Riverwaysoft\DtoConverter\Dto\DtoEnumProperty;
 use Riverwaysoft\DtoConverter\Dto\DtoList;
@@ -64,18 +65,38 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
         $fullRoute = $apiEndpoint->route . '/' . $apiEndpoint->method->getType();
         $name = $this->normalizeEndpointName($fullRoute);
 
-        $params = implode(', ', array_map(
-            fn (string $param): string => "{$param}: string",
+        $params = array_map(
+            fn (ApiEndpointParam $param): string => "{$param->name}: {$this->getTypeScriptTypeFromPhp($param->type, null, $dtoList)}",
             $apiEndpoint->routeParams,
-        ));
+        );
 
         $inputType = null;
         if ($apiEndpoint->input) {
-            $inputType = $this->getTypeScriptTypeFromPhp($apiEndpoint->input, null, $dtoList);
-            $params = implode(', ', array_filter([$params, "body: {$inputType}"]));
+            $inputType = $this->getTypeScriptTypeFromPhp($apiEndpoint->input->type, null, $dtoList);
+            $params = array_merge($params, ["{$apiEndpoint->input->name}: {$inputType}"]);
         }
 
-        $form = $inputType !== null ? sprintf(', body') : '';
+        if (count($apiEndpoint->queryParams)) {
+            $queryParamsAsTs = array_map(
+                fn (ApiEndpointParam $param): string => "{$param->name}: {$this->getTypeScriptTypeFromPhp($param->type, null, $dtoList)}",
+                $apiEndpoint->queryParams,
+            );
+            $params = array_merge($params, $queryParamsAsTs);
+        }
+
+        $params = implode(', ', array_filter($params));
+
+
+        $formParams = [];
+        if ($apiEndpoint->input) {
+            $formParams[] = $apiEndpoint->input->name;
+        }
+        if ($apiEndpoint->queryParams) {
+            $message = sprintf("Multiple query params are not supported. Context: %s", json_encode($apiEndpoint->queryParams));
+            Assert::count($apiEndpoint->queryParams, 1, $message);
+            $formParams[] = sprintf('{ params: %s }', $apiEndpoint->queryParams[0]->name);
+        }
+        $formParamsAsString = $formParams ? sprintf(", %s", implode(', ', $formParams)) : '';
 
         $outputType = $apiEndpoint->output ? $this->getTypeScriptTypeFromPhp($apiEndpoint->output, null, $dtoList) : 'null';
 
@@ -84,7 +105,7 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
         $route = $this->injectJavaScriptInterpolatedVariables($apiEndpoint->route);
         $body = sprintf('  return axios
     .%s<%s>(`%s`%s)
-    .then((response) => response.data);', $apiEndpoint->method->getType(), $outputType, $route, $form);
+    .then((response) => response.data);', $apiEndpoint->method->getType(), $outputType, $route, $formParamsAsString);
 
         return sprintf($string, $name, $params, $returnType, $body);
     }

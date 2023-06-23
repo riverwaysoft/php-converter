@@ -7,31 +7,46 @@
             "input": null,
             "output": {
                 "array": {
-                    "name": "User"
+                    "name": "User",
+                    "context": []
                 }
-            }
+            },
+            "queryParams": []
         },
         {
             "route": "\/api\/users",
             "routeParams": [],
             "method": "post",
             "input": {
-                "name": "CreateUserInput"
+                "name": "input",
+                "type": {
+                    "name": "CreateUserInput",
+                    "context": []
+                }
             },
             "output": {
-                "name": "User"
-            }
+                "name": "User",
+                "context": []
+            },
+            "queryParams": []
         },
         {
             "route": "\/api\/users\/{id}",
             "routeParams": [
-                "id"
+                {
+                    "name": "id",
+                    "type": {
+                        "name": "string"
+                    }
+                }
             ],
             "method": "get",
             "input": null,
             "output": {
-                "name": "User"
-            }
+                "name": "User",
+                "context": []
+            },
+            "queryParams": []
         },
         {
             "route": "\/api\/users_methods_string",
@@ -39,8 +54,10 @@
             "method": "get",
             "input": null,
             "output": {
-                "name": "User"
-            }
+                "name": "User",
+                "context": []
+            },
+            "queryParams": []
         },
         {
             "route": "\/api\/users_reversed_order",
@@ -49,9 +66,11 @@
             "input": null,
             "output": {
                 "array": {
-                    "name": "User"
+                    "name": "User",
+                    "context": []
                 }
-            }
+            },
+            "queryParams": []
         }
     ]
 }

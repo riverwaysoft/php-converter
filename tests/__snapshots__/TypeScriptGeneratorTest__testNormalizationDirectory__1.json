@@ -85,7 +85,8 @@
                 "type": {
                     "types": [
                         {
-                            "name": "FullName"
+                            "name": "FullName",
+                            "context": []
                         },
                         {
                             "name": "null"
@@ -118,7 +119,8 @@
                 "type": {
                     "types": [
                         {
-                            "name": "User"
+                            "name": "User",
+                            "context": []
                         },
                         {
                             "name": "null"
@@ -130,7 +132,8 @@
             {
                 "type": {
                     "array": {
-                        "name": "User"
+                        "name": "User",
+                        "context": []
                     }
                 },
                 "name": "friends"
@@ -163,7 +166,8 @@
             },
             {
                 "type": {
-                    "name": "PermissionsEnum"
+                    "name": "PermissionsEnum",
+                    "context": []
                 },
                 "name": "permissions"
             },
@@ -171,7 +175,8 @@
                 "type": {
                     "types": [
                         {
-                            "name": "Profile"
+                            "name": "Profile",
+                            "context": []
                         },
                         {
                             "name": "null"
@@ -228,7 +233,8 @@
             {
                 "type": {
                     "array": {
-                        "name": "Activity"
+                        "name": "Activity",
+                        "context": []
                     }
                 },
                 "name": "activities"
