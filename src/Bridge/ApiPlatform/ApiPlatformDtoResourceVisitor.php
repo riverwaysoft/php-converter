@@ -24,6 +24,8 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
     private ApiPlatformIriGenerator $iriGenerator;
     private ConverterResult $converterResult;
     public const API_PLATFORM_ATTRIBUTE = 'ApiResource';
+    // Is used to wrap output types in CollectionResponse<T>
+    public const COLLECTION_RESPONSE_CONTEXT_KEY = 'isCollectionResponse';
 
     public function __construct(private ?ClassFilterInterface $classFilter = null)
     {
@@ -119,13 +121,14 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
         }
         $route = sprintf("/api/%s", ltrim($route, '/'));
 
-        // All API Platform GET methods have can be filtered
-        if ($method->equals(ApiEndpointMethod::get())) {
+        // All API Platform GET methods can be filtered
+        if ($isCollection && $method->equals(ApiEndpointMethod::get())) {
             $queryParams[] = new ApiEndpointParam('filters', PhpBaseType::object());
         }
 
         $output = $this->findArrayAttributeValueByKey('output', $item->value->items) ?? $mainOutput;
-        $outputType = PhpTypeFactory::create($output);
+        $outputTypeContext = $isCollection && $method->equals(ApiEndpointMethod::get()) ? [self::COLLECTION_RESPONSE_CONTEXT_KEY => true] : [];
+        $outputType = PhpTypeFactory::create($output, $outputTypeContext);
 
         $input = $this->findArrayAttributeValueByKey('input', $item->value->items) ?? $mainInput;
         $inputType = $input !== null ? PhpTypeFactory::create($input) : null;

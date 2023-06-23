@@ -37,3 +37,11 @@ export const apiUsersUpdateItUserToUpdatePut = (userToUpdate: string, body: Upda
     .put<UserOutput>(`/api/users_update-it/${userToUpdate}`, body)
     .then((response) => response.data);
 }
+
+export type CollectionResponse<Resource extends {id: string}> = {
+  'hydra:member': Resource[];
+  'hydra:totalItems': number;
+  'hydra:view': { '@id': string; 'hydra:last': string };
+  'hydra:search': { 'hydra:mapping': any[] };
+  'hydra:last': string;
+};
