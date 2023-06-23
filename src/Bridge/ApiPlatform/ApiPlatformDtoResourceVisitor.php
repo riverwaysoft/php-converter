@@ -14,7 +14,10 @@ use Riverwaysoft\DtoConverter\Bridge\Symfony\SymfonyRoutingParser;
 use Riverwaysoft\DtoConverter\ClassFilter\ClassFilterInterface;
 use Riverwaysoft\DtoConverter\Dto\ApiClient\ApiEndpoint;
 use Riverwaysoft\DtoConverter\Dto\ApiClient\ApiEndpointMethod;
+use Riverwaysoft\DtoConverter\Dto\ApiClient\ApiEndpointParam;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpBaseType;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeFactory;
+use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeInterface;
 
 class ApiPlatformDtoResourceVisitor extends ConverterVisitor
 {
@@ -97,17 +100,29 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
         $method = ApiEndpointMethod::fromString($method);
 
         $route = $this->findArrayAttributeValueByKey('path', $item->value->items);
+        /** @var ApiEndpointParam[] $routeParams */
         $routeParams = [];
+        /** @var ApiEndpointParam[] $queryParams */
+        $queryParams = [];
         if (!$route) {
+            // If the 'route' is missed - generate it by ourselves
             $route = $this->iriGenerator->generate($node->name->name);
             if (!$isCollection) {
-                $route = rtrim($route, '/') . '/{id}';
-                $routeParams[] = 'id';
+                $route = sprintf("%s/{id}", rtrim($route, '/'));
+                $routeParams[] = new ApiEndpointParam('id', PhpBaseType::string());
             }
         } else {
-            $routeParams = SymfonyRoutingParser::parseRoute($route);
+            $routeParams = array_map(
+                fn (string $param) => new ApiEndpointParam($param, PhpBaseType::string()),
+                SymfonyRoutingParser::parseRoute($route),
+            );
         }
-        $route = '/api/'.ltrim($route, '/');
+        $route = sprintf("/api/%s", ltrim($route, '/'));
+
+        // All API Platform GET methods have can be filtered
+        if ($method->equals(ApiEndpointMethod::get())) {
+            $queryParams[] = new ApiEndpointParam('filters', PhpBaseType::object());
+        }
 
         $output = $this->findArrayAttributeValueByKey('output', $item->value->items) ?? $mainOutput;
         $outputType = PhpTypeFactory::create($output);
@@ -121,6 +136,7 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
             input: $inputType,
             output: $outputType,
             routeParams: $routeParams,
+            queryParams: $queryParams,
         );
     }
 

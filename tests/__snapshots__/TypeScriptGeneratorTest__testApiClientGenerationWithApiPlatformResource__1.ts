@@ -22,13 +22,13 @@ export type ChatOutput = {
   id: string;
 };
 
-export const apiChatsGet = (): Promise<ChatOutput> => {
+export const apiChatsGet = (filters: any): Promise<ChatOutput> => {
   return axios
     .get<ChatOutput>(`/api/chats`)
     .then((response) => response.data);
 }
 
-export const apiChatsIdGet = (id: string): Promise<ChatOutput> => {
+export const apiChatsIdGet = (id: string, filters: any): Promise<ChatOutput> => {
   return axios
     .get<ChatOutput>(`/api/chats/${id}`)
     .then((response) => response.data);
@@ -40,7 +40,7 @@ export const apiChatsIdMarkAsReadPut = (id: string): Promise<ChatOutput> => {
     .then((response) => response.data);
 }
 
-export const apiChatsIdMessagesWithAttachmentsGet = (id: string): Promise<ChatMessageWithAttachmentsOutput> => {
+export const apiChatsIdMessagesWithAttachmentsGet = (id: string, filters: any): Promise<ChatMessageWithAttachmentsOutput> => {
   return axios
     .get<ChatMessageWithAttachmentsOutput>(`/api/chats/${id}/messages_with_attachments`)
     .then((response) => response.data);
@@ -52,7 +52,7 @@ export const apiChatsIdMutePut = (id: string): Promise<ChatOutput> => {
     .then((response) => response.data);
 }
 
-export const apiChatsAdminZoneGet = (): Promise<AdminZoneChatOutput> => {
+export const apiChatsAdminZoneGet = (filters: any): Promise<AdminZoneChatOutput> => {
   return axios
     .get<AdminZoneChatOutput>(`/api/chats_admin_zone`)
     .then((response) => response.data);
@@ -70,7 +70,7 @@ export const apiChatsAdminZoneIdPut = (id: string, body: AdminZoneChatUpdateInpu
     .then((response) => response.data);
 }
 
-export const apiChatsAdminZoneIdGet = (id: string): Promise<AdminZoneChatOutput> => {
+export const apiChatsAdminZoneIdGet = (id: string, filters: any): Promise<AdminZoneChatOutput> => {
   return axios
     .get<AdminZoneChatOutput>(`/api/chats_admin_zone/${id}`)
     .then((response) => response.data);

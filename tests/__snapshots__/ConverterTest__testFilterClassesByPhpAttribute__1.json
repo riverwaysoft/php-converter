@@ -9,7 +9,8 @@
                 "array": {
                     "name": "User"
                 }
-            }
+            },
+            "queryParams": []
         },
         {
             "route": "\/api\/users",
@@ -20,18 +21,25 @@
             },
             "output": {
                 "name": "User"
-            }
+            },
+            "queryParams": []
         },
         {
             "route": "\/api\/users\/{id}",
             "routeParams": [
-                "id"
+                {
+                    "name": "id",
+                    "type": {
+                        "name": "string"
+                    }
+                }
             ],
             "method": "get",
             "input": null,
             "output": {
                 "name": "User"
-            }
+            },
+            "queryParams": []
         },
         {
             "route": "\/api\/users_methods_string",
@@ -40,7 +48,8 @@
             "input": null,
             "output": {
                 "name": "User"
-            }
+            },
+            "queryParams": []
         },
         {
             "route": "\/api\/users_reversed_order",
@@ -51,7 +60,8 @@
                 "array": {
                     "name": "User"
                 }
-            }
+            },
+            "queryParams": []
         }
     ]
 }

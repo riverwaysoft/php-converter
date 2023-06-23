@@ -11,6 +11,7 @@ use Riverwaysoft\DtoConverter\Ast\ConverterResult;
 use Riverwaysoft\DtoConverter\Ast\ConverterVisitor;
 use Riverwaysoft\DtoConverter\Dto\ApiClient\ApiEndpoint;
 use Riverwaysoft\DtoConverter\Dto\ApiClient\ApiEndpointMethod;
+use Riverwaysoft\DtoConverter\Dto\ApiClient\ApiEndpointParam;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpBaseType;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpListType;
 use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeFactory;
@@ -162,7 +163,10 @@ class SymfonyControllerVisitor extends ConverterVisitor
             method: ApiEndpointMethod::fromString($method),
             input: $inputType,
             output: $outputType,
-            routeParams: $routeParams,
+            routeParams: array_map(
+                fn (string $paramName) => new ApiEndpointParam($paramName, PhpBaseType::string()),
+                $routeParams,
+            ),
         ));
     }
 
