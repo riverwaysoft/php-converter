@@ -762,7 +762,7 @@ CODE;
         $this->assertMatchesGeneratedTypeScriptApi($result);
     }
 
-    public function testApiPlatformWithNewApiResource()
+    public function testApiPlatformWithNewApiResource(): void
     {
         $code = <<<'CODE'
 <?php
