@@ -18,6 +18,9 @@ class ApiEndpoint implements \JsonSerializable
         /** @var ApiEndpointParam[] */
         public array $queryParams = [],
     ) {
+        if (str_contains($this->route, '.')) {
+            throw new \Exception(sprintf("Invalid character . in route %s", $this->route));
+        }
     }
 
     public function jsonSerialize(): mixed

@@ -4,6 +4,28 @@ declare(strict_types=1);
 
 namespace App\Tests;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Link;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
+use App\Contract\User\Enum\HubUserRoleEnum;
+use App\Modules\Crm\Entity\CustomerSite;
+use App\Modules\Security\Dto\BranchContextUpdateInput;
+use App\Modules\Security\Dto\HubUserCreateInput;
+use App\Modules\Security\Dto\HubUserOutput;
+use App\Modules\Security\Dto\HubUserUpdateInput;
+use App\Modules\Security\Processor\HubUserUpdateContextProcessor;
+use App\Modules\Workshop\Booking\Application\DataTransformer\BookingManageDataProcessor;
+use App\Modules\Workshop\Booking\Application\Dto\Input\BookingCompleteInput;
+use App\Modules\Workshop\Booking\Application\Dto\Input\BookingCreateInput;
+use App\Modules\Workshop\Booking\Application\Dto\Input\BookingUpdateInput;
+use App\Modules\Workshop\Booking\Application\Dto\Output\FullBookingOutput;
+use App\Modules\Workshop\Tags\Dto\TagsCollectionManageInput;
+use App\Shared\Annotation\BranchAware;
+use App\Shared\EventSourceCollector;
 use App\Tests\SnapshotComparator\TypeScriptSnapshotComparator;
 use PHPUnit\Framework\TestCase;
 use Riverwaysoft\DtoConverter\Ast\Converter;
@@ -14,6 +36,7 @@ use Riverwaysoft\DtoConverter\Bridge\ApiPlatform\ApiPlatformInputTypeResolver;
 use Riverwaysoft\DtoConverter\Bridge\ApiPlatform\AppendCollectionResponseFileProcessor;
 use Riverwaysoft\DtoConverter\Bridge\ApiPlatform\CollectionResponseTypeResolver;
 use Riverwaysoft\DtoConverter\Bridge\Symfony\SymfonyControllerVisitor;
+use Riverwaysoft\DtoConverter\ClassFilter\Dto;
 use Riverwaysoft\DtoConverter\ClassFilter\PhpAttributeFilter;
 use Riverwaysoft\DtoConverter\CodeProvider\FileSystemCodeProvider;
 use Riverwaysoft\DtoConverter\Dto\DtoList;
@@ -735,6 +758,162 @@ CODE;
         $result = $converter->convert([$code]);
 
         $this->assertCount(13, $result->apiEndpointList->getList());
+
+        $this->assertMatchesGeneratedTypeScriptApi($result);
+    }
+
+    public function testApiPlatformWithNewApiResource()
+    {
+        $code = <<<'CODE'
+<?php
+
+use \Riverwaysoft\DtoConverter\ClassFilter\Dto;
+use \Riverwaysoft\DtoConverter\Bridge\ApiPlatform\DtoResource;
+
+#[\Attribute(\Attribute::TARGET_PARAMETER)]
+class Input {
+  
+}
+
+#[\Attribute(\Attribute::TARGET_CLASS)]
+class ApiResource {
+// Copied from API Platform source
+     public function __construct(
+        ?string $uriTemplate = null,
+        ?string $shortName = null,
+        ?string $description = null,
+        $types = null,
+        $operations = null,
+        $formats = null,
+        $inputFormats = null,
+        $outputFormats = null,
+        $uriVariables = null,
+        ?string $routePrefix = null,
+        ?array $defaults = null,
+        ?array $requirements = null,
+        ?array $options = null,
+        ?bool $stateless = null,
+        ?string $sunset = null,
+        ?string $acceptPatch = null,
+        ?int $status = null,
+        ?string $host = null,
+        ?array $schemes = null,
+        ?string $condition = null,
+        ?string $controller = null,
+        ?string $class = null,
+        ?int $urlGenerationStrategy = null,
+        ?string $deprecationReason = null,
+        ?array $cacheHeaders = null,
+        ?array $normalizationContext = null,
+        ?array $denormalizationContext = null,
+        ?array $hydraContext = null,
+        ?array $openapiContext = null,
+        ?array $validationContext = null,
+        ?array $filters = null,
+        ?bool $elasticsearch = null,
+        $mercure = null,
+        $messenger = null,
+        $input = null,
+        $output = null,
+        ?array $order = null,
+        ?bool $fetchPartial = null,
+        ?bool $forceEager = null,
+        ?bool $paginationClientEnabled = null,
+        ?bool $paginationClientItemsPerPage = null,
+        ?bool $paginationClientPartial = null,
+        ?array $paginationViaCursor = null,
+        ?bool $paginationEnabled = null,
+        ?bool $paginationFetchJoinCollection = null,
+        ?bool $paginationUseOutputWalkers = null,
+        ?int $paginationItemsPerPage = null,
+        ?int $paginationMaximumItemsPerPage = null,
+        ?bool $paginationPartial = null,
+        ?string $paginationType = null,
+        ?string $security = null,
+        ?string $securityMessage = null,
+        ?string $securityPostDenormalize = null,
+        ?string $securityPostDenormalizeMessage = null,
+        ?string $securityPostValidation = null,
+        ?string $securityPostValidationMessage = null,
+        ?bool $compositeIdentifier = null,
+        ?array $exceptionToStatus = null,
+        ?bool $queryParameterValidationEnabled = null,
+        ?array $graphQlOperations = null,
+        $provider = null,
+        $processor = null,
+        array $extraProperties = []
+        ) {}
+}
+
+#[Dto]
+class HubUserOutput
+{
+    public function __construct(
+        public string $id,
+        public string $username,
+    ) {}
+}
+
+#[Dto]
+class HubUserUpdateInput
+{
+    public function __construct(
+        public string $username,
+    ) {}
+}
+
+#[Dto]
+class HubUserCreateInput
+{
+    public function __construct(
+        public string $id,
+        public string $username,
+    ) {}
+}
+
+#[Dto]
+class BranchContextUpdateInput {}
+
+#[ApiResource(
+    operations: [
+        new Put(uriTemplate: '/hub_users/{id}/update_branch_context', status: 204, input: BranchContextUpdateInput::class, output: false, processor: HubUserUpdateContextProcessor::class),
+        new Put(input: HubUserUpdateInput::class),
+        new Get(),
+        new Delete(),
+        new GetCollection(),
+        new Post(input: HubUserCreateInput::class)
+    ],
+    output: HubUserOutput::class,
+)]
+#[DtoResource]
+class HubUser {}
+
+#[Dto]
+class FullBookingOutput
+{
+    public function __construct(
+        public string $id,
+        ) {}
+}
+
+#[ApiResource(
+    operations: [
+        new Get(),
+    ],
+    output: FullBookingOutput::class,
+)]
+#[DtoResource]
+class Booking {}
+CODE;
+
+        $converter = new Converter([
+            new DtoVisitor(new PhpAttributeFilter('Dto')),
+            new ApiPlatformDtoResourceVisitor(new PhpAttributeFilter('DtoResource')),
+        ]);
+
+        $result = $converter->convert([$code]);
+
+        $this->assertCount(7, $result->apiEndpointList->getList());
 
         $this->assertMatchesGeneratedTypeScriptApi($result);
     }
