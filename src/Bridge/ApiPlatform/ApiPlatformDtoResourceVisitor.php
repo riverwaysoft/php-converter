@@ -154,7 +154,6 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
             $routeParams[] = new ApiEndpointParam('id', PhpBaseType::string());
         }
 
-        // TODO: handle {_format}
         $maybePath = $this->getNewExpressionArgumentByName($item->value, 'uriTemplate');
         if ($maybePath?->value instanceof Node\Scalar\String_) {
             $route = $maybePath->value->value;
