@@ -44,6 +44,12 @@ export const apiHubUsersGet = (filters: any | null = null): Promise<CollectionRe
     .then((response) => response.data);
 }
 
+export const apiHubUsersPost = (body: HubUserCreateInput): Promise<HubUserOutput> => {
+  return axios
+    .post<HubUserOutput>(`/api/hub_users`, body)
+    .then((response) => response.data);
+}
+
 export const apiHubUsersIdPut = (id: string, body: HubUserUpdateInput): Promise<HubUserOutput> => {
   return axios
     .put<HubUserOutput>(`/api/hub_users/${id}`, body)
@@ -59,12 +65,6 @@ export const apiHubUsersIdGet = (id: string): Promise<HubUserOutput> => {
 export const apiHubUsersIdDelete = (id: string): Promise<HubUserOutput> => {
   return axios
     .delete<HubUserOutput>(`/api/hub_users/${id}`)
-    .then((response) => response.data);
-}
-
-export const apiHubUsersIdPost = (id: string, body: HubUserCreateInput): Promise<HubUserOutput> => {
-  return axios
-    .post<HubUserOutput>(`/api/hub_users/${id}`, body)
     .then((response) => response.data);
 }
 
