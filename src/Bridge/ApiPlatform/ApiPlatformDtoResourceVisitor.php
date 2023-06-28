@@ -171,7 +171,9 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
         if ($isCollection) {
             $queryParams[] = new ApiEndpointParam('filters', new PhpOptionalType(PhpBaseType::object()));
         } else {
-            $routeParams[] = new ApiEndpointParam('id', PhpBaseType::string());
+            if (!$method->equals(ApiEndpointMethod::post())) {
+                $routeParams[] = new ApiEndpointParam('id', PhpBaseType::string());
+            }
         }
 
         $route = $forcePath;
@@ -190,7 +192,7 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
         } else {
             // If the 'route' is missed - generate it by ourselves
             $route = $this->iriGenerator->generate($node->name->name);
-            if (!$isCollection) {
+            if (!$isCollection && !$method->equals(ApiEndpointMethod::post())) {
                 $route = sprintf("%s/{id}", rtrim($route, '/'));
                 $routeParams = [new ApiEndpointParam('id', PhpBaseType::string())];
             }
