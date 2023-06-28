@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Riverwaysoft\DtoConverter\Bridge\ApiPlatform;
 
+use Jawira\CaseConverter\Convert;
 use PhpParser\Node;
 use PhpParser\Node\Attribute;
 use PhpParser\Node\Stmt\Class_;
@@ -59,6 +60,7 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
             // Support for new ApiResource annotation
             $operationsArg = $this->getAttributeArgumentByName($apiResourceAttribute, 'operations');
             $uriTemplateArg = $this->getAttributeArgumentByName($apiResourceAttribute, 'uriTemplate');
+            $shortNameArg = $this->getAttributeArgumentByName($apiResourceAttribute, 'shortName');
             $forceSubresourcePath = null;
 
             if (
@@ -67,6 +69,11 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
                 && !$operationsArg?->value instanceof Node\Expr\Array_
             ) {
                 return null;
+            }
+
+            $shortName = null;
+            if ($shortNameArg?->value instanceof Node\Scalar\String_) {
+                $shortName = $shortNameArg->value->value;
             }
 
             // Main output
@@ -88,12 +95,12 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
 
             if ($uriTemplateArg?->value instanceof Node\Scalar\String_) {
                 // Remove Api Platform's subresource: https://api-platform.com/docs/core/subresources/
-                $forceSubresourcePath = str_replace(search: '.{_format}', replace:  '', subject: $uriTemplateArg->value->value);
+                $forceSubresourcePath = str_replace(search: '.{_format}', replace: '', subject: $uriTemplateArg->value->value);
             }
 
             if ($legacyCollectionOperationsArg?->value instanceof Node\Expr\Array_) {
                 foreach ($legacyCollectionOperationsArg->value->items as $item) {
-                    $apiEndpoint = $this->createApiEndpointFromLegacyCode($item, true, $node, $defaultOutput, $defaultInput);
+                    $apiEndpoint = $this->createApiEndpointFromLegacyCode($item, true, $node, $defaultOutput, $defaultInput, $shortName);
                     if ($apiEndpoint) {
                         $this->converterResult->apiEndpointList->add($apiEndpoint);
                     }
@@ -102,7 +109,7 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
 
             if ($legacyItemOperationsArg?->value instanceof Node\Expr\Array_) {
                 foreach ($legacyItemOperationsArg->value->items as $item) {
-                    $apiEndpoint = $this->createApiEndpointFromLegacyCode($item, false, $node, $defaultOutput, $defaultInput);
+                    $apiEndpoint = $this->createApiEndpointFromLegacyCode($item, false, $node, $defaultOutput, $defaultInput, $shortName);
                     if ($apiEndpoint) {
                         $this->converterResult->apiEndpointList->add($apiEndpoint);
                     }
@@ -118,7 +125,7 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
                 }
 
                 foreach ($operationsArg->value->items as $item) {
-                    $apiEndpoint = $this->createApiEndpoint($item, $node, $defaultOutput, $defaultInput, $forceSubresourcePath);
+                    $apiEndpoint = $this->createApiEndpoint($item, $node, $defaultOutput, $defaultInput, $forceSubresourcePath, $shortName);
                     if ($apiEndpoint) {
                         $this->converterResult->apiEndpointList->add($apiEndpoint);
                     }
@@ -135,6 +142,7 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
         string $defaultOutput,
         string|null $defaultInput,
         string|null $forcePath,
+        string|null $shortName,
     ): null|ApiEndpoint {
         if (!$item->value instanceof Node\Expr\New_) {
             return null;
@@ -190,8 +198,9 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
                 SymfonyRoutingParser::parseRoute($route),
             );
         } else {
+            $apiResourceName = $shortName ? (new Convert($shortName))->toKebab() : $node->name->name;
             // If the 'route' is missed - generate it by ourselves
-            $route = $this->iriGenerator->generate($node->name->name);
+            $route = $this->iriGenerator->generate($apiResourceName);
             if (!$isCollection && !$method->equals(ApiEndpointMethod::post())) {
                 $route = sprintf("%s/{id}", rtrim($route, '/'));
                 $routeParams = [new ApiEndpointParam('id', PhpBaseType::string())];
@@ -210,8 +219,14 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
         );
     }
 
-    private function createApiEndpointFromLegacyCode(Node\Expr\ArrayItem $item, bool $isCollection, Class_ $node, string $defaultOutput, string|null $defaultInput): null|ApiEndpoint
-    {
+    private function createApiEndpointFromLegacyCode(
+        Node\Expr\ArrayItem $item,
+        bool $isCollection,
+        Class_ $node,
+        string $defaultOutput,
+        string|null $defaultInput,
+        string|null $shortName,
+    ): null|ApiEndpoint {
         $arrayItemValue = $item->value instanceof Node\Expr\Array_ ? $item->value->items : null;
 
         $key = null;
@@ -236,8 +251,9 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
         /** @var ApiEndpointParam[] $queryParams */
         $queryParams = [];
         if (!$route) {
+            $apiResourceName = $shortName ? (new Convert($shortName))->toKebab() : $node->name->name;
             // If the 'route' is missed - generate it by ourselves
-            $route = $this->iriGenerator->generate($node->name->name);
+            $route = $this->iriGenerator->generate($apiResourceName);
             if (!$isCollection) {
                 $route = sprintf("%s/{id}", rtrim($route, '/'));
                 $routeParams[] = new ApiEndpointParam('id', PhpBaseType::string());
