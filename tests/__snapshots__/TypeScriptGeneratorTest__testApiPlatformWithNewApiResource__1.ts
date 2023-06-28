@@ -23,9 +23,18 @@ export type HubUserUpdateInput = {
   username: string;
 };
 
-export const apiBookingsIdGet = (id: string): Promise<FullBookingOutput> => {
+export type JobSheetTagCollectionOutput = {
+};
+
+export const apiBookingsGet = (filters: any | null = null): Promise<CollectionResponse<FullBookingOutput>> => {
   return axios
-    .get<FullBookingOutput>(`/api/bookings/${id}`)
+    .get<CollectionResponse<FullBookingOutput>>(`/api/bookings`, { params: filters })
+    .then((response) => response.data);
+}
+
+export const apiCustomerSitesIdBookingsGet = (id: string, filters: any | null = null): Promise<CollectionResponse<FullBookingOutput>> => {
+  return axios
+    .get<CollectionResponse<FullBookingOutput>>(`/api/customer_sites/${id}/bookings`, { params: filters })
     .then((response) => response.data);
 }
 
@@ -62,6 +71,12 @@ export const apiHubUsersIdPost = (id: string, body: HubUserCreateInput): Promise
 export const apiHubUsersIdUpdateBranchContextPut = (id: string, body: BranchContextUpdateInput): Promise<HubUserOutput> => {
   return axios
     .put<HubUserOutput>(`/api/hub_users/${id}/update_branch_context`, body)
+    .then((response) => response.data);
+}
+
+export const apiJobSheetsIdTagsGet = (id: string): Promise<JobSheetTagCollectionOutput> => {
+  return axios
+    .get<JobSheetTagCollectionOutput>(`/api/job_sheets/${id}/tags`)
     .then((response) => response.data);
 }
 

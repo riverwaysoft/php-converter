@@ -47,66 +47,81 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
             return null;
         }
 
-        $apiResourceAttribute = $this->findAttribute($node, self::API_PLATFORM_ATTRIBUTE);
-        if (!$apiResourceAttribute) {
+        $apiResourceAttributes = $this->findAttributes($node, self::API_PLATFORM_ATTRIBUTE);
+        if (empty($apiResourceAttributes)) {
             throw new \Exception(sprintf('Class %s does not have #[%s] attribute', $node->name->name, self::API_PLATFORM_ATTRIBUTE));
         }
 
+        foreach ($apiResourceAttributes as $apiResourceAttribute) {
+            // Support for legacy ApiResource annotation
+            $legacyCollectionOperationsArg = $this->getAttributeArgumentByName($apiResourceAttribute, 'collectionOperations');
+            $legacyItemOperationsArg = $this->getAttributeArgumentByName($apiResourceAttribute, 'itemOperations');
+            // Support for new ApiResource annotation
+            $operationsArg = $this->getAttributeArgumentByName($apiResourceAttribute, 'operations');
+            $uriTemplateArg = $this->getAttributeArgumentByName($apiResourceAttribute, 'uriTemplate');
+            $forceSubresourcePath = null;
 
-        // Support for legacy ApiResource annotation
-        $legacyCollectionOperationsArg = $this->getAttributeArgumentByName($apiResourceAttribute, 'collectionOperations');
-        $legacyItemOperationsArg = $this->getAttributeArgumentByName($apiResourceAttribute, 'itemOperations');
-        // Support for new ApiResource annotation
-        $operationsArg = $this->getAttributeArgumentByName($apiResourceAttribute, 'operations');
-
-        if (
+            if (
                 !$legacyCollectionOperationsArg?->value instanceof Node\Expr\Array_
                 && !$legacyItemOperationsArg?->value instanceof Node\Expr\Array_
                 && !$operationsArg?->value instanceof Node\Expr\Array_
             ) {
-            return null;
-        }
+                return null;
+            }
 
-        // Main output
-        $defaultOutput = null;
-        $outputNode = $this->getAttributeArgumentByName($apiResourceAttribute, 'output');
-        if ($outputNode?->value instanceof Node\Expr\ClassConstFetch) {
-            $defaultOutput = $outputNode->value->class->parts[array_key_last($outputNode->value->class->parts)];
-        }
-        if (!$defaultOutput) {
-            throw new \Exception(sprintf("The output is required for ApiResource %s. Context: %s", $node->name->name, $this->prettyPrinter->prettyPrint([$apiResourceAttribute])));
-        }
+            // Main output
+            $defaultOutput = null;
+            $outputNode = $this->getAttributeArgumentByName($apiResourceAttribute, 'output');
+            if ($outputNode?->value instanceof Node\Expr\ClassConstFetch) {
+                $defaultOutput = $outputNode->value->class->parts[array_key_last($outputNode->value->class->parts)];
+            }
+            if (!$defaultOutput) {
+                throw new \Exception(sprintf("The output is required for ApiResource %s. Context: %s", $node->name->name, $this->prettyPrinter->prettyPrint([$apiResourceAttribute])));
+            }
 
-        // Main input
-        $defaultInput = null;
-        $inputNode = $this->getAttributeArgumentByName($apiResourceAttribute, 'input');
-        if ($inputNode?->value instanceof Node\Expr\ClassConstFetch) {
-            $defaultInput = $inputNode->value->class->parts[array_key_last($inputNode->value->class->parts)];
-        }
+            // Main input
+            $defaultInput = null;
+            $inputNode = $this->getAttributeArgumentByName($apiResourceAttribute, 'input');
+            if ($inputNode?->value instanceof Node\Expr\ClassConstFetch) {
+                $defaultInput = $inputNode->value->class->parts[array_key_last($inputNode->value->class->parts)];
+            }
 
-        if ($legacyCollectionOperationsArg?->value instanceof Node\Expr\Array_) {
-            foreach ($legacyCollectionOperationsArg->value->items as $item) {
-                $apiEndpoint = $this->createApiEndpointFromLegacyCode($item, true, $node, $defaultOutput, $defaultInput);
-                if ($apiEndpoint) {
-                    $this->converterResult->apiEndpointList->add($apiEndpoint);
+            if ($uriTemplateArg?->value instanceof Node\Scalar\String_) {
+                // Remove Api Platform's subresource: https://api-platform.com/docs/core/subresources/
+                $forceSubresourcePath = str_replace(search: '.{_format}', replace:  '', subject: $uriTemplateArg->value->value);
+            }
+
+            if ($legacyCollectionOperationsArg?->value instanceof Node\Expr\Array_) {
+                foreach ($legacyCollectionOperationsArg->value->items as $item) {
+                    $apiEndpoint = $this->createApiEndpointFromLegacyCode($item, true, $node, $defaultOutput, $defaultInput);
+                    if ($apiEndpoint) {
+                        $this->converterResult->apiEndpointList->add($apiEndpoint);
+                    }
                 }
             }
-        }
 
-        if ($legacyItemOperationsArg?->value instanceof Node\Expr\Array_) {
-            foreach ($legacyItemOperationsArg->value->items as $item) {
-                $apiEndpoint = $this->createApiEndpointFromLegacyCode($item, false, $node, $defaultOutput, $defaultInput);
-                if ($apiEndpoint) {
-                    $this->converterResult->apiEndpointList->add($apiEndpoint);
+            if ($legacyItemOperationsArg?->value instanceof Node\Expr\Array_) {
+                foreach ($legacyItemOperationsArg->value->items as $item) {
+                    $apiEndpoint = $this->createApiEndpointFromLegacyCode($item, false, $node, $defaultOutput, $defaultInput);
+                    if ($apiEndpoint) {
+                        $this->converterResult->apiEndpointList->add($apiEndpoint);
+                    }
                 }
             }
-        }
 
-        if ($operationsArg?->value instanceof Node\Expr\Array_) {
-            foreach ($operationsArg->value->items as $item) {
-                $apiEndpoint = $this->createApiEndpoint($item, $node, $defaultOutput, $defaultInput);
-                if ($apiEndpoint) {
-                    $this->converterResult->apiEndpointList->add($apiEndpoint);
+            if ($operationsArg?->value instanceof Node\Expr\Array_) {
+                if ($forceSubresourcePath) {
+                    $endpointCount = count($operationsArg->value->items);
+                    if ($endpointCount !== 1) {
+                        throw new \Exception(sprintf('ApiResource %s should have only 1 array item in the "operations" field since it is subresource. %s given: ', $node->name->name, $endpointCount));
+                    }
+                }
+
+                foreach ($operationsArg->value->items as $item) {
+                    $apiEndpoint = $this->createApiEndpoint($item, $node, $defaultOutput, $defaultInput, $forceSubresourcePath);
+                    if ($apiEndpoint) {
+                        $this->converterResult->apiEndpointList->add($apiEndpoint);
+                    }
                 }
             }
         }
@@ -114,8 +129,13 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
         return null;
     }
 
-    private function createApiEndpoint(Node\Expr\ArrayItem $item, Class_ $node, string $defaultOutput, string|null $defaultInput): null|ApiEndpoint
-    {
+    private function createApiEndpoint(
+        Node\Expr\ArrayItem $item,
+        Class_ $node,
+        string $defaultOutput,
+        string|null $defaultInput,
+        string|null $forcePath,
+    ): null|ApiEndpoint {
         if (!$item->value instanceof Node\Expr\New_) {
             return null;
         }
@@ -154,12 +174,15 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
             $routeParams[] = new ApiEndpointParam('id', PhpBaseType::string());
         }
 
-        $maybePath = $this->getNewExpressionArgumentByName($item->value, 'uriTemplate');
-        if ($maybePath?->value instanceof Node\Scalar\String_) {
-            $route = $maybePath->value->value;
-            if (str_contains($route, '.{_format}')) {
-                throw new \Exception(sprintf("Routes with .{_format} are not supported. Route %s", $route));
+        $route = $forcePath;
+        if (!$route) {
+            $maybePath = $this->getNewExpressionArgumentByName($item->value, 'uriTemplate');
+            if ($maybePath?->value instanceof Node\Scalar\String_) {
+                $route = $maybePath->value->value;
             }
+        }
+
+        if ($route) {
             $routeParams = array_map(
                 fn (string $param) => new ApiEndpointParam($param, PhpBaseType::string()),
                 SymfonyRoutingParser::parseRoute($route),
@@ -282,19 +305,22 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
         return null;
     }
 
-    private function findAttribute(Class_ $node, string $name): Node\Attribute|null
+    /** @return Node\Attribute[] */
+    private function findAttributes(Class_ $node, string $name): array
     {
         $attrGroups = $node->attrGroups;
+        /** @var Node\Attribute[] $result */
+        $result = [];
 
         foreach ($attrGroups as $attrGroup) {
             foreach ($attrGroup->attrs as $attr) {
                 if (in_array(needle: $name, haystack: $attr->name->parts)) {
-                    return $attr;
+                    $result[] = $attr;
                 }
             }
         }
 
-        return null;
+        return $result;
     }
 
     private function getNewExpressionArgumentByName(Node\Expr\New_ $new, string $name): ?Node\Arg
