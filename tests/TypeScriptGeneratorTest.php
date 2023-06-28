@@ -720,6 +720,18 @@ public string $id;
 )]
 #[DtoResource]
 class StudentNotes {}
+
+#[Dto]
+class CloudPushStoreOutput {}
+
+#[ApiResource(
+    itemOperations: ['get'],
+    shortName: "push_history_item",
+    output: CloudPushStoreOutput::class
+)]
+#[DtoResource]
+class CloudPushStore {}
+
 CODE;
 
         $converter = new Converter([
@@ -729,7 +741,7 @@ CODE;
 
         $result = $converter->convert([$code]);
 
-        $this->assertCount(13, $result->apiEndpointList->getList());
+        $this->assertCount(14, $result->apiEndpointList->getList());
 
         $this->assertMatchesGeneratedTypeScriptApi($result);
     }

@@ -22,6 +22,9 @@ export type ChatOutput = {
   id: string;
 };
 
+export type CloudPushStoreOutput = {
+};
+
 export type StudentNotesInput = {
 };
 
@@ -83,6 +86,12 @@ export const apiChatsAdminZoneIdPut = (id: string, body: AdminZoneChatUpdateInpu
 export const apiChatsAdminZoneIdGet = (id: string): Promise<AdminZoneChatOutput> => {
   return axios
     .get<AdminZoneChatOutput>(`/api/chats_admin_zone/${id}`)
+    .then((response) => response.data);
+}
+
+export const apiPushHistoryItemsIdGet = (id: string): Promise<CloudPushStoreOutput> => {
+  return axios
+    .get<CloudPushStoreOutput>(`/api/push_history_items/${id}`)
     .then((response) => response.data);
 }
 
