@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Riverwaysoft\DtoConverter\Cli;
 
+use Composer\XdebugHandler\XdebugHandler;
 use Riverwaysoft\DtoConverter\CodeProvider\FileSystemCodeProvider;
 use Riverwaysoft\DtoConverter\Ast\Converter;
 use Riverwaysoft\DtoConverter\Language\LanguageGeneratorInterface;
@@ -36,11 +37,16 @@ class ConvertCommand extends Command
             ->setDescription('Generate TypeScript / Dart from PHP sources')
             ->addOption('from', 'f', InputOption::VALUE_REQUIRED)
             ->addOption('to', 't', InputOption::VALUE_REQUIRED)
+            ->addOption('xdebug', null, InputOption::VALUE_OPTIONAL)
             ->addOption('branch', 'b', InputOption::VALUE_OPTIONAL);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        if (!$input->getOption('xdebug')) {
+            $this->turnOffXdebug();
+        }
+
         $from = $input->getOption('from');
         $to = $input->getOption('to');
         Assert::directory($to);
@@ -75,5 +81,13 @@ class ConvertCommand extends Command
         }
 
         return Command::SUCCESS;
+    }
+
+    private function turnOffXdebug(): void
+    {
+        $xdebug = new XdebugHandler('dtoConverter');
+        $xdebug->setPersistent();
+        $xdebug->check();
+        unset($xdebug);
     }
 }
