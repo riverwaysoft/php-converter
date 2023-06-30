@@ -1,9 +1,9 @@
 <?php
 
-namespace Riverwaysoft\DtoConverter\Language\Dart;
+namespace Riverwaysoft\PhpConverter\Language\Dart;
 
-use Riverwaysoft\DtoConverter\Dto\DtoClassProperty;
-use Riverwaysoft\DtoConverter\Dto\DtoType;
+use Riverwaysoft\PhpConverter\Dto\DtoClassProperty;
+use Riverwaysoft\PhpConverter\Dto\DtoType;
 
 class DartEquitableGenerator
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace Riverwaysoft\DtoConverter\Language\Dart;
+namespace Riverwaysoft\PhpConverter\Language\Dart;
 
-use Riverwaysoft\DtoConverter\Dto\DtoEnumProperty;
-use Riverwaysoft\DtoConverter\Dto\DtoType;
+use Riverwaysoft\PhpConverter\Dto\DtoEnumProperty;
+use Riverwaysoft\PhpConverter\Dto\DtoType;
 use Webmozart\Assert\Assert;
 
 class DartEnumValidator

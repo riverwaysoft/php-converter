@@ -1,9 +1,9 @@
 <?php
 
-namespace Riverwaysoft\DtoConverter\Dto;
+namespace Riverwaysoft\PhpConverter\Dto;
 
 use PHPUnit\Framework\TestCase;
-use Riverwaysoft\DtoConverter\Dto\PhpType\PhpBaseType;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpBaseType;
 
 class DtoTypeTest extends TestCase
 {

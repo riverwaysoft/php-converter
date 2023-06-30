@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\Dto;
+namespace Riverwaysoft\PhpConverter\Dto;
 
 class DtoEnumProperty implements \JsonSerializable
 {

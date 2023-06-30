@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\Ast;
+namespace Riverwaysoft\PhpConverter\Ast;
 
 use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTagNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\VarTagValueNode;
@@ -15,10 +15,10 @@ use PHPStan\PhpDocParser\Parser\ConstExprParser;
 use PHPStan\PhpDocParser\Parser\PhpDocParser;
 use PHPStan\PhpDocParser\Parser\TokenIterator;
 use PHPStan\PhpDocParser\Parser\TypeParser;
-use Riverwaysoft\DtoConverter\Dto\PhpType\PhpListType;
-use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeFactory;
-use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeInterface;
-use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnionType;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpListType;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeFactory;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeInterface;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnionType;
 
 class PhpDocTypeParser
 {

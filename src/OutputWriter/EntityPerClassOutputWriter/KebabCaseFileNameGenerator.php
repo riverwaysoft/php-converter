@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter;
+namespace Riverwaysoft\PhpConverter\OutputWriter\EntityPerClassOutputWriter;
 
 use Jawira\CaseConverter\Convert;
 

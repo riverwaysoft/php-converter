@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\Bridge\Symfony;
+namespace Riverwaysoft\PhpConverter\Bridge\Symfony;
 
 use PhpParser\Node;
 use PhpParser\Node\Attribute;
 use PhpParser\Node\Stmt\ClassMethod;
-use Riverwaysoft\DtoConverter\Ast\ConverterResult;
-use Riverwaysoft\DtoConverter\Ast\ConverterVisitor;
-use Riverwaysoft\DtoConverter\Dto\ApiClient\ApiEndpoint;
-use Riverwaysoft\DtoConverter\Dto\ApiClient\ApiEndpointMethod;
-use Riverwaysoft\DtoConverter\Dto\ApiClient\ApiEndpointParam;
-use Riverwaysoft\DtoConverter\Dto\PhpType\PhpBaseType;
-use Riverwaysoft\DtoConverter\Dto\PhpType\PhpListType;
-use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeFactory;
+use Riverwaysoft\PhpConverter\Ast\ConverterResult;
+use Riverwaysoft\PhpConverter\Ast\ConverterVisitor;
+use Riverwaysoft\PhpConverter\Dto\ApiClient\ApiEndpoint;
+use Riverwaysoft\PhpConverter\Dto\ApiClient\ApiEndpointMethod;
+use Riverwaysoft\PhpConverter\Dto\ApiClient\ApiEndpointParam;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpBaseType;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpListType;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeFactory;
 
 class SymfonyControllerVisitor extends ConverterVisitor
 {

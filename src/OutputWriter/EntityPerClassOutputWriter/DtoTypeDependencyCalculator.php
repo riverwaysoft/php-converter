@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter;
+namespace Riverwaysoft\PhpConverter\OutputWriter\EntityPerClassOutputWriter;
 
-use Riverwaysoft\DtoConverter\Dto\DtoClassProperty;
-use Riverwaysoft\DtoConverter\Dto\DtoType;
-use Riverwaysoft\DtoConverter\Dto\ExpressionType;
-use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnionType;
-use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnknownType;
+use Riverwaysoft\PhpConverter\Dto\DtoClassProperty;
+use Riverwaysoft\PhpConverter\Dto\DtoType;
+use Riverwaysoft\PhpConverter\Dto\ExpressionType;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnionType;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
 
 class DtoTypeDependencyCalculator
 {

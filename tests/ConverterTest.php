@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Riverwaysoft\DtoConverter\Ast\Converter;
-use Riverwaysoft\DtoConverter\Ast\DtoVisitor;
-use Riverwaysoft\DtoConverter\Bridge\Symfony\SymfonyControllerVisitor;
-use Riverwaysoft\DtoConverter\ClassFilter\DocBlockCommentFilter;
-use Riverwaysoft\DtoConverter\ClassFilter\NegationFilter;
-use Riverwaysoft\DtoConverter\ClassFilter\PhpAttributeFilter;
+use Riverwaysoft\PhpConverter\Ast\Converter;
+use Riverwaysoft\PhpConverter\Ast\DtoVisitor;
+use Riverwaysoft\PhpConverter\Bridge\Symfony\SymfonyControllerVisitor;
+use Riverwaysoft\PhpConverter\ClassFilter\DocBlockCommentFilter;
+use Riverwaysoft\PhpConverter\ClassFilter\NegationFilter;
+use Riverwaysoft\PhpConverter\ClassFilter\PhpAttributeFilter;
 use Spatie\Snapshots\MatchesSnapshots;
 
 class ConverterTest extends TestCase
@@ -165,7 +165,7 @@ CODE;
         $codeWithDateTime = <<<'CODE'
 <?php
 
-use \Riverwaysoft\DtoConverter\ClassFilter\DtoEndpoint;
+use \Riverwaysoft\PhpConverter\ClassFilter\DtoEndpoint;
 
 #[\Attribute(\Attribute::TARGET_CLASS)]
 class Dto
@@ -279,7 +279,7 @@ CODE;
         $codeWithDateTime = <<<'CODE'
 <?php
 
-use \Riverwaysoft\DtoConverter\ClassFilter\DtoEndpoint;
+use \Riverwaysoft\PhpConverter\ClassFilter\DtoEndpoint;
 
 #[\Attribute(\Attribute::TARGET_CLASS)]
 class Dto

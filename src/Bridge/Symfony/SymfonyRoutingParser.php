@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\Bridge\Symfony;
+namespace Riverwaysoft\PhpConverter\Bridge\Symfony;
 
 class SymfonyRoutingParser
 {

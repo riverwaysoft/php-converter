@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\OutputWriter\OutputProcessor;
+namespace Riverwaysoft\PhpConverter\OutputWriter\OutputProcessor;
 
-use Riverwaysoft\DtoConverter\OutputWriter\OutputFile;
+use Riverwaysoft\PhpConverter\OutputWriter\OutputFile;
 
 interface SingleOutputFileProcessorInterface
 {

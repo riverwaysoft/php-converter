@@ -5,17 +5,17 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Riverwaysoft\DtoConverter\Ast\Converter;
-use Riverwaysoft\DtoConverter\Ast\DtoVisitor;
-use Riverwaysoft\DtoConverter\Bridge\Symfony\SymfonyControllerVisitor;
-use Riverwaysoft\DtoConverter\ClassFilter\PhpAttributeFilter;
-use Riverwaysoft\DtoConverter\Cli\ConvertCommand;
-use Riverwaysoft\DtoConverter\CodeProvider\FileSystemCodeProvider;
-use Riverwaysoft\DtoConverter\Language\TypeScript\TypeScriptGenerator;
-use Riverwaysoft\DtoConverter\Language\UnknownTypeResolver\ClassNameTypeResolver;
-use Riverwaysoft\DtoConverter\Language\UnknownTypeResolver\DateTimeTypeResolver;
-use Riverwaysoft\DtoConverter\OutputDiffCalculator\OutputDiffCalculator;
-use Riverwaysoft\DtoConverter\OutputWriter\SingleFileOutputWriter\SingleFileOutputWriter;
+use Riverwaysoft\PhpConverter\Ast\Converter;
+use Riverwaysoft\PhpConverter\Ast\DtoVisitor;
+use Riverwaysoft\PhpConverter\Bridge\Symfony\SymfonyControllerVisitor;
+use Riverwaysoft\PhpConverter\ClassFilter\PhpAttributeFilter;
+use Riverwaysoft\PhpConverter\Cli\ConvertCommand;
+use Riverwaysoft\PhpConverter\CodeProvider\FileSystemCodeProvider;
+use Riverwaysoft\PhpConverter\Language\TypeScript\TypeScriptGenerator;
+use Riverwaysoft\PhpConverter\Language\UnknownTypeResolver\ClassNameTypeResolver;
+use Riverwaysoft\PhpConverter\Language\UnknownTypeResolver\DateTimeTypeResolver;
+use Riverwaysoft\PhpConverter\OutputDiffCalculator\OutputDiffCalculator;
+use Riverwaysoft\PhpConverter\OutputWriter\SingleFileOutputWriter\SingleFileOutputWriter;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Filesystem\Filesystem;
 

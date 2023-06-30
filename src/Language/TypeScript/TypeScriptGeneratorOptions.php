@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\Language\TypeScript;
+namespace Riverwaysoft\PhpConverter\Language\TypeScript;
 
 class TypeScriptGeneratorOptions
 {

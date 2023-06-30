@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\Dto;
+namespace Riverwaysoft\PhpConverter\Dto;
 
-use Riverwaysoft\DtoConverter\Dto\PhpType\PhpBaseType;
-use Riverwaysoft\DtoConverter\Dto\PhpType\PhpListType;
-use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeInterface;
-use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnionType;
-use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnknownType;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpBaseType;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpListType;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeInterface;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnionType;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
 
 class DtoClassProperty implements \JsonSerializable
 {

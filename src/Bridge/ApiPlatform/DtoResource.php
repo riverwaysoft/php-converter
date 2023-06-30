@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\Bridge\ApiPlatform;
+namespace Riverwaysoft\PhpConverter\Bridge\ApiPlatform;
 
 #[\Attribute(\Attribute::TARGET_CLASS)]
 class DtoResource

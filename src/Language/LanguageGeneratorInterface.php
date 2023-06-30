@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\Language;
+namespace Riverwaysoft\PhpConverter\Language;
 
-use Riverwaysoft\DtoConverter\Ast\ConverterResult;
-use Riverwaysoft\DtoConverter\OutputWriter\OutputFile;
+use Riverwaysoft\PhpConverter\Ast\ConverterResult;
+use Riverwaysoft\PhpConverter\OutputWriter\OutputFile;
 
 interface LanguageGeneratorInterface
 {

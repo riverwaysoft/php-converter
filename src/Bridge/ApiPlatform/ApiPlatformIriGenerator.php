@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\Bridge\ApiPlatform;
+namespace Riverwaysoft\PhpConverter\Bridge\ApiPlatform;
 
 use Doctrine\Inflector\Inflector;
 use Doctrine\Inflector\InflectorFactory;
 use Jawira\CaseConverter\Convert;
-use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnknownType;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
 
 class ApiPlatformIriGenerator
 {

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\Dto\ApiClient;
+namespace Riverwaysoft\PhpConverter\Dto\ApiClient;
 
-use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeInterface;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeInterface;
 
 class ApiEndpointParam implements \JsonSerializable
 {

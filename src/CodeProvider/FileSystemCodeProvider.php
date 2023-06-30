@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\CodeProvider;
+namespace Riverwaysoft\PhpConverter\CodeProvider;
 
 class FileSystemCodeProvider
 {

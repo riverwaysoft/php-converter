@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter;
+namespace Riverwaysoft\PhpConverter\OutputWriter\EntityPerClassOutputWriter;
 
 use PHPUnit\Framework\TestCase;
-use Riverwaysoft\DtoConverter\Dto\DtoClassProperty;
-use Riverwaysoft\DtoConverter\Dto\DtoType;
-use Riverwaysoft\DtoConverter\Dto\ExpressionType;
-use Riverwaysoft\DtoConverter\Dto\PhpType\PhpBaseType;
-use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnionType;
-use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnknownType;
-use Riverwaysoft\DtoConverter\Language\TypeScript\TypeScriptImportGenerator;
+use Riverwaysoft\PhpConverter\Dto\DtoClassProperty;
+use Riverwaysoft\PhpConverter\Dto\DtoType;
+use Riverwaysoft\PhpConverter\Dto\ExpressionType;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpBaseType;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnionType;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
+use Riverwaysoft\PhpConverter\Language\TypeScript\TypeScriptImportGenerator;
 use Spatie\Snapshots\MatchesSnapshots;
 
 class EntityPerClassOutputWriterTest extends TestCase

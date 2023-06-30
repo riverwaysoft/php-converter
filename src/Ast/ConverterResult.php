@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\Ast;
+namespace Riverwaysoft\PhpConverter\Ast;
 
-use Riverwaysoft\DtoConverter\Dto\ApiClient\ApiEndpointList;
-use Riverwaysoft\DtoConverter\Dto\DtoList;
+use Riverwaysoft\PhpConverter\Dto\ApiClient\ApiEndpointList;
+use Riverwaysoft\PhpConverter\Dto\DtoList;
 
 class ConverterResult
 {

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\OutputWriter\SingleFileOutputWriter;
+namespace Riverwaysoft\PhpConverter\OutputWriter\SingleFileOutputWriter;
 
-use Riverwaysoft\DtoConverter\Dto\ApiClient\ApiEndpoint;
-use Riverwaysoft\DtoConverter\Dto\DtoType;
-use Riverwaysoft\DtoConverter\OutputWriter\OutputFile;
-use Riverwaysoft\DtoConverter\OutputWriter\OutputWriterInterface;
+use Riverwaysoft\PhpConverter\Dto\ApiClient\ApiEndpoint;
+use Riverwaysoft\PhpConverter\Dto\DtoType;
+use Riverwaysoft\PhpConverter\OutputWriter\OutputFile;
+use Riverwaysoft\PhpConverter\OutputWriter\OutputWriterInterface;
 
 class SingleFileOutputWriter implements OutputWriterInterface
 {
