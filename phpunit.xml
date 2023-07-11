@@ -9,6 +9,7 @@
   <coverage>
     <report>
       <text outputFile="php://stdout" showUncoveredFiles="true"/>
+      <clover outputFile="./coverage/clover.xml"/>
       <html outputDirectory="./coverage"/>
     </report>
   </coverage>
