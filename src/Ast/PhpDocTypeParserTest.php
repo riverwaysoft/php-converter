@@ -8,7 +8,6 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpBaseType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpListType;
-use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeFactory;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeInterface;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnionType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
@@ -95,6 +94,11 @@ class PhpDocTypeParserTest extends TestCase
             [
                 '@var is required',
                 '/** int[]|null */',
+                null,
+            ],
+            [
+                'array shapes are not yet supported',
+                '/** @var array{"foo": int, "bar": string} */',
                 null,
             ],
             [

@@ -37,10 +37,6 @@ class PhpDocTypeParser
     {
         $tokens = new TokenIterator($this->lexer->tokenize($input));
         $result = $this->phpDocParser->parse($tokens)->children;
-        if (!is_array($result)) {
-            return null;
-        }
-
         $varTagNode = null;
 
         foreach ($result as $node) {

@@ -1,0 +1,11 @@
+@@ -1,4 +1,6 @@
+ type User = {
+-  age: string;
++  age: number;
+   name: string;
+-}
+\ No newline at end of file
++}
++
++enum Role { Admin, User }
+\ No newline at end of file
