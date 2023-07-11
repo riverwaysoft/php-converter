@@ -7,7 +7,4 @@ namespace Riverwaysoft\PhpConverter\Bridge\ApiPlatform;
 #[\Attribute(\Attribute::TARGET_CLASS)]
 class DtoResource
 {
-    public function __construct(
-    ) {
-    }
 }

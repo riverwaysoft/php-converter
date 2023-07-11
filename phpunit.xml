@@ -9,11 +9,16 @@
   <coverage>
     <report>
       <text outputFile="php://stdout" showUncoveredFiles="true"/>
+      <clover outputFile="./coverage/clover.xml"/>
+      <html outputDirectory="./coverage"/>
     </report>
   </coverage>
   <source>
     <include>
       <directory suffix=".php">src</directory>
     </include>
+    <exclude>
+      <directory suffix="Test.php">src</directory>
+    </exclude>
   </source>
 </phpunit>
