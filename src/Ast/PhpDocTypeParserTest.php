@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Riverwaysoft\PhpConverter\Ast;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpBaseType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpListType;
@@ -14,7 +15,7 @@ use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
 
 class PhpDocTypeParserTest extends TestCase
 {
-    /** @dataProvider getData */
+    #[DataProvider('getData')]
     public function testBasicScenario(string $explanation, string $input, PhpTypeInterface|null $expected): void
     {
         $parser = new PhpDocTypeParser();
@@ -23,7 +24,7 @@ class PhpDocTypeParserTest extends TestCase
     }
 
     /** @return array{string, string, PhpTypeInterface|null}[] */
-    public function getData(): array
+    public static function getData(): array
     {
         return [
             [

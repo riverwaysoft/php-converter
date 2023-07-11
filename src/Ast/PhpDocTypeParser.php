@@ -35,7 +35,8 @@ class PhpDocTypeParser
 
     public function parse(string $input): PhpTypeInterface|null
     {
-        $result = $this->phpDocParser->parse(new TokenIterator($this->lexer->tokenize($input)))->children;
+        $tokens = new TokenIterator($this->lexer->tokenize($input));
+        $result = $this->phpDocParser->parse($tokens)->children;
         if (!is_array($result)) {
             return null;
         }

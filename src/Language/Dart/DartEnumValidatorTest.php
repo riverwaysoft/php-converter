@@ -2,6 +2,7 @@
 
 namespace Riverwaysoft\PhpConverter\Language\Dart;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Riverwaysoft\PhpConverter\Dto\DtoEnumProperty;
 use Riverwaysoft\PhpConverter\Dto\DtoType;
@@ -36,7 +37,7 @@ class DartEnumValidatorTest extends TestCase
         $this->expectNotToPerformAssertions();
     }
 
-    /** @dataProvider provideInvalidData */
+    #[DataProvider('provideInvalidData')]
     public function testInvalidEnumForDart(DtoType $enumInvalid, string $message): void
     {
         if (PHP_VERSION_ID < 80100) {
@@ -50,7 +51,7 @@ class DartEnumValidatorTest extends TestCase
         $dartEnumValidator->assertIsValidEnumForDart($enumInvalid);
     }
 
-    public function provideInvalidData(): \Generator
+    public static function provideInvalidData(): \Generator
     {
         yield [
             new DtoType(
