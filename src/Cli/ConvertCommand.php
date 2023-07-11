@@ -2,13 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\Cli;
+namespace Riverwaysoft\PhpConverter\Cli;
 
 use Riverwaysoft\PhpConverter\CodeProvider\FileSystemCodeProvider;
 use Riverwaysoft\PhpConverter\Ast\Converter;
 use Riverwaysoft\PhpConverter\Language\LanguageGeneratorInterface;
 use Riverwaysoft\PhpConverter\OutputDiffCalculator\OutputDiffCalculator;
-use Riverwaysoft\PhpConverter\OutputWriter\OutputProcessor\SingleOutputFileProcessorInterface;
 use Composer\XdebugHandler\XdebugHandler;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;

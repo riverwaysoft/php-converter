@@ -5,11 +5,11 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Riverwaysoft\DtoConverter\Cli\ConvertCommand;
 use Riverwaysoft\PhpConverter\Ast\Converter;
 use Riverwaysoft\PhpConverter\Ast\DtoVisitor;
 use Riverwaysoft\PhpConverter\Bridge\Symfony\SymfonyControllerVisitor;
 use Riverwaysoft\PhpConverter\ClassFilter\PhpAttributeFilter;
+use Riverwaysoft\PhpConverter\Cli\ConvertCommand;
 use Riverwaysoft\PhpConverter\CodeProvider\FileSystemCodeProvider;
 use Riverwaysoft\PhpConverter\Language\TypeScript\TypeScriptGenerator;
 use Riverwaysoft\PhpConverter\Language\UnknownTypeResolver\ClassNameTypeResolver;
