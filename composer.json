@@ -11,7 +11,7 @@
         "test": "vendor/bin/phpunit --no-coverage",
         "test:with-coverage": "XDEBUG_MODE=coverage vendor/bin/phpunit",
         "test:coverage-level": "vendor/bin/coverage-check ./coverage/clover.xml 88",
-        "test:update-snapshots": "vendor/bin/phpunit -d --update-snapshots",
+        "test:update-snapshots": "vendor/bin/phpunit -d --update-snapshots --no-coverage",
         "cs:src": "vendor/bin/php-cs-fixer fix src",
         "cs:tests": "vendor/bin/php-cs-fixer fix tests",
         "cs": ["@cs:src", "@cs:tests"],
@@ -50,6 +50,13 @@
         "friendsofphp/php-cs-fixer": "^3.0",
         "symfony/var-dumper": "^5.3|^6.0",
         "phpstan/phpstan": "^1.7",
-        "rregeer/phpunit-coverage-check": "^0.3.1"
+        "rregeer/phpunit-coverage-check": "^0.3.1",
+        "phpstan/extension-installer": "^1.3",
+        "phpstan/phpstan-deprecation-rules": "^1.1"
+    },
+    "config": {
+        "allow-plugins": {
+            "phpstan/extension-installer": true
+        }
     }
 }

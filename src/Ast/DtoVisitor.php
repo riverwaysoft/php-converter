@@ -60,7 +60,7 @@ class DtoVisitor extends ConverterVisitor
         }
 
         $typeName = get_class($param) === Node\Name::class || get_class($param) === Node\Name\FullyQualified::class
-            ? $param->parts[0]
+            ? $param->getParts()[0]
             : $param->name;
 
         return PhpTypeFactory::create($typeName);
@@ -152,7 +152,7 @@ class DtoVisitor extends ConverterVisitor
         }
 
         // https://github.com/myclabs/php-enum
-        $isMyCLabsEnum = $node->extends?->parts[0] === 'Enum';
+        $isMyCLabsEnum = $node->extends?->getParts()[0] === 'Enum';
 
         return $isMyCLabsEnum
             ? ExpressionType::enumNonStandard()
