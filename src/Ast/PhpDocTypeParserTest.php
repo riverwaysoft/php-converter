@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\Ast;
+namespace Riverwaysoft\PhpConverter\Ast;
 
 use PHPUnit\Framework\TestCase;
-use Riverwaysoft\DtoConverter\Dto\PhpType\PhpBaseType;
-use Riverwaysoft\DtoConverter\Dto\PhpType\PhpListType;
-use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeFactory;
-use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeInterface;
-use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnionType;
-use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnknownType;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpBaseType;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpListType;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeFactory;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeInterface;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnionType;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
 
 class PhpDocTypeParserTest extends TestCase
 {

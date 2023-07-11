@@ -1,11 +1,11 @@
 <?php
 
-namespace Riverwaysoft\DtoConverter\Language\Dart;
+namespace Riverwaysoft\PhpConverter\Language\Dart;
 
 use PHPUnit\Framework\TestCase;
-use Riverwaysoft\DtoConverter\Dto\DtoEnumProperty;
-use Riverwaysoft\DtoConverter\Dto\DtoType;
-use Riverwaysoft\DtoConverter\Dto\ExpressionType;
+use Riverwaysoft\PhpConverter\Dto\DtoEnumProperty;
+use Riverwaysoft\PhpConverter\Dto\DtoType;
+use Riverwaysoft\PhpConverter\Dto\ExpressionType;
 
 class DartEnumValidatorTest extends TestCase
 {

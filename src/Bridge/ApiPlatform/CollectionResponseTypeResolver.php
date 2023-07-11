@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\Bridge\ApiPlatform;
+namespace Riverwaysoft\PhpConverter\Bridge\ApiPlatform;
 
-use Riverwaysoft\DtoConverter\Dto\DtoList;
-use Riverwaysoft\DtoConverter\Dto\DtoType;
-use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeInterface;
-use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnknownType;
-use Riverwaysoft\DtoConverter\Language\UnknownTypeResolver\ClassNameTypeResolver;
+use Riverwaysoft\PhpConverter\Dto\DtoList;
+use Riverwaysoft\PhpConverter\Dto\DtoType;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeInterface;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
+use Riverwaysoft\PhpConverter\Language\UnknownTypeResolver\ClassNameTypeResolver;
 
 class CollectionResponseTypeResolver extends ClassNameTypeResolver
 {

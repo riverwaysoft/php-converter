@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Riverwaysoft\DtoConverter\Cli;
 
+use Riverwaysoft\PhpConverter\CodeProvider\FileSystemCodeProvider;
+use Riverwaysoft\PhpConverter\Ast\Converter;
+use Riverwaysoft\PhpConverter\Language\LanguageGeneratorInterface;
+use Riverwaysoft\PhpConverter\OutputDiffCalculator\OutputDiffCalculator;
+use Riverwaysoft\PhpConverter\OutputWriter\OutputProcessor\SingleOutputFileProcessorInterface;
 use Composer\XdebugHandler\XdebugHandler;
-use Riverwaysoft\DtoConverter\CodeProvider\FileSystemCodeProvider;
-use Riverwaysoft\DtoConverter\Ast\Converter;
-use Riverwaysoft\DtoConverter\Language\LanguageGeneratorInterface;
-use Riverwaysoft\DtoConverter\OutputDiffCalculator\OutputDiffCalculator;
-use Riverwaysoft\DtoConverter\OutputWriter\OutputProcessor\SingleOutputFileProcessorInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;

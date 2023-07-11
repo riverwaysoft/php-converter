@@ -1,6 +1,6 @@
 {
     "name": "riverwaysoft/php-converter",
-    "description": "PHP DTO converter to TypeScript / Dart",
+    "description": "PHP converter to TypeScript / Dart",
     "authors": [
         {
             "name": "Egor Gorbachev",
@@ -30,7 +30,7 @@
     },
     "license": "GPL-3.0-or-later",
     "autoload": {
-        "psr-4": {"Riverwaysoft\\DtoConverter\\": "src/"},
+        "psr-4": {"Riverwaysoft\\PhpConverter\\": "src/"},
         "classmap": [
             "src"
         ]
@@ -41,7 +41,7 @@
         }
     },
     "bin": [
-        "bin/dto-converter-ts"
+        "bin/php-converter-ts"
     ],
     "require-dev": {
         "phpunit/phpunit": "^9",

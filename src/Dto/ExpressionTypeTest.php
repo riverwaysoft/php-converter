@@ -1,6 +1,6 @@
 <?php
 
-namespace Riverwaysoft\DtoConverter\Dto;
+namespace Riverwaysoft\PhpConverter\Dto;
 
 use PHPUnit\Framework\TestCase;
 

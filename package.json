@@ -1,5 +1,5 @@
 {
-  "name": "dto-converter",
+  "name": "php-converter",
   "version": "1.0.0",
   "directories": {
     "test": "tests"

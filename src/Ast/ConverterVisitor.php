@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\Ast;
+namespace Riverwaysoft\PhpConverter\Ast;
 
 use PhpParser\NodeVisitorAbstract;
 

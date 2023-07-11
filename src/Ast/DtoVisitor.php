@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\Ast;
+namespace Riverwaysoft\PhpConverter\Ast;
 
 use PhpParser\Node;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Enum_;
-use Riverwaysoft\DtoConverter\ClassFilter\ClassFilterInterface;
-use Riverwaysoft\DtoConverter\Dto\DtoClassProperty;
-use Riverwaysoft\DtoConverter\Dto\DtoEnumProperty;
-use Riverwaysoft\DtoConverter\Dto\DtoType;
-use Riverwaysoft\DtoConverter\Dto\ExpressionType;
-use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeFactory;
-use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeInterface;
-use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnionType;
+use Riverwaysoft\PhpConverter\ClassFilter\ClassFilterInterface;
+use Riverwaysoft\PhpConverter\Dto\DtoClassProperty;
+use Riverwaysoft\PhpConverter\Dto\DtoEnumProperty;
+use Riverwaysoft\PhpConverter\Dto\DtoType;
+use Riverwaysoft\PhpConverter\Dto\ExpressionType;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeFactory;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeInterface;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnionType;
 
 class DtoVisitor extends ConverterVisitor
 {

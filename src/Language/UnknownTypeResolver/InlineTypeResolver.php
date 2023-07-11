@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\Language\UnknownTypeResolver;
+namespace Riverwaysoft\PhpConverter\Language\UnknownTypeResolver;
 
-use Riverwaysoft\DtoConverter\Dto\DtoList;
-use Riverwaysoft\DtoConverter\Dto\DtoType;
-use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeInterface;
-use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnknownType;
+use Riverwaysoft\PhpConverter\Dto\DtoList;
+use Riverwaysoft\PhpConverter\Dto\DtoType;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeInterface;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
 
 class InlineTypeResolver implements UnknownTypeResolverInterface
 {

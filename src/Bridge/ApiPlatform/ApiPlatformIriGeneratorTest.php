@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\Bridge\ApiPlatform;
+namespace Riverwaysoft\PhpConverter\Bridge\ApiPlatform;
 
 use PHPUnit\Framework\TestCase;
-use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnknownType;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
 
 class ApiPlatformIriGeneratorTest extends TestCase
 {

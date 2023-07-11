@@ -1,16 +1,16 @@
 <?php
 
-namespace Riverwaysoft\DtoConverter\Language\Dart;
+namespace Riverwaysoft\PhpConverter\Language\Dart;
 
-use Riverwaysoft\DtoConverter\Dto\DtoEnumProperty;
-use Riverwaysoft\DtoConverter\Dto\DtoList;
-use Riverwaysoft\DtoConverter\Dto\DtoType;
-use Riverwaysoft\DtoConverter\Dto\PhpType\PhpBaseType;
-use Riverwaysoft\DtoConverter\Dto\PhpType\PhpListType;
-use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeInterface;
-use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnionType;
-use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnknownType;
-use Riverwaysoft\DtoConverter\Language\UnknownTypeResolver\InlineTypeResolver;
+use Riverwaysoft\PhpConverter\Dto\DtoEnumProperty;
+use Riverwaysoft\PhpConverter\Dto\DtoList;
+use Riverwaysoft\PhpConverter\Dto\DtoType;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpBaseType;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpListType;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeInterface;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnionType;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
+use Riverwaysoft\PhpConverter\Language\UnknownTypeResolver\InlineTypeResolver;
 use Webmozart\Assert\Assert;
 
 class DartClassFactoryGenerator

@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\Ast;
+namespace Riverwaysoft\PhpConverter\Ast;
 
 use PhpParser\NodeTraverser;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
-use Riverwaysoft\DtoConverter\ClassFilter\ClassFilterInterface;
-use Riverwaysoft\DtoConverter\Dto\ApiClient\ApiEndpoint;
-use Riverwaysoft\DtoConverter\Dto\ApiClient\ApiEndpointList;
-use Riverwaysoft\DtoConverter\Dto\DtoList;
-use Riverwaysoft\DtoConverter\Dto\PhpType\PhpTypeFactory;
+use Riverwaysoft\PhpConverter\ClassFilter\ClassFilterInterface;
+use Riverwaysoft\PhpConverter\Dto\ApiClient\ApiEndpoint;
+use Riverwaysoft\PhpConverter\Dto\ApiClient\ApiEndpointList;
+use Riverwaysoft\PhpConverter\Dto\DtoList;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeFactory;
 
 /**
  * It converts PHP code string into a normalized DTO list suitable for converting into other languages

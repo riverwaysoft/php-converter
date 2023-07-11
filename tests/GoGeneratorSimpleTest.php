@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Riverwaysoft\DtoConverter\Ast\Converter;
-use Riverwaysoft\DtoConverter\Ast\DtoVisitor;
-use Riverwaysoft\DtoConverter\Language\UnknownTypeResolver\ClassNameTypeResolver;
-use Riverwaysoft\DtoConverter\OutputWriter\SingleFileOutputWriter\SingleFileOutputWriter;
+use Riverwaysoft\PhpConverter\Ast\Converter;
+use Riverwaysoft\PhpConverter\Ast\DtoVisitor;
+use Riverwaysoft\PhpConverter\Language\UnknownTypeResolver\ClassNameTypeResolver;
+use Riverwaysoft\PhpConverter\OutputWriter\SingleFileOutputWriter\SingleFileOutputWriter;
 use Spatie\Snapshots\Drivers\TextDriver;
 use Spatie\Snapshots\MatchesSnapshots;
 

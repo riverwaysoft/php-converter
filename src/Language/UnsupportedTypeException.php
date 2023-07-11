@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\Language;
+namespace Riverwaysoft\PhpConverter\Language;
 
-use Riverwaysoft\DtoConverter\Dto\PhpType\PhpUnknownType;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
 
 class UnsupportedTypeException extends \Exception
 {

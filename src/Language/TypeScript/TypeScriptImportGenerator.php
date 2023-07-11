@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\Language\TypeScript;
+namespace Riverwaysoft\PhpConverter\Language\TypeScript;
 
-use Riverwaysoft\DtoConverter\Dto\DtoType;
-use Riverwaysoft\DtoConverter\Language\ImportGeneratorInterface;
-use Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter\DtoTypeDependencyCalculator;
-use Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter\FileNameGeneratorInterface;
+use Riverwaysoft\PhpConverter\Dto\DtoType;
+use Riverwaysoft\PhpConverter\Language\ImportGeneratorInterface;
+use Riverwaysoft\PhpConverter\OutputWriter\EntityPerClassOutputWriter\DtoTypeDependencyCalculator;
+use Riverwaysoft\PhpConverter\OutputWriter\EntityPerClassOutputWriter\FileNameGeneratorInterface;
 
 class TypeScriptImportGenerator implements ImportGeneratorInterface
 {

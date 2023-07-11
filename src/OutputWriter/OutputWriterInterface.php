@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\OutputWriter;
+namespace Riverwaysoft\PhpConverter\OutputWriter;
 
-use Riverwaysoft\DtoConverter\Dto\ApiClient\ApiEndpoint;
-use Riverwaysoft\DtoConverter\Dto\DtoType;
+use Riverwaysoft\PhpConverter\Dto\ApiClient\ApiEndpoint;
+use Riverwaysoft\PhpConverter\Dto\DtoType;
 
 interface OutputWriterInterface
 {

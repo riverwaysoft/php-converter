@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\Bridge\ApiPlatform;
+namespace Riverwaysoft\PhpConverter\Bridge\ApiPlatform;
 
-use Riverwaysoft\DtoConverter\OutputWriter\OutputFile;
-use Riverwaysoft\DtoConverter\OutputWriter\OutputProcessor\SingleOutputFileProcessorInterface;
+use Riverwaysoft\PhpConverter\OutputWriter\OutputFile;
+use Riverwaysoft\PhpConverter\OutputWriter\OutputProcessor\SingleOutputFileProcessorInterface;
 
 class AppendCollectionResponseFileProcessor implements SingleOutputFileProcessorInterface
 {

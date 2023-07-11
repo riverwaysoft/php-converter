@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\OutputWriter;
+namespace Riverwaysoft\PhpConverter\OutputWriter;
 
 class OutputFile implements \JsonSerializable
 {

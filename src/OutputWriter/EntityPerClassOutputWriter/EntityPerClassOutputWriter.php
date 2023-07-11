@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\DtoConverter\OutputWriter\EntityPerClassOutputWriter;
+namespace Riverwaysoft\PhpConverter\OutputWriter\EntityPerClassOutputWriter;
 
-use Riverwaysoft\DtoConverter\Dto\ApiClient\ApiEndpoint;
-use Riverwaysoft\DtoConverter\Dto\DtoType;
-use Riverwaysoft\DtoConverter\Language\ImportGeneratorInterface;
-use Riverwaysoft\DtoConverter\OutputWriter\OutputFile;
-use Riverwaysoft\DtoConverter\OutputWriter\OutputWriterInterface;
+use Riverwaysoft\PhpConverter\Dto\ApiClient\ApiEndpoint;
+use Riverwaysoft\PhpConverter\Dto\DtoType;
+use Riverwaysoft\PhpConverter\Language\ImportGeneratorInterface;
+use Riverwaysoft\PhpConverter\OutputWriter\OutputFile;
+use Riverwaysoft\PhpConverter\OutputWriter\OutputWriterInterface;
 
 class EntityPerClassOutputWriter implements OutputWriterInterface
 {

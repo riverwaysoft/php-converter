@@ -1,4 +1,4 @@
-name: dto_converter
+name: php_converter
 
 dependencies:
   equatable: '^2.0.3'
