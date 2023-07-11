@@ -80,7 +80,7 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
             $defaultOutput = null;
             $outputNode = $this->getAttributeArgumentByName($apiResourceAttribute, 'output');
             if ($outputNode?->value instanceof Node\Expr\ClassConstFetch) {
-                $defaultOutput = $outputNode->value->class->parts[array_key_last($outputNode->value->class->parts)];
+                $defaultOutput = $outputNode->value->class->getParts()[array_key_last($outputNode->value->class->getParts())];
             }
             if (!$defaultOutput) {
                 throw new \Exception(sprintf("The output is required for ApiResource %s. Context: %s", $node->name->name, $this->prettyPrinter->prettyPrint([$apiResourceAttribute])));
@@ -90,7 +90,7 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
             $defaultInput = null;
             $inputNode = $this->getAttributeArgumentByName($apiResourceAttribute, 'input');
             if ($inputNode?->value instanceof Node\Expr\ClassConstFetch) {
-                $defaultInput = $inputNode->value->class->parts[array_key_last($inputNode->value->class->parts)];
+                $defaultInput = $inputNode->value->class->getParts()[array_key_last($inputNode->value->class->getParts())];
             }
 
             if ($uriTemplateArg?->value instanceof Node\Scalar\String_) {
@@ -147,7 +147,7 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
         if (!$item->value instanceof Node\Expr\New_) {
             return null;
         }
-        $classString = $item->value->class->parts[array_key_last($item->value->class->parts)];
+        $classString = $item->value->class->getParts()[array_key_last($item->value->class->getParts())];
         $isCollection = $classString === 'GetCollection';
 
         $method = match ($classString) {
@@ -158,7 +158,7 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
         $maybeInput = $this->getNewExpressionArgumentByName($item->value, 'input');
         $localInputClass = null;
         if ($maybeInput?->value instanceof Node\Expr\ClassConstFetch) {
-            $localInputClass = $maybeInput->value->class->parts[array_key_last($maybeInput->value->class->parts)];
+            $localInputClass = $maybeInput->value->class->getParts()[array_key_last($maybeInput->value->class->getParts())];
         }
         if ($localInputClass || $defaultInput) {
             $inputParam = new ApiEndpointParam('body', PhpTypeFactory::create($localInputClass ?? $defaultInput));
@@ -169,7 +169,7 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
         $maybeOutput = $this->getNewExpressionArgumentByName($item->value, 'output');
         $localOutputClass = null;
         if ($maybeOutput?->value instanceof Node\Expr\ClassConstFetch) {
-            $localOutputClass = $maybeOutput->value->class->parts[array_key_last($maybeOutput->value->class->parts)];
+            $localOutputClass = $maybeOutput->value->class->getParts()[array_key_last($maybeOutput->value->class->getParts())];
         }
         $outputTypeContext = $isCollection ? [self::COLLECTION_RESPONSE_CONTEXT_KEY => true] : [];
         $outputType = PhpTypeFactory::create($localOutputClass ?? $defaultOutput, $outputTypeContext);
@@ -307,11 +307,11 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
                     return $arrayItem->value->value;
                 }
                 if ($arrayItem->value instanceof Node\Expr\ClassConstFetch) {
-                    return $arrayItem->value->class->parts[array_key_last($arrayItem->value->class->parts)];
+                    return $arrayItem->value->class->getParts()[array_key_last($arrayItem->value->class->getParts())];
                 }
                 // Handle ['input' => false]
                 if ($arrayItem->value instanceof Node\Expr\ConstFetch) {
-                    if ($arrayItem->value->name->parts[array_key_last($arrayItem->value->name->parts)] === 'false') {
+                    if ($arrayItem->value->name->getParts()[array_key_last($arrayItem->value->name->getParts())] === 'false') {
                         return null;
                     }
                 }
@@ -332,7 +332,7 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
 
         foreach ($attrGroups as $attrGroup) {
             foreach ($attrGroup->attrs as $attr) {
-                if (in_array(needle: $name, haystack: $attr->name->parts)) {
+                if (in_array(needle: $name, haystack: $attr->name->getParts())) {
                     $result[] = $attr;
                 }
             }

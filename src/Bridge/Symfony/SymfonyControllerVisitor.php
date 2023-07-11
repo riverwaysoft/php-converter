@@ -42,7 +42,7 @@ class SymfonyControllerVisitor extends ConverterVisitor
 
         foreach ($attrGroups as $attrGroup) {
             foreach ($attrGroup->attrs as $attr) {
-                if (in_array(needle: $name, haystack: $attr->name->parts)) {
+                if (in_array(needle: $name, haystack: $attr->name->getParts())) {
                     return $attr;
                 }
             }
@@ -125,13 +125,13 @@ class SymfonyControllerVisitor extends ConverterVisitor
             if (!($arg->value instanceof Node\Expr\ClassConstFetch)) {
                 throw new \Exception('Argument of returnOne should be a class string');
             }
-            $outputType = PhpTypeFactory::create($arg->value->class->parts[0]);
+            $outputType = PhpTypeFactory::create($arg->value->class->getParts()[0]);
         }
         if ($arg = $this->getAttributeArgumentByName($dtoReturnAttribute, 'returnMany')) {
             if (!($arg->value instanceof Node\Expr\ClassConstFetch)) {
                 throw new \Exception('Argument of returnMany should be a class string');
             }
-            $outputType = new PhpListType(PhpTypeFactory::create($arg->value->class->parts[0]));
+            $outputType = new PhpListType(PhpTypeFactory::create($arg->value->class->getParts()[0]));
         }
 
         $inputParam = null;
@@ -149,7 +149,7 @@ class SymfonyControllerVisitor extends ConverterVisitor
                 $inputParam = new ApiEndpointParam(
                     name: $param->var->name,
                     // TODO: class names with full namespace probably aren't supported
-                    type: PhpTypeFactory::create($param->type->parts[0]),
+                    type: PhpTypeFactory::create($param->type->getParts()[0]),
                 );
             }
             $maybeDtoQueryAttribute = $this->findAttribute($param, 'Query');
@@ -160,7 +160,7 @@ class SymfonyControllerVisitor extends ConverterVisitor
                 $queryParams[] = new ApiEndpointParam(
                     name: $param->var->name,
                     // TODO: class names with full namespace probably aren't supported
-                    type: PhpTypeFactory::create($param->type->parts[0]),
+                    type: PhpTypeFactory::create($param->type->getParts()[0]),
                 );
             }
 
