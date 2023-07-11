@@ -8,10 +8,9 @@
         }
     ],
     "scripts": {
-        "test:e2e": "vendor/bin/phpunit tests",
-        "test:unit": "vendor/bin/phpunit src",
-        "test": ["@test:unit", "@test:e2e"],
-        "test:update-snapshots": "vendor/bin/phpunit tests -d --update-snapshots",
+        "test": "vendor/bin/phpunit",
+        "test:coverage": "XDEBUG_MODE=coverage vendor/bin/phpunit",
+        "test:update-snapshots": "vendor/bin/phpunit -d --update-snapshots",
         "cs:src": "vendor/bin/php-cs-fixer fix src",
         "cs:tests": "vendor/bin/php-cs-fixer fix tests",
         "cs": ["@cs:src", "@cs:tests"],
@@ -44,8 +43,8 @@
         "bin/php-converter-ts"
     ],
     "require-dev": {
-        "phpunit/phpunit": "^9",
-        "spatie/phpunit-snapshot-assertions": "4.2.8",
+        "phpunit/phpunit": "^10",
+        "spatie/phpunit-snapshot-assertions": "^5",
         "myclabs/php-enum": "^1.8",
         "friendsofphp/php-cs-fixer": "^3.0",
         "symfony/var-dumper": "^5.3|^6.0",

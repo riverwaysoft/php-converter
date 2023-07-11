@@ -2,25 +2,26 @@
 
 namespace Riverwaysoft\PhpConverter\Dto;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpBaseType;
 
 class DtoTypeTest extends TestCase
 {
-    /** @dataProvider provideEmptyDto */
+    #[DataProvider('provideEmptyDto')]
     public function testIsEmpty(DtoType $dto, bool $isEmptyExpected): void
     {
         $this->assertEquals($isEmptyExpected, $dto->isEmpty());
     }
 
-    /** @dataProvider provideStringEnumDto */
+    #[DataProvider('provideStringEnumDto')]
     public function testIsStringEnum(DtoType $dto, bool $isStringExpected): void
     {
         $this->assertEquals($isStringExpected, $dto->isStringEnum());
     }
 
     /** @return \Generator<array{0: DtoType, 1: bool}> */
-    public function provideEmptyDto(): iterable
+    public static function provideEmptyDto(): iterable
     {
         yield [new DtoType(
             name: 'User',
@@ -53,7 +54,7 @@ class DtoTypeTest extends TestCase
     }
 
     /** @return \Generator<array{0: DtoType, 1: bool}> */
-    public function provideStringEnumDto(): iterable
+    public static function provideStringEnumDto(): iterable
     {
         yield [new DtoType(
             name: 'RoleEnum',

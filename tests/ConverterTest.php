@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Riverwaysoft\PhpConverter\Ast\Converter;
 use Riverwaysoft\PhpConverter\Ast\DtoVisitor;
@@ -273,7 +274,7 @@ CODE;
         $this->assertMatchesJsonSnapshot(json_encode($result->apiEndpointList));
     }
 
-    /** @dataProvider provideInvalidControllers */
+    #[DataProvider('provideInvalidControllers')]
     public function testTheFollowingCodeShouldThrow(string $invalidControllerActionCode, string $expectedError): void
     {
         $codeWithDateTime = <<<'CODE'
@@ -325,7 +326,7 @@ CODE;
         $converter->convert([$codeWithDateTime]);
     }
 
-    public function provideInvalidControllers(): \Generator
+    public static function provideInvalidControllers(): \Generator
     {
         yield [
             <<<'CODE'
