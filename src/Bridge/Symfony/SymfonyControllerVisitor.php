@@ -7,6 +7,7 @@ namespace Riverwaysoft\PhpConverter\Bridge\Symfony;
 use PhpParser\Node;
 use PhpParser\Node\Attribute;
 use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\NodeTraverser;
 use Riverwaysoft\PhpConverter\Ast\ConverterResult;
 use Riverwaysoft\PhpConverter\Ast\ConverterVisitor;
 use Riverwaysoft\PhpConverter\Dto\ApiClient\ApiEndpoint;
@@ -27,13 +28,15 @@ class SymfonyControllerVisitor extends ConverterVisitor
         $this->converterResult = new ConverterResult();
     }
 
-    public function leaveNode(Node $node)
+    public function enterNode(Node $node)
     {
-        if ($node instanceof ClassMethod && $this->findAttribute($node, $this->attribute)) {
-            $this->createApiEndpoint($node);
+        if (!$node instanceof ClassMethod || !$this->findAttribute($node, $this->attribute)) {
+            return null;
         }
 
-        return null;
+        $this->createApiEndpoint($node);
+
+        return NodeTraverser::DONT_TRAVERSE_CURRENT_AND_CHILDREN;
     }
 
     private function findAttribute(ClassMethod|Node\Param $node, string $name): Attribute|null

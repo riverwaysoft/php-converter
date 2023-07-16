@@ -9,6 +9,7 @@ use PhpParser\Node;
 use PhpParser\Node\Attribute;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Enum_;
+use PhpParser\NodeTraverser;
 use PhpParser\PrettyPrinter\Standard;
 use Riverwaysoft\PhpConverter\Ast\ConverterResult;
 use Riverwaysoft\PhpConverter\Ast\ConverterVisitor;
@@ -38,7 +39,7 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
         $this->prettyPrinter = new Standard();
     }
 
-    public function leaveNode(Node $node)
+    public function enterNode(Node $node)
     {
         if (!$node instanceof Class_ && !$node instanceof Enum_) {
             return null;
@@ -133,7 +134,7 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
             }
         }
 
-        return null;
+        return NodeTraverser::DONT_TRAVERSE_CURRENT_AND_CHILDREN;
     }
 
     private function createApiEndpoint(
