@@ -11,6 +11,8 @@
         "test": "vendor/bin/phpunit --no-coverage",
         "test:with-coverage": "XDEBUG_MODE=coverage vendor/bin/phpunit",
         "test:coverage-level": "vendor/bin/coverage-check ./coverage/clover.xml 87",
+        "build-phar": "php -d phar.readonly=Off tools/phar-composer-1.4.0.phar build",
+        "build-phar:test": "php php-converter.phar generate --from=./tests/Fixtures/ --to=.",
         "test:update-snapshots": "vendor/bin/phpunit -d --update-snapshots --no-coverage",
         "cs:src": "vendor/bin/php-cs-fixer fix src",
         "cs:tests": "vendor/bin/php-cs-fixer fix tests",
