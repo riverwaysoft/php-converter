@@ -60,13 +60,16 @@ type UserOutput = {
 - Flexible class filters with an option to use your own filters
 
 ## Customize
-If you'd like to customize `php-converter-ts` you need to copy the generator script to your project folder:
+If you'd like to customize the conversion, you need to copy the config script to your project folder:
 
 ```
-cp vendor/bin/default-config.php bin/php-converter-config.php
+cp vendor/bin/default-config.php config/php-converter-config.php
 ``` 
 
-Now you can start customizing the php-converter by editing the executable file.
+Now you can customize this config and run the php-converter via the following script:
+```bash
+vendor/bin/php-converter --from=/path/to/project/src --to=. --config=config/php-converter-config.php
+```
 
 ### How to customize generated output?
 By default `php-converter` writes all the types into one file. You can configure it to put each type / class in a separate file with all the required imports. Here is an example how to achieve it:
