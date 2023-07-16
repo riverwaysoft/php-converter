@@ -1,0 +1,12 @@
+{
+    "chmod": "0700",
+    "files": ["vendor/autoload.php"],
+    "directories": ["src"],
+    "finder": [
+        {
+            "name": "*.php",
+            "exclude": ["tests"],
+            "in": "vendor"
+        }
+    ]
+}
