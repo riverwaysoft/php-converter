@@ -298,6 +298,8 @@ Please see [CONTRIBUTING](./CONTRIBUTING.md) for details.
 
 ## Development
 
+The information is for the package developers.
+
 ### Work with a local copy of `php-converter` inside your project
 
 1. Go to `your-project` with `php-converter` already installed. Add the following code to your `composer.json`:
@@ -306,12 +308,12 @@ Please see [CONTRIBUTING](./CONTRIBUTING.md) for details.
     "repositories": [
         {
             "type": "path",
-            "url": "/Path/to/local/dto-converter"
+            "url": "/Path/to/local/php-converter"
         }
     ],
 ```
 
-To find out the absolute path run `realpath .` in the `dto-converter` directory.
+To find out the absolute path run `realpath .` in the `php-converter` directory.
 
 2. Create a symbolic link by running `composer require "riverwaysoft/php-converter @dev" --dev`
 
@@ -319,10 +321,10 @@ To find out the absolute path run `realpath .` in the `dto-converter` directory.
 
 Show memory & time usage:
 
-`bin/dto-converter generate --from=./ --to=./assets/ -v`
+`bin/php-converter generate --from=./ --to=./assets/ -v`
 
 Generate Xdebug profiler output:
 
-`php -d xdebug.mode=profile -d xdebug.output_dir=. bin/dto-converter generate --from=./ --to=./assets/ -v -xdebug`
+`php -d xdebug.mode=profile -d xdebug.output_dir=. bin/php-converter generate --from=./ --to=./assets/ -v -xdebug`
 
 Then open the result .cachegrind file in PHPStorm -> Tools -> Analyze XDebug Profiler Snapshot
