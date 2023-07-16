@@ -36,7 +36,7 @@ class UserOutput
 
 4) Run CLI command to generate TypeScript
 ```bash
-vendor/bin/php-converter-ts generate --from=/path/to/project/src --to=.
+vendor/bin/php-converter --from=/path/to/project/src --to=.
 ```
 
 You'll get file `generated.ts` with the following contents:
@@ -63,7 +63,7 @@ type UserOutput = {
 If you'd like to customize `php-converter-ts` you need to copy the generator script to your project folder:
 
 ```
-cp vendor/bin/php-converter-ts bin/php-converter-ts
+cp vendor/bin/default-config.php bin/php-converter-config.php
 ``` 
 
 Now you can start customizing the php-converter by editing the executable file.
@@ -72,32 +72,29 @@ Now you can start customizing the php-converter by editing the executable file.
 By default `php-converter` writes all the types into one file. You can configure it to put each type / class in a separate file with all the required imports. Here is an example how to achieve it:
 
 ```diff
-+ $fileNameGenerator = new KebabCaseFileNameGenerator('.ts');
+return static function (PhpConverterConfig $config) {
+    $config->setCodeProvider(new FileSystemCodeProvider('/\.php$/'));
 
-$application->add(
-    new ConvertCommand(
-        new Converter([
-            new DtoVisitor(new PhpAttributeFilter('Dto')),
-        ]),
-        new TypeScriptGenerator(
--            new SingleFileOutputWriter('generated.ts'),
-+            new EntityPerClassOutputWriter(
-+                $fileNameGenerator,
-+                new TypeScriptImportGenerator(
-+                    $fileNameGenerator,
-+                    new DtoTypeDependencyCalculator()
-+                )
-+            ),
-            [
-                new DateTimeTypeResolver(),
-                new ClassNameTypeResolver(),
-            ],
-        ),
-        new Filesystem(),
-        new OutputDiffCalculator(),
-        new FileSystemCodeProvider('/\.php$/'),
-    )
-);
+    $config->addVisitor(new DtoVisitor(new PhpAttributeFilter('Dto')));
+
++   $fileNameGenerator = new KebabCaseFileNameGenerator('.ts');
+
+    $config->setLanguageGenerator(new TypeScriptGenerator(
+        new SingleFileOutputWriter('generated.ts'),
+-       new SingleFileOutputWriter('generated.ts'),
++       new EntityPerClassOutputWriter(
++           $fileNameGenerator,
++           new TypeScriptImportGenerator(
++               $fileNameGenerator,
++               new DtoTypeDependencyCalculator()
++           )
++       ),
+        [
+            new DateTimeTypeResolver(),
+            new ClassNameTypeResolver(),
+        ],
+    ));
+};
 ```
 
 Feel free to create your own OutputWriter.
@@ -106,25 +103,22 @@ Feel free to create your own OutputWriter.
 Suppose you don't want to mark each DTO individually with `#[Dto]` but want to convert all the files ending with "Dto" automatically:
 
 ```diff
-$application->add(
-    new ConvertCommand(
--       new Converter([
--           new DtoVisitor(new PhpAttributeFilter('Dto')),
--       ]),
-+       new Converter([new DtoVisitor()]),
-        new TypeScriptGenerator(
-            new SingleFileOutputWriter('generated.ts'),
-            [
-                new DateTimeTypeResolver(),
-                new ClassNameTypeResolver(),
-            ],
-        ),
-        new Filesystem(),
-        new OutputDiffCalculator(),
--       new FileSystemCodeProvider('/\.php$/'),
-+       new FileSystemCodeProvider('/Dto\.php$/'),
-    )
-);
+
+return static function (PhpConverterConfig $config) {
+-   $config->setCodeProvider(new FileSystemCodeProvider('/\.php$/'));
++    $config->setCodeProvider(new FileSystemCodeProvider('/Dto\.php$/'));
+
+-   $config->addVisitor(new DtoVisitor(new PhpAttributeFilter('Dto')));
++   $config->addVisitor(new DtoVisitor());
+
+    $config->setLanguageGenerator(new TypeScriptGenerator(
+        new SingleFileOutputWriter('generated.ts'),
+        [
+            new DateTimeTypeResolver(),
+            new ClassNameTypeResolver(),
+        ],
+    ));
+};
 ```
 
 You can even go further and use `NegationFilter` to exclude specific files as shown in [unit tests](https://github.com/riverwaysoft/php-converter/blob/a8d5df2c03303c02bc9148bd1d7822d7fe48c5d8/tests/EndToEndTest.php#L297).
@@ -135,16 +129,16 @@ You can even go further and use `NegationFilter` to exclude specific files as sh
 ```diff
 +use Riverwaysoft\PhpConverter\Dto\PhpType\PhpBaseType;
 
-$application->add(
-    new ConvertCommand(
-        new Converter([
-            new DtoVisitor(new PhpAttributeFilter('Dto')),
-        ]),
-        new TypeScriptGenerator(
-            new SingleFileOutputWriter('generated.ts'),
-            [
-                new DateTimeTypeResolver(),
-                new ClassNameTypeResolver(),
+return static function (PhpConverterConfig $config) {
+    $config->setCodeProvider(new FileSystemCodeProvider('/\.php$/'));
+
+    $config->addVisitor(new DtoVisitor(new PhpAttributeFilter('Dto')));
+
+    $config->setLanguageGenerator(new TypeScriptGenerator(
+        new SingleFileOutputWriter('generated.ts'),
+        [
+            new DateTimeTypeResolver(),
+            new ClassNameTypeResolver(),
 +               new InlineTypeResolver([
 +                 // Convert libphonenumber object to a string
 +                 // PhpBaseType is used to support both Dart/TypeScript
@@ -155,13 +149,9 @@ $application->add(
 +                 // Convert Doctrine Embeddable to an existing Dto marked as #[Dto]
 +                 'SomeDoctrineEmbeddable' => 'SomeDoctrineEmbeddableDto',
 +               ])
-            ],
-        ),
-        new Filesystem(),
-        new OutputDiffCalculator(),
-        new FileSystemCodeProvider('/\.php$/'),
-    )
-);
+        ],
+    ));
+};
 ```
 
 ### How to customize generated output file?
@@ -169,26 +159,22 @@ $application->add(
 You may want to apply some transformations on the resulted file with types. For example, you may want to format it with tool of your choice or prepend code with a warning like "// The file was autogenerated, don't edit it manually". To add such a warning you can already use the built-in extension:
 
 ```diff
-$application->add(
-    new ConvertCommand(
-        new Converter([
-            new DtoVisitor(new PhpAttributeFilter('Dto')),
-        ]),
-        new TypeScriptGenerator(
-            new SingleFileOutputWriter('generated.ts'),
-            [
-                new DateTimeTypeResolver(),
-                new ClassNameTypeResolver(),
-            ],
-+           new OutputFilesProcessor([
-+               new PrependAutogeneratedNoticeFileProcessor(),
-+           ]),
-        ),
-        new Filesystem(),
-        new OutputDiffCalculator(),
-        new FileSystemCodeProvider('/\.php$/'),
-    )
-);
+return static function (PhpConverterConfig $config) {
+    $config->setCodeProvider(new FileSystemCodeProvider('/\.php$/'));
+
+    $config->addVisitor(new DtoVisitor(new PhpAttributeFilter('Dto')));
+
+    $config->setLanguageGenerator(new TypeScriptGenerator(
+        new SingleFileOutputWriter('generated.ts'),
+        [
+            new DateTimeTypeResolver(),
+            new ClassNameTypeResolver(),
+        ],
++       new OutputFilesProcessor([
++           new PrependAutogeneratedNoticeFileProcessor(),
++       ]),
+    ));
+};
 ```
 
 Feel free to create your own processor based on [PrependAutogeneratedNoticeFileProcessor](https://github.com/riverwaysoft/php-converter/blob/26ee25f07ac97a942e1327165424fc65777b80b0/src/OutputWriter/OutputProcessor/PrependAutogeneratedNoticeFileProcessor.php) source.
@@ -226,27 +212,23 @@ class PrettierFormatProcessor implements SingleOutputFileProcessorInterface
 Then add it to the list:
 
 ```diff
-$application->add(
-    new ConvertCommand(
-        new Converter([
-            new DtoVisitor(new PhpAttributeFilter('Dto')),
-        ]),
-        new TypeScriptGenerator(
-            new SingleFileOutputWriter('generated.ts'),
-            [
-                new DateTimeTypeResolver(),
-                new ClassNameTypeResolver(),
-            ],
-+           new OutputFilesProcessor([
-+               new PrependAutogeneratedNoticeFileProcessor(),
-+               new PrettierFormatProcessor(),
-+           ]),
-        ),
-        new Filesystem(),
-        new OutputDiffCalculator(),
-        new FileSystemCodeProvider('/\.php$/'),
-    )
-);
+return static function (PhpConverterConfig $config) {
+    $config->setCodeProvider(new FileSystemCodeProvider('/\.php$/'));
+
+    $config->addVisitor(new DtoVisitor(new PhpAttributeFilter('Dto')));
+
+    $config->setLanguageGenerator(new TypeScriptGenerator(
+        new SingleFileOutputWriter('generated.ts'),
+        [
+            new DateTimeTypeResolver(),
+            new ClassNameTypeResolver(),
+        ],
++       new OutputFilesProcessor([
++           new PrependAutogeneratedNoticeFileProcessor(),
++           new PrettierFormatProcessor(),
++       ]),
+    ));
+};
 ```
 
 ### How to add support for other languages?
@@ -298,7 +280,7 @@ Please see [CONTRIBUTING](./CONTRIBUTING.md) for details.
 
 ## Development
 
-The information is for the package developers.
+The information is for the package contributors.
 
 ### Work with a local copy of `php-converter` inside your project
 
@@ -328,3 +310,9 @@ Generate Xdebug profiler output:
 `php -d xdebug.mode=profile -d xdebug.output_dir=. bin/php-converter generate --from=./ --to=./assets/ -v -xdebug`
 
 Then open the result .cachegrind file in PHPStorm -> Tools -> Analyze XDebug Profiler Snapshot
+
+### Code coverage
+
+1) Run tests with code coverage: `composer run test:with-coverage`
+2) Check coverage level: `composer run test:coverage-level`
+3) Browser generated HTML report: `npm run coverage-server`

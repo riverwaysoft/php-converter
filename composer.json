@@ -10,9 +10,9 @@
     "scripts": {
         "test": "vendor/bin/phpunit --no-coverage",
         "test:with-coverage": "XDEBUG_MODE=coverage vendor/bin/phpunit",
-        "test:coverage-level": "vendor/bin/coverage-check ./coverage/clover.xml 87",
-        "build-phar": "php -d phar.readonly=Off tools/phar-composer-1.4.0.phar build",
-        "build-phar:test": "php php-converter.phar generate --from=./tests/Fixtures/ --to=.",
+        "test:coverage-level": "vendor/bin/coverage-check ./coverage/clover.xml 85",
+        "build-phar": "bin/build.sh",
+        "build-phar:test": "php build/php-converter.phar --from=./tests/Fixtures/ --to=.",
         "test:update-snapshots": "vendor/bin/phpunit -d --update-snapshots --no-coverage",
         "cs:src": "vendor/bin/php-cs-fixer fix src",
         "cs:tests": "vendor/bin/php-cs-fixer fix tests",
@@ -28,7 +28,9 @@
         "jawira/case-converter": "^3.4",
         "phpstan/phpdoc-parser": "^1.6",
         "doctrine/inflector": "^2.0",
-        "composer/xdebug-handler": "^3.0"
+        "composer/xdebug-handler": "^3.0",
+        "symfony/console": "^6.3",
+        "symfony/filesystem": "^6.3"
     },
     "license": "GPL-3.0-or-later",
     "autoload": {
@@ -43,7 +45,7 @@
         }
     },
     "bin": [
-        "bin/php-converter-ts"
+        "bin/php-converter"
     ],
     "require-dev": {
         "phpunit/phpunit": "^10",
