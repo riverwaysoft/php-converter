@@ -298,6 +298,23 @@ Please see [CONTRIBUTING](./CONTRIBUTING.md) for details.
 
 ## Development
 
+### Work with a local copy of `php-converter` inside your project
+
+1. Go to `your-project` with `php-converter` already installed. Add the following code to your `composer.json`:
+
+```
+    "repositories": [
+        {
+            "type": "path",
+            "url": "/Path/to/local/dto-converter"
+        }
+    ],
+```
+
+To find out the absolute path run `realpath .` in the `dto-converter` directory.
+
+2. Create a symbolic link by running `composer require "riverwaysoft/php-converter @dev" --dev`
+
 ### Profile
 
 Show memory & time usage:
