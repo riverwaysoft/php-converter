@@ -7,6 +7,7 @@ namespace Riverwaysoft\PhpConverter\Ast;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Enum_;
+use PhpParser\NodeTraverser;
 use Riverwaysoft\PhpConverter\ClassFilter\ClassFilterInterface;
 use Riverwaysoft\PhpConverter\Dto\DtoClassProperty;
 use Riverwaysoft\PhpConverter\Dto\DtoEnumProperty;
@@ -28,42 +29,18 @@ class DtoVisitor extends ConverterVisitor
         $this->converterResult = new ConverterResult();
     }
 
-    public function leaveNode(Node $node)
+    public function enterNode(Node $node)
     {
-        if ($node instanceof Class_ || $node instanceof Enum_) {
-            if ($this->classFilter && !$this->classFilter->isMatch($node)) {
-                return null;
-            }
-            $this->createDtoType($node);
+        if (!$node instanceof Class_ && !$node instanceof Enum_) {
+            return null;
+        }
+        if ($this->classFilter && !$this->classFilter->isMatch($node)) {
+            return null;
         }
 
-        return null;
-    }
+        $this->createDtoType($node);
 
-    private function createSingleType(
-        Node\Name|Node\Identifier|Node\NullableType|Node\UnionType $param,
-        ?string $docComment = null,
-    ): PhpTypeInterface {
-        if ($docComment) {
-            $docBlockType = $this->phpDocTypeParser->parse($docComment);
-            if ($docBlockType) {
-                return $docBlockType;
-            }
-        }
-
-        if ($param instanceof Node\UnionType) {
-            return new PhpUnionType(array_map(fn ($singleParam) => $this->createSingleType($singleParam, $docComment), $param->types));
-        }
-
-        if ($param instanceof Node\NullableType) {
-            return PhpUnionType::nullable($this->createSingleType($param->type, $docComment));
-        }
-
-        $typeName = get_class($param) === Node\Name::class || get_class($param) === Node\Name\FullyQualified::class
-            ? $param->getParts()[0]
-            : $param->name;
-
-        return PhpTypeFactory::create($typeName);
+        return NodeTraverser::DONT_TRAVERSE_CURRENT_AND_CHILDREN;
     }
 
     private function createDtoType(Class_|Enum_ $node): void
@@ -142,6 +119,32 @@ class DtoVisitor extends ConverterVisitor
             expressionType: $expressionType,
             properties: $properties,
         ));
+    }
+
+    private function createSingleType(
+        Node\Name|Node\Identifier|Node\NullableType|Node\UnionType $param,
+        ?string $docComment = null,
+    ): PhpTypeInterface {
+        if ($docComment) {
+            $docBlockType = $this->phpDocTypeParser->parse($docComment);
+            if ($docBlockType) {
+                return $docBlockType;
+            }
+        }
+
+        if ($param instanceof Node\UnionType) {
+            return new PhpUnionType(array_map(fn ($singleParam) => $this->createSingleType($singleParam, $docComment), $param->types));
+        }
+
+        if ($param instanceof Node\NullableType) {
+            return PhpUnionType::nullable($this->createSingleType($param->type, $docComment));
+        }
+
+        $typeName = get_class($param) === Node\Name::class || get_class($param) === Node\Name\FullyQualified::class
+            ? $param->getParts()[0]
+            : $param->name;
+
+        return PhpTypeFactory::create($typeName);
     }
 
     public function resolveExpressionType(Class_|Enum_ $node): ExpressionType

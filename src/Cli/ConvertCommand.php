@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Riverwaysoft\PhpConverter\Cli;
 
+use Riverwaysoft\PhpConverter\Ast\UsageCollector;
 use Riverwaysoft\PhpConverter\CodeProvider\FileSystemCodeProvider;
 use Riverwaysoft\PhpConverter\Ast\Converter;
 use Riverwaysoft\PhpConverter\Language\LanguageGeneratorInterface;
 use Riverwaysoft\PhpConverter\OutputDiffCalculator\OutputDiffCalculator;
 use Composer\XdebugHandler\XdebugHandler;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -19,6 +21,7 @@ use Webmozart\Assert\Assert;
 class ConvertCommand extends Command
 {
     protected static $defaultName = 'generate';
+    private UsageCollector $usageCollector;
 
     public function __construct(
         private Converter $converter,
@@ -28,6 +31,7 @@ class ConvertCommand extends Command
         private FileSystemCodeProvider $fsCodeProvider,
     ) {
         parent::__construct();
+        $this->usageCollector = new UsageCollector();
     }
 
     protected function configure(): void
@@ -36,7 +40,7 @@ class ConvertCommand extends Command
             ->setDescription('Generate TypeScript / Dart from PHP sources')
             ->addOption('from', 'f', InputOption::VALUE_REQUIRED)
             ->addOption('to', 't', InputOption::VALUE_REQUIRED)
-            ->addOption('xdebug', null, InputOption::VALUE_OPTIONAL)
+            ->addOption('xdebug', 'x', InputArgument::OPTIONAL, 'Do not turn off Xdebug')
             ->addOption('branch', 'b', InputOption::VALUE_OPTIONAL);
     }
 
@@ -56,11 +60,15 @@ class ConvertCommand extends Command
             return Command::SUCCESS;
         }
 
+        if ($output->isVerbose()) {
+            $this->usageCollector->startMeasuring();
+        }
+
         $converterResult = $this->converter->convert($files);
         $outputFiles = $this->languageGenerator->generate($converterResult);
 
         foreach ($outputFiles as $outputFile) {
-            $outputAbsolutePath = rtrim($to, '/') . '/' . $outputFile->getRelativeName();
+            $outputAbsolutePath = sprintf("%s/%s", rtrim($to, '/'), $outputFile->getRelativeName());
             $newFileContent = $outputFile->getContent();
             if ($this->fileSystem->exists($outputAbsolutePath)) {
                 $diff = $this->diffWriter->calculate(file_get_contents($outputAbsolutePath), $newFileContent);
@@ -79,12 +87,17 @@ class ConvertCommand extends Command
             $this->fileSystem->appendToFile($outputAbsolutePath, $newFileContent);
         }
 
+        if ($output->isVerbose()) {
+            $this->usageCollector->endMeasuring();
+            $output->writeln("\n\nScript usage: " . json_encode($this->usageCollector->report()));
+        }
+
         return Command::SUCCESS;
     }
 
     private function turnOffXdebug(): void
     {
-        $xdebug = new XdebugHandler('dtoConverter');
+        $xdebug = new XdebugHandler('phpConverter');
         $xdebug->setPersistent();
         $xdebug->check();
         unset($xdebug);

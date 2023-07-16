@@ -296,3 +296,16 @@ composer test
 
 Please see [CONTRIBUTING](./CONTRIBUTING.md) for details.
 
+## Development
+
+### Profile
+
+Show memory & time usage:
+
+`bin/dto-converter generate --from=./ --to=./assets/ -v`
+
+Generate Xdebug profiler output:
+
+`php -d xdebug.mode=profile -d xdebug.output_dir=. bin/dto-converter generate --from=./ --to=./assets/ -v -xdebug`
+
+Then open the result .cachegrind file in PHPStorm -> Tools -> Analyze XDebug Profiler Snapshot
