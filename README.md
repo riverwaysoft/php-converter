@@ -65,12 +65,12 @@ type UserOutput = {
 If you'd like to customize the conversion, you need to copy the config script to your project folder:
 
 ```
-cp vendor/bin/default-config.php config/php-converter-config.php
+cp vendor/riverwaysoft/php-converter/bin/default-config.php config/ts-config.php
 ``` 
 
 Now you can customize this config and run the php-converter via the following script:
 ```bash
-vendor/bin/php-converter --from=/path/to/project/src --to=. --config=config/php-converter-config.php
+vendor/bin/php-converter --from=/path/to/project/src --to=. --config=config/ts-config.php
 ```
 
 ### How to customize generated output?
@@ -320,7 +320,7 @@ To find out the absolute path run `realpath .` in the `php-converter` directory.
 
 Show memory & time usage:
 
-`bin/php-converter generate --from=./ --to=./assets/ -v`
+`bin/php-converter --from=./ --to=./assets/ -v`
 
 Generate Xdebug profiler output:
 
