@@ -22,7 +22,7 @@
     },
     "require": {
         "php": ">=8.0",
-        "nikic/php-parser": "^4.10",
+        "nikic/php-parser": "^4.16",
         "webmozart/assert": "^1.10",
         "jfcherng/php-diff": "^6.10",
         "jawira/case-converter": "^3.4",
