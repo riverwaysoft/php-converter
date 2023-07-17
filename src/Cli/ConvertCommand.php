@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace Riverwaysoft\PhpConverter\Cli;
 
 use Riverwaysoft\PhpConverter\Ast\UsageCollector;
-use Riverwaysoft\PhpConverter\CodeProvider\FileSystemCodeProvider;
 use Riverwaysoft\PhpConverter\Ast\Converter;
-use Riverwaysoft\PhpConverter\Language\LanguageGeneratorInterface;
+use Riverwaysoft\PhpConverter\Config\PhpConverterConfig;
 use Riverwaysoft\PhpConverter\OutputDiffCalculator\OutputDiffCalculator;
 use Composer\XdebugHandler\XdebugHandler;
 use Symfony\Component\Console\Command\Command;
@@ -22,16 +21,15 @@ class ConvertCommand extends Command
 {
     protected static $defaultName = 'generate';
     private UsageCollector $usageCollector;
+    private OutputDiffCalculator $diffWriter;
+    private Filesystem $fileSystem;
 
-    public function __construct(
-        private Converter $converter,
-        private LanguageGeneratorInterface $languageGenerator,
-        private Filesystem $fileSystem,
-        private OutputDiffCalculator $diffWriter,
-        private FileSystemCodeProvider $fsCodeProvider,
-    ) {
+    public function __construct()
+    {
         parent::__construct();
         $this->usageCollector = new UsageCollector();
+        $this->diffWriter = new OutputDiffCalculator();
+        $this->fileSystem = new Filesystem();
     }
 
     protected function configure(): void
@@ -40,8 +38,15 @@ class ConvertCommand extends Command
             ->setDescription('Generate TypeScript / Dart from PHP sources')
             ->addOption('from', 'f', InputOption::VALUE_REQUIRED)
             ->addOption('to', 't', InputOption::VALUE_REQUIRED)
+            ->addOption(
+                name: 'config',
+                shortcut: 'c',
+                mode: InputOption::VALUE_REQUIRED,
+                description: 'A path to php-converter config',
+                default: './bin/default-config.php',
+            )
             ->addOption('xdebug', 'x', InputArgument::OPTIONAL, 'Do not turn off Xdebug')
-            ->addOption('branch', 'b', InputOption::VALUE_OPTIONAL);
+        ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -54,7 +59,14 @@ class ConvertCommand extends Command
         $to = $input->getOption('to');
         Assert::directory($to);
 
-        $files = $this->fsCodeProvider->getListings($from);
+        $configFile = $input->getOption('config');
+        Assert::file($configFile);
+        Assert::readable($configFile);
+
+        $config = new PhpConverterConfig();
+        (require_once $configFile)($config);
+
+        $files = $config->getCodeProvider()->getListings($from);
         if (empty($files)) {
             $output->writeln('No files to convert');
             return Command::SUCCESS;
@@ -64,8 +76,9 @@ class ConvertCommand extends Command
             $this->usageCollector->startMeasuring();
         }
 
-        $converterResult = $this->converter->convert($files);
-        $outputFiles = $this->languageGenerator->generate($converterResult);
+        $converter = new Converter($config->getVisitors());
+        $converterResult = $converter->convert($files);
+        $outputFiles = $config->getLanguageGenerator()->generate($converterResult);
 
         foreach ($outputFiles as $outputFile) {
             $outputAbsolutePath = sprintf("%s/%s", rtrim($to, '/'), $outputFile->getRelativeName());
