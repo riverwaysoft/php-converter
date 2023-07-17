@@ -3,7 +3,8 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/../vendor/autoload.php';
+// https://getcomposer.org/doc/articles/vendor-binaries.md#finding-the-composer-autoloader-from-a-binary
+include $_composer_autoload_path ?? __DIR__ . '/../vendor/autoload.php';
 
 use Riverwaysoft\PhpConverter\Cli\ConvertCommand;
 use Symfony\Component\Console\Application;
