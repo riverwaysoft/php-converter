@@ -19,6 +19,8 @@ PHP 8.0 or above
 composer require riverwaysoft/php-converter --dev
 ```
 
+If the installation causes dependency conflicts you can use the [standalone Phar version](#phar-installation) of the package.
+
 2) Mark a few classes with `#[Dto]` annotation to convert them into TypeScript or Dart
 ```php
 use Riverwaysoft\PhpConverter\ClassFilter\Dto;
@@ -276,6 +278,18 @@ composer test
 ## How it is different from alternatives?
 - Unlike [spatie/typescript-transformer](https://github.com/spatie/typescript-transformer) `php-converter` supports not only TypeScript but also Dart. Support for other languages can be easily added by implementing LanguageInterface. `php-converter` can also output generated types / classes into different files.
 - Unlike [grpc](https://github.com/grpc/grpc/tree/v1.40.0/examples/php) `php-converter` doesn't require to modify your app or install some extensions.
+
+## Phar installation
+
+PHAR files, similar to JAR files in Java, bundle a PHP application and its dependencies into a single file. This provides the isolation of dependencies. Each PHAR can include its specific version of dependencies, avoiding conflicts with other packages on the same project. To download `phar` version of this package go to releases and download the `.phar` file from there. Static analyzers like PHPStan will complain if you use classes from the PHAR in your code, so you'd need to tell a static analyzer where to find these classes. Example for PHPStan:
+
+```
+// phpstan.neon
+
+parameters:
+    bootstrapFiles:
+        - phar://bin/php-converter.phar/vendor/autoload.php
+```
 
 ## Contributing
 
