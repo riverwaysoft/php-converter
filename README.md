@@ -19,7 +19,7 @@ PHP 8.0 or above
 composer require riverwaysoft/php-converter --dev
 ```
 
-If the installation causes dependency conflicts you can use the [standalone Phar version](#phar-installation) of the package.
+If the installation causes dependency conflicts use the [standalone Phar version](#phar-installation) of the package.
 
 2) Mark a few classes with `#[Dto]` annotation to convert them into TypeScript or Dart
 ```php
@@ -111,7 +111,7 @@ Suppose you don't want to mark each DTO individually with `#[Dto]` but want to c
 
 return static function (PhpConverterConfig $config) {
 -   $config->setCodeProvider(new FileSystemCodeProvider('/\.php$/'));
-+    $config->setCodeProvider(new FileSystemCodeProvider('/Dto\.php$/'));
++   $config->setCodeProvider(new FileSystemCodeProvider('/Dto\.php$/'));
 
 -   $config->addVisitor(new DtoVisitor(new PhpAttributeFilter('Dto')));
 +   $config->addVisitor(new DtoVisitor());
@@ -145,14 +145,14 @@ return static function (PhpConverterConfig $config) {
             new DateTimeTypeResolver(),
             new ClassNameTypeResolver(),
 +               new InlineTypeResolver([
-+                 // Convert libphonenumber object to a string
-+                 // PhpBaseType is used to support both Dart/TypeScript
-+                 'PhoneNumber' => PhpBaseType::string(), 
-+                 // Convert PHP Money object to a custom TypeScript type
-+                 // It's TS-only syntax, to support Dart and the rest of the languages you'd have to create a separate PHP class like MoneyOutput
-+                 'Money' => '{ amount: number; currency: string }',
-+                 // Convert Doctrine Embeddable to an existing Dto marked as #[Dto]
-+                 'SomeDoctrineEmbeddable' => 'SomeDoctrineEmbeddableDto',
++                   // Convert libphonenumber object to a string
++                   // PhpBaseType is used to support both Dart/TypeScript
++                   'PhoneNumber' => PhpBaseType::string(), 
++                   // Convert PHP Money object to a custom TypeScript type
++                   // It's TS-only syntax, to support Dart and the rest of the languages you'd have to create a separate PHP class like MoneyOutput
++                   'Money' => '{ amount: number; currency: string }',
++                   // Convert Doctrine Embeddable to an existing Dto marked as #[Dto]
++                   'SomeDoctrineEmbeddable' => 'SomeDoctrineEmbeddableDto',
 +               ])
         ],
     ));
