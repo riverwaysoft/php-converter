@@ -7,7 +7,7 @@ namespace Riverwaysoft\PhpConverter\ClassFilter;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Enum_;
 
-class NegationFilter implements ClassFilterInterface
+class NotFilter implements ClassFilterInterface
 {
     public function __construct(private ClassFilterInterface $filter)
     {

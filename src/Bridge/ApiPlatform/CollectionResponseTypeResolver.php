@@ -8,7 +8,7 @@ use Riverwaysoft\PhpConverter\Dto\DtoList;
 use Riverwaysoft\PhpConverter\Dto\DtoType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeInterface;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
-use Riverwaysoft\PhpConverter\Language\UnknownTypeResolver\ClassNameTypeResolver;
+use Riverwaysoft\PhpConverter\OutputGenerator\UnknownTypeResolver\ClassNameTypeResolver;
 
 class CollectionResponseTypeResolver extends ClassNameTypeResolver
 {

@@ -7,7 +7,7 @@ namespace App\Tests;
 use PHPUnit\Framework\TestCase;
 use Riverwaysoft\PhpConverter\Ast\Converter;
 use Riverwaysoft\PhpConverter\Ast\DtoVisitor;
-use Riverwaysoft\PhpConverter\Language\UnknownTypeResolver\ClassNameTypeResolver;
+use Riverwaysoft\PhpConverter\OutputGenerator\UnknownTypeResolver\ClassNameTypeResolver;
 use Riverwaysoft\PhpConverter\OutputWriter\SingleFileOutputWriter\SingleFileOutputWriter;
 use Spatie\Snapshots\Drivers\TextDriver;
 use Spatie\Snapshots\MatchesSnapshots;
@@ -49,7 +49,7 @@ CODE;
     public function testDart(): void
     {
         $normalized = (new Converter([new DtoVisitor()]))->convert([$this->codePhp]);
-        $results = (new GoGeneratorSimple(new SingleFileOutputWriter('generated.go'), [new ClassNameTypeResolver()]))->generate($normalized);
+        $results = (new GoOutputGeneratorSimple(new SingleFileOutputWriter('generated.go'), [new ClassNameTypeResolver()]))->generate($normalized);
 
         $this->assertCount(1, $results);
 

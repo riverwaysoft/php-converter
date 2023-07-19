@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\PhpConverter\Language\UnknownTypeResolver;
+namespace Riverwaysoft\PhpConverter\OutputGenerator\UnknownTypeResolver;
 
 use Riverwaysoft\PhpConverter\Dto\DtoList;
 use Riverwaysoft\PhpConverter\Dto\DtoType;

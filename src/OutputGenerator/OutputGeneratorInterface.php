@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\PhpConverter\Language;
+namespace Riverwaysoft\PhpConverter\OutputGenerator;
 
 use Riverwaysoft\PhpConverter\Ast\ConverterResult;
 use Riverwaysoft\PhpConverter\OutputWriter\OutputFile;
 
-interface LanguageGeneratorInterface
+interface OutputGeneratorInterface
 {
     /** @return OutputFile[] */
     public function generate(ConverterResult $converterResult): array;

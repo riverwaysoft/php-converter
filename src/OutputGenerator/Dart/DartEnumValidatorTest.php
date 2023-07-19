@@ -1,6 +1,6 @@
 <?php
 
-namespace Riverwaysoft\PhpConverter\Language\Dart;
+namespace Riverwaysoft\PhpConverter\OutputGenerator\Dart;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;

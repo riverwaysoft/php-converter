@@ -84,7 +84,7 @@ return static function (PhpConverterConfig $config) {
 
 +   $fileNameGenerator = new KebabCaseFileNameGenerator('.ts');
 
-    $config->setLanguageGenerator(new TypeScriptGenerator(
+    $config->setOutputGenerator(new TypeScriptGenerator(
         new SingleFileOutputWriter('generated.ts'),
 -       new SingleFileOutputWriter('generated.ts'),
 +       new EntityPerClassOutputWriter(
@@ -116,7 +116,7 @@ return static function (PhpConverterConfig $config) {
 -   $config->addVisitor(new DtoVisitor(new PhpAttributeFilter('Dto')));
 +   $config->addVisitor(new DtoVisitor());
 
-    $config->setLanguageGenerator(new TypeScriptGenerator(
+    $config->setOutputGenerator(new TypeScriptGenerator(
         new SingleFileOutputWriter('generated.ts'),
         [
             new DateTimeTypeResolver(),
@@ -126,7 +126,7 @@ return static function (PhpConverterConfig $config) {
 };
 ```
 
-You can even go further and use `NegationFilter` to exclude specific files as shown in [unit tests](https://github.com/riverwaysoft/php-converter/blob/a8d5df2c03303c02bc9148bd1d7822d7fe48c5d8/tests/EndToEndTest.php#L297).
+You can even go further and use `NotFilter` to exclude specific files as shown in [unit tests](https://github.com/riverwaysoft/php-converter/blob/a8d5df2c03303c02bc9148bd1d7822d7fe48c5d8/tests/EndToEndTest.php#L297).
 
 ### How to write custom type resolvers?
 `php-converter` takes care of converting basic PHP types like number, string and so on. But what if you have a type that isn't a DTO? For example `\DateTimeImmutable`. You can write a class that implements [UnknownTypeResolverInterface](https://github.com/riverwaysoft/php-converter/blob/2d434562c1bc73bcb6819257b31dd75c818f4ab1/src/Language/UnknownTypeResolverInterface.php). There is also a shortcut to achieve it - use [InlineTypeResolver](https://github.com/riverwaysoft/php-converter/blob/2d434562c1bc73bcb6819257b31dd75c818f4ab1/src/Language/TypeScript/InlineTypeResolver.php):
@@ -139,7 +139,7 @@ return static function (PhpConverterConfig $config) {
 
     $config->addVisitor(new DtoVisitor(new PhpAttributeFilter('Dto')));
 
-    $config->setLanguageGenerator(new TypeScriptGenerator(
+    $config->setOutputGenerator(new TypeScriptGenerator(
         new SingleFileOutputWriter('generated.ts'),
         [
             new DateTimeTypeResolver(),
@@ -169,7 +169,7 @@ return static function (PhpConverterConfig $config) {
 
     $config->addVisitor(new DtoVisitor(new PhpAttributeFilter('Dto')));
 
-    $config->setLanguageGenerator(new TypeScriptGenerator(
+    $config->setOutputGenerator(new TypeScriptGenerator(
         new SingleFileOutputWriter('generated.ts'),
         [
             new DateTimeTypeResolver(),
@@ -222,7 +222,7 @@ return static function (PhpConverterConfig $config) {
 
     $config->addVisitor(new DtoVisitor(new PhpAttributeFilter('Dto')));
 
-    $config->setLanguageGenerator(new TypeScriptGenerator(
+    $config->setOutputGenerator(new TypeScriptGenerator(
         new SingleFileOutputWriter('generated.ts'),
         [
             new DateTimeTypeResolver(),
@@ -237,7 +237,7 @@ return static function (PhpConverterConfig $config) {
 ```
 
 ### How to add support for other languages?
-To write a custom converter you can implement [LanguageGeneratorInterface](./src/Language/LanguageGeneratorInterface.php). Here is an example how to do it for Go language: [GoGeneratorSimple](./tests/GoGeneratorSimple.php). Check how to use it [here](./tests/GoGeneratorSimpleTest.php). It covers only basic scenarios to get you an idea, so feel free to modify it to your needs.
+To write a custom converter you can implement [OutputGeneratorInterface](./src/OutputGenerator/OutputGeneratorInterface.php). Here is an example how to do it for Go language: [GoGeneratorSimple](./tests/GoGeneratorSimple.php). Check how to use it [here](./tests/GoGeneratorSimpleTest.php). It covers only basic scenarios to get you an idea, so feel free to modify it to your needs.
 
 ## Error list
 Here is a list of errors `php-converter` can throw and description what to do if you encounter these errors:

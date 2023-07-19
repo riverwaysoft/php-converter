@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\PhpConverter\Language\TypeScript;
+namespace Riverwaysoft\PhpConverter\OutputGenerator\TypeScript;
 
 use Riverwaysoft\PhpConverter\Ast\ConverterResult;
 use Riverwaysoft\PhpConverter\Dto\ApiClient\ApiEndpoint;
@@ -18,15 +18,15 @@ use Riverwaysoft\PhpConverter\Dto\PhpType\PhpOptionalType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeInterface;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnionType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
-use Riverwaysoft\PhpConverter\Language\LanguageGeneratorInterface;
-use Riverwaysoft\PhpConverter\Language\UnknownTypeResolver\UnknownTypeResolverInterface;
-use Riverwaysoft\PhpConverter\Language\UnsupportedTypeException;
+use Riverwaysoft\PhpConverter\OutputGenerator\OutputGeneratorInterface;
+use Riverwaysoft\PhpConverter\OutputGenerator\UnknownTypeResolver\UnknownTypeResolverInterface;
+use Riverwaysoft\PhpConverter\OutputGenerator\UnsupportedTypeException;
 use Riverwaysoft\PhpConverter\OutputWriter\OutputFile;
 use Riverwaysoft\PhpConverter\OutputWriter\OutputProcessor\OutputFilesProcessor;
 use Riverwaysoft\PhpConverter\OutputWriter\OutputWriterInterface;
 use Webmozart\Assert\Assert;
 
-class TypeScriptGenerator implements LanguageGeneratorInterface
+class TypeScriptOutputGenerator implements OutputGeneratorInterface
 {
     private TypeScriptGeneratorOptions $options;
 

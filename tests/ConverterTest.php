@@ -10,7 +10,7 @@ use Riverwaysoft\PhpConverter\Ast\Converter;
 use Riverwaysoft\PhpConverter\Ast\DtoVisitor;
 use Riverwaysoft\PhpConverter\Bridge\Symfony\SymfonyControllerVisitor;
 use Riverwaysoft\PhpConverter\ClassFilter\DocBlockCommentFilter;
-use Riverwaysoft\PhpConverter\ClassFilter\NegationFilter;
+use Riverwaysoft\PhpConverter\ClassFilter\NotFilter;
 use Riverwaysoft\PhpConverter\ClassFilter\PhpAttributeFilter;
 use Spatie\Snapshots\MatchesSnapshots;
 
@@ -149,7 +149,7 @@ class User
 
 CODE;
 
-        $classesWithoutIgnoreFilter = new NegationFilter(new DocBlockCommentFilter('@ignore'));
+        $classesWithoutIgnoreFilter = new NotFilter(new DocBlockCommentFilter('@ignore'));
         $converter = new Converter([new DtoVisitor($classesWithoutIgnoreFilter)]);
         $result = $converter->convert([$codeWithDateTime]);
 

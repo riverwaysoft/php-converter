@@ -1,6 +1,6 @@
 <?php
 
-namespace Riverwaysoft\PhpConverter\Language\Dart;
+namespace Riverwaysoft\PhpConverter\OutputGenerator\Dart;
 
 use Riverwaysoft\PhpConverter\Dto\DtoEnumProperty;
 use Riverwaysoft\PhpConverter\Dto\DtoList;
@@ -10,7 +10,7 @@ use Riverwaysoft\PhpConverter\Dto\PhpType\PhpListType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeInterface;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnionType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
-use Riverwaysoft\PhpConverter\Language\UnknownTypeResolver\InlineTypeResolver;
+use Riverwaysoft\PhpConverter\OutputGenerator\UnknownTypeResolver\InlineTypeResolver;
 use Webmozart\Assert\Assert;
 
 class DartClassFactoryGenerator
