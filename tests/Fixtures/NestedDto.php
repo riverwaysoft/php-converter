@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use MyCLabs\Enum\Enum;
 
 final class PermissionsEnum extends Enum
