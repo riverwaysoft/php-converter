@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Riverwaysoft\PhpConverter\Dto;
 
+use Exception;
+
 class DtoList
 {
     /** @var array<string, DtoType> */
@@ -12,7 +14,7 @@ class DtoList
     public function add(DtoType $dto): void
     {
         if (!empty($this->dtoMap[$dto->getName()])) {
-            throw new \Exception(sprintf("Non-unique class name %s", $dto->getName()));
+            throw new Exception(sprintf("Non-unique class name %s", $dto->getName()));
         }
         $this->dtoMap[$dto->getName()] = $dto;
     }

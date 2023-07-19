@@ -78,7 +78,7 @@ class ConvertCommand extends Command
 
         $converter = new Converter($config->getVisitors());
         $converterResult = $converter->convert($files);
-        $outputFiles = $config->getLanguageGenerator()->generate($converterResult);
+        $outputFiles = $config->getOutputGenerator()->generate($converterResult);
 
         foreach ($outputFiles as $outputFile) {
             $outputAbsolutePath = sprintf("%s/%s", rtrim($to, '/'), $outputFile->getRelativeName());

@@ -13,13 +13,14 @@ use Riverwaysoft\PhpConverter\Dto\PhpType\PhpListType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeInterface;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnionType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
-use Riverwaysoft\PhpConverter\Language\LanguageGeneratorInterface;
-use Riverwaysoft\PhpConverter\Language\UnknownTypeResolver\UnknownTypeResolverInterface;
-use Riverwaysoft\PhpConverter\Language\UnsupportedTypeException;
+use Riverwaysoft\PhpConverter\OutputGenerator\OutputGeneratorInterface;
+use Riverwaysoft\PhpConverter\OutputGenerator\UnknownTypeResolver\UnknownTypeResolverInterface;
+use Riverwaysoft\PhpConverter\OutputGenerator\UnsupportedTypeException;
 use Riverwaysoft\PhpConverter\OutputWriter\OutputWriterInterface;
 use Webmozart\Assert\Assert;
+use Exception;
 
-class GoGeneratorSimple implements LanguageGeneratorInterface
+class GoOutputGeneratorSimple implements OutputGeneratorInterface
 {
     public function __construct(
         private OutputWriterInterface $outputWriter,
@@ -80,7 +81,7 @@ class GoGeneratorSimple implements LanguageGeneratorInterface
                 $type->equalsTo(PhpBaseType::string()) => 'string',
                 $type->equalsTo(PhpBaseType::bool()) => 'bool',
                 $type->equalsTo(PhpBaseType::mixed()), $type->equalsTo(PhpBaseType::object()) => 'any',
-                default => throw new \Exception(sprintf("Unknown base PHP type: %s", $type->jsonSerialize()))
+                default => throw new Exception(sprintf("Unknown base PHP type: %s", $type->jsonSerialize()))
             };
         }
 

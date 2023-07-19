@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Riverwaysoft\PhpConverter\ClassFilter;
 
-#[\Attribute(\Attribute::TARGET_METHOD)]
+use Attribute;
+
+#[Attribute(Attribute::TARGET_METHOD)]
 class DtoEndpoint
 {
     public function __construct(

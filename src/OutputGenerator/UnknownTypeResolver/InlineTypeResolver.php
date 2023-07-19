@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\PhpConverter\Language\UnknownTypeResolver;
+namespace Riverwaysoft\PhpConverter\OutputGenerator\UnknownTypeResolver;
 
 use Riverwaysoft\PhpConverter\Dto\DtoList;
 use Riverwaysoft\PhpConverter\Dto\DtoType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeInterface;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
+use Exception;
 
 class InlineTypeResolver implements UnknownTypeResolverInterface
 {
@@ -26,7 +27,7 @@ class InlineTypeResolver implements UnknownTypeResolverInterface
     {
         $result = $this->map[$type->getName()];
         if (!$result) {
-            throw new \Exception(sprintf('Unsupported type %s', $type->getName()));
+            throw new Exception(sprintf('Unsupported type %s', $type->getName()));
         }
         return $result;
     }

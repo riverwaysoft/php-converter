@@ -22,6 +22,7 @@ use Riverwaysoft\PhpConverter\Dto\PhpType\PhpBaseType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpOptionalType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeFactory;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeInterface;
+use Exception;
 
 class ApiPlatformDtoResourceVisitor extends ConverterVisitor
 {
@@ -51,7 +52,7 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
 
         $apiResourceAttributes = $this->findAttributes($node, self::API_PLATFORM_ATTRIBUTE);
         if (empty($apiResourceAttributes)) {
-            throw new \Exception(sprintf('Class %s does not have #[%s] attribute', $node->name->name, self::API_PLATFORM_ATTRIBUTE));
+            throw new Exception(sprintf('Class %s does not have #[%s] attribute', $node->name->name, self::API_PLATFORM_ATTRIBUTE));
         }
 
         foreach ($apiResourceAttributes as $apiResourceAttribute) {
@@ -84,7 +85,7 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
                 $defaultOutput = $outputNode->value->class->getParts()[array_key_last($outputNode->value->class->getParts())];
             }
             if (!$defaultOutput) {
-                throw new \Exception(sprintf("The output is required for ApiResource %s. Context: %s", $node->name->name, $this->prettyPrinter->prettyPrint([$apiResourceAttribute])));
+                throw new Exception(sprintf("The output is required for ApiResource %s. Context: %s", $node->name->name, $this->prettyPrinter->prettyPrint([$apiResourceAttribute])));
             }
 
             // Main input
@@ -121,7 +122,7 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
                 if ($forceSubresourcePath) {
                     $endpointCount = count($operationsArg->value->items);
                     if ($endpointCount !== 1) {
-                        throw new \Exception(sprintf('ApiResource %s should have only 1 array item in the "operations" field since it is subresource. %s given: ', $node->name->name, $endpointCount));
+                        throw new Exception(sprintf('ApiResource %s should have only 1 array item in the "operations" field since it is subresource. %s given: ', $node->name->name, $endpointCount));
                     }
                 }
 
@@ -317,7 +318,7 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
                     }
                 }
 
-                throw new \Exception('Expected to have string value for key '.$arrayItem->key->value);
+                throw new Exception('Expected to have string value for key '.$arrayItem->key->value);
             }
         }
 

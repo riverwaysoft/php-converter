@@ -1,6 +1,8 @@
 <?php
 
-namespace Riverwaysoft\PhpConverter\Language\Dart;
+declare(strict_types=1);
+
+namespace Riverwaysoft\PhpConverter\OutputGenerator\Dart;
 
 use Riverwaysoft\PhpConverter\Dto\DtoClassProperty;
 use Riverwaysoft\PhpConverter\Dto\DtoType;

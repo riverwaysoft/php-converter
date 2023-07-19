@@ -16,6 +16,7 @@ use Riverwaysoft\PhpConverter\Dto\ApiClient\ApiEndpointParam;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpBaseType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpListType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeFactory;
+use Exception;
 
 class SymfonyControllerVisitor extends ConverterVisitor
 {
@@ -70,7 +71,7 @@ class SymfonyControllerVisitor extends ConverterVisitor
         $routeAttribute = $this->findAttribute($node, 'Route');
 
         if (!$routeAttribute) {
-            throw new \Exception('#[DtoEndpoint] is used on a method, that does not have #[Route] attribute');
+            throw new Exception('#[DtoEndpoint] is used on a method, that does not have #[Route] attribute');
         }
 
         $route = null;
@@ -92,7 +93,7 @@ class SymfonyControllerVisitor extends ConverterVisitor
             }
 
             if (!$route) {
-                throw new \Exception('Could not find route path. Make sure your route looks like this #[Route(\'/api/users\')] or #[Route(name: \'/api/users/\')] or #[Route(path: \'/api/users/\')]');
+                throw new Exception('Could not find route path. Make sure your route looks like this #[Route(\'/api/users\')] or #[Route(name: \'/api/users/\')] or #[Route(path: \'/api/users/\')]');
             }
         }
 
@@ -101,7 +102,7 @@ class SymfonyControllerVisitor extends ConverterVisitor
         if ($methodArg) {
             if ($methodArg->value instanceof Node\Expr\Array_) {
                 if (count($methodArg->value->items) > 1) {
-                    throw new \Exception('At the moment argument "methods" should have only 1 item');
+                    throw new Exception('At the moment argument "methods" should have only 1 item');
                 }
                 $methodString = $methodArg->value->items[0]->value;
                 if ($methodString instanceof Node\Scalar\String_) {
@@ -110,29 +111,29 @@ class SymfonyControllerVisitor extends ConverterVisitor
             } elseif ($methodArg->value instanceof Node\Scalar\String_) {
                 $method = $methodArg->value->value;
             } else {
-                throw new \Exception('Only array argument "methods" is supported');
+                throw new Exception('Only array argument "methods" is supported');
             }
         }
 
         if (!$method) {
-            throw new \Exception('#[Route()] argument "methods" is required');
+            throw new Exception('#[Route()] argument "methods" is required');
         }
 
         $dtoReturnAttribute = $this->findAttribute($node, 'DtoEndpoint');
         if (!$dtoReturnAttribute) {
-            throw new \Exception('Should not be reached, checked earlier');
+            throw new Exception('Should not be reached, checked earlier');
         }
 
         $outputType = PhpBaseType::null();
         if ($arg = $this->getAttributeArgumentByName($dtoReturnAttribute, 'returnOne')) {
             if (!($arg->value instanceof Node\Expr\ClassConstFetch)) {
-                throw new \Exception('Argument of returnOne should be a class string');
+                throw new Exception('Argument of returnOne should be a class string');
             }
             $outputType = PhpTypeFactory::create($arg->value->class->getParts()[0]);
         }
         if ($arg = $this->getAttributeArgumentByName($dtoReturnAttribute, 'returnMany')) {
             if (!($arg->value instanceof Node\Expr\ClassConstFetch)) {
-                throw new \Exception('Argument of returnMany should be a class string');
+                throw new Exception('Argument of returnMany should be a class string');
             }
             $outputType = new PhpListType(PhpTypeFactory::create($arg->value->class->getParts()[0]));
         }
@@ -147,7 +148,7 @@ class SymfonyControllerVisitor extends ConverterVisitor
             $maybeDtoInputAttribute = $this->findAttribute($param, 'Input');
             if ($maybeDtoInputAttribute) {
                 if ($inputParam) {
-                    throw new \Exception('Multiple #[Input] on controller action are not supported');
+                    throw new Exception('Multiple #[Input] on controller action are not supported');
                 }
                 $inputParam = new ApiEndpointParam(
                     name: $param->var->name,
@@ -158,7 +159,7 @@ class SymfonyControllerVisitor extends ConverterVisitor
             $maybeDtoQueryAttribute = $this->findAttribute($param, 'Query');
             if ($maybeDtoQueryAttribute) {
                 if (!empty($queryParams)) {
-                    throw new \Exception('Multiple #[Query] on controller action are not supported');
+                    throw new Exception('Multiple #[Query] on controller action are not supported');
                 }
                 $queryParams[] = new ApiEndpointParam(
                     name: $param->var->name,
@@ -173,7 +174,7 @@ class SymfonyControllerVisitor extends ConverterVisitor
         }
 
         if (!empty($excessiveRouteParams)) {
-            throw new \Exception(sprintf(
+            throw new Exception(sprintf(
                 'Route %s has parameter %s, but there are no method params with this name. Available parameters: %s',
                 $route,
                 array_key_first($excessiveRouteParams),

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\PhpConverter\Language\TypeScript;
+namespace Riverwaysoft\PhpConverter\OutputGenerator\TypeScript;
 
 use Riverwaysoft\PhpConverter\Ast\ConverterResult;
 use Riverwaysoft\PhpConverter\Dto\ApiClient\ApiEndpoint;
@@ -18,15 +18,16 @@ use Riverwaysoft\PhpConverter\Dto\PhpType\PhpOptionalType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeInterface;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnionType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
-use Riverwaysoft\PhpConverter\Language\LanguageGeneratorInterface;
-use Riverwaysoft\PhpConverter\Language\UnknownTypeResolver\UnknownTypeResolverInterface;
-use Riverwaysoft\PhpConverter\Language\UnsupportedTypeException;
+use Riverwaysoft\PhpConverter\OutputGenerator\OutputGeneratorInterface;
+use Riverwaysoft\PhpConverter\OutputGenerator\UnknownTypeResolver\UnknownTypeResolverInterface;
+use Riverwaysoft\PhpConverter\OutputGenerator\UnsupportedTypeException;
 use Riverwaysoft\PhpConverter\OutputWriter\OutputFile;
 use Riverwaysoft\PhpConverter\OutputWriter\OutputProcessor\OutputFilesProcessor;
 use Riverwaysoft\PhpConverter\OutputWriter\OutputWriterInterface;
 use Webmozart\Assert\Assert;
+use Exception;
 
-class TypeScriptGenerator implements LanguageGeneratorInterface
+class TypeScriptOutputGenerator implements OutputGeneratorInterface
 {
     private TypeScriptGeneratorOptions $options;
 
@@ -139,7 +140,7 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
             }
             return sprintf("export enum %s {%s\n}", $dto->getName(), $this->convertEnumToTypeScriptEnumProperties($dto->getProperties()));
         }
-        throw new \Exception('Unknown expression type ' . $dto->getExpressionType()->jsonSerialize());
+        throw new Exception('Unknown expression type ' . $dto->getExpressionType()->jsonSerialize());
     }
 
     // TS only supports string or number backed enums. If one of the enum values is null TS gives compilation error
@@ -235,7 +236,7 @@ class TypeScriptGenerator implements LanguageGeneratorInterface
                 $type->equalsTo(PhpBaseType::array()), $type->equalsTo(PhpBaseType::iterable()) => 'any[]',
                 $type->equalsTo(PhpBaseType::null()) => 'null',
                 $type->equalsTo(PhpBaseType::self()) => $dto->getName(),
-                default => throw new \Exception(sprintf("Unknown base PHP type: %s", $type->jsonSerialize()))
+                default => throw new Exception(sprintf("Unknown base PHP type: %s", $type->jsonSerialize()))
             };
         }
 

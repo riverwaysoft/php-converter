@@ -11,7 +11,7 @@ use Riverwaysoft\PhpConverter\Dto\ExpressionType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpBaseType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnionType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
-use Riverwaysoft\PhpConverter\Language\TypeScript\TypeScriptImportGenerator;
+use Riverwaysoft\PhpConverter\OutputGenerator\TypeScript\TypeScriptImportGenerator;
 use Spatie\Snapshots\MatchesSnapshots;
 
 class EntityPerClassOutputWriterTest extends TestCase

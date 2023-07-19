@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Riverwaysoft\PhpConverter\OutputWriter;
 
-class OutputFile implements \JsonSerializable
+use JsonSerializable;
+
+class OutputFile implements JsonSerializable
 {
     public function __construct(
         private string $relativeName,

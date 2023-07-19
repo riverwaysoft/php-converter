@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\PhpConverter\Language\Dart;
+namespace Riverwaysoft\PhpConverter\OutputGenerator\Dart;
 
 use Riverwaysoft\PhpConverter\Ast\ConverterResult;
 use Riverwaysoft\PhpConverter\Dto\DtoEnumProperty;
@@ -14,14 +14,15 @@ use Riverwaysoft\PhpConverter\Dto\PhpType\PhpListType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeInterface;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnionType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
-use Riverwaysoft\PhpConverter\Language\LanguageGeneratorInterface;
-use Riverwaysoft\PhpConverter\Language\UnknownTypeResolver\UnknownTypeResolverInterface;
-use Riverwaysoft\PhpConverter\Language\UnsupportedTypeException;
+use Riverwaysoft\PhpConverter\OutputGenerator\OutputGeneratorInterface;
+use Riverwaysoft\PhpConverter\OutputGenerator\UnknownTypeResolver\UnknownTypeResolverInterface;
+use Riverwaysoft\PhpConverter\OutputGenerator\UnsupportedTypeException;
 use Riverwaysoft\PhpConverter\OutputWriter\OutputProcessor\OutputFilesProcessor;
 use Riverwaysoft\PhpConverter\OutputWriter\OutputWriterInterface;
 use Webmozart\Assert\Assert;
+use Exception;
 
-class DartGenerator implements LanguageGeneratorInterface
+class DartOutputGenerator implements OutputGeneratorInterface
 {
     private DartEnumValidator $dartEnumValidator;
 
@@ -71,7 +72,7 @@ class DartGenerator implements LanguageGeneratorInterface
             return sprintf("enum %s {%s\n}", $dto->getName(), $this->convertEnumToTypeScriptProperties($dto->getProperties()));
         }
 
-        throw new \Exception('Unknown expression type '.$dto->getExpressionType()->jsonSerialize());
+        throw new Exception('Unknown expression type '.$dto->getExpressionType()->jsonSerialize());
     }
 
     private function convertToDartProperties(DtoType $dto, DtoList $dtoList): string
@@ -127,7 +128,7 @@ class DartGenerator implements LanguageGeneratorInterface
                 $type->equalsTo(PhpBaseType::mixed()), $type->equalsTo(PhpBaseType::iterable()), $type->equalsTo(PhpBaseType::array()) => 'dynamic',
                 $type->equalsTo(PhpBaseType::null()) => 'null',
                 $type->equalsTo(PhpBaseType::self()) => $dto->getName(),
-                default => throw new \Exception(sprintf("Unknown base PHP type: %s", $type->jsonSerialize()))
+                default => throw new Exception(sprintf("Unknown base PHP type: %s", $type->jsonSerialize()))
             };
         }
 

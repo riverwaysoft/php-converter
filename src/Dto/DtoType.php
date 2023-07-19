@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Riverwaysoft\PhpConverter\Dto;
 
-class DtoType implements \JsonSerializable
+use JsonSerializable;
+
+class DtoType implements JsonSerializable
 {
     public function __construct(
         private string $name,

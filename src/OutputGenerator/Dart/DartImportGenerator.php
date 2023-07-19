@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\PhpConverter\Language\Dart;
+namespace Riverwaysoft\PhpConverter\OutputGenerator\Dart;
 
 use Riverwaysoft\PhpConverter\Dto\DtoType;
-use Riverwaysoft\PhpConverter\Language\ImportGeneratorInterface;
+use Riverwaysoft\PhpConverter\OutputGenerator\ImportGeneratorInterface;
 use Riverwaysoft\PhpConverter\OutputWriter\EntityPerClassOutputWriter\DtoTypeDependencyCalculator;
 use Riverwaysoft\PhpConverter\OutputWriter\EntityPerClassOutputWriter\FileNameGeneratorInterface;
 

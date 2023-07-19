@@ -6,9 +6,10 @@ namespace Riverwaysoft\PhpConverter\OutputWriter\EntityPerClassOutputWriter;
 
 use Riverwaysoft\PhpConverter\Dto\ApiClient\ApiEndpoint;
 use Riverwaysoft\PhpConverter\Dto\DtoType;
-use Riverwaysoft\PhpConverter\Language\ImportGeneratorInterface;
+use Riverwaysoft\PhpConverter\OutputGenerator\ImportGeneratorInterface;
 use Riverwaysoft\PhpConverter\OutputWriter\OutputFile;
 use Riverwaysoft\PhpConverter\OutputWriter\OutputWriterInterface;
+use Exception;
 
 class EntityPerClassOutputWriter implements OutputWriterInterface
 {
@@ -31,7 +32,7 @@ class EntityPerClassOutputWriter implements OutputWriterInterface
 
     public function writeApiEndpoint(string $languageEndpoint, ApiEndpoint $apiEndpoint): void
     {
-        throw new \Exception('Not implemented');
+        throw new Exception('Not implemented');
     }
 
     public function getTypes(): array

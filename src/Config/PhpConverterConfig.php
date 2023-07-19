@@ -6,13 +6,13 @@ namespace Riverwaysoft\PhpConverter\Config;
 
 use Riverwaysoft\PhpConverter\Ast\ConverterVisitor;
 use Riverwaysoft\PhpConverter\CodeProvider\FileSystemCodeProvider;
-use Riverwaysoft\PhpConverter\Language\LanguageGeneratorInterface;
+use Riverwaysoft\PhpConverter\OutputGenerator\OutputGeneratorInterface;
 
 class PhpConverterConfig
 {
     /** @var ConverterVisitor[] */
     private array $visitors = [];
-    private LanguageGeneratorInterface|null $languageGenerator = null;
+    private OutputGeneratorInterface|null $outputGenerator = null;
     private FileSystemCodeProvider|null $codeProvider = null;
 
 
@@ -27,14 +27,14 @@ class PhpConverterConfig
         return $this->visitors;
     }
 
-    public function setLanguageGenerator(LanguageGeneratorInterface $languageGenerator): void
+    public function setOutputGenerator(OutputGeneratorInterface $generator): void
     {
-        $this->languageGenerator = $languageGenerator;
+        $this->outputGenerator = $generator;
     }
 
-    public function getLanguageGenerator(): LanguageGeneratorInterface
+    public function getOutputGenerator(): OutputGeneratorInterface
     {
-        return $this->languageGenerator;
+        return $this->outputGenerator;
     }
 
     public function getCodeProvider(): FileSystemCodeProvider

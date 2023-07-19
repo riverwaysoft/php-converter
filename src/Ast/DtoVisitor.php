@@ -16,6 +16,7 @@ use Riverwaysoft\PhpConverter\Dto\ExpressionType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeFactory;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeInterface;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnionType;
+use Exception;
 
 class DtoVisitor extends ConverterVisitor
 {
@@ -58,7 +59,7 @@ class DtoVisitor extends ConverterVisitor
                 $notNullValue = $stmt->consts[0]->value->value ?? null;
                 $isNullValue = ($stmt->consts[0]->value->name->parts[0] ?? null) === 'null';
                 if ($notNullValue === null && $isNullValue === false) {
-                    throw new \Exception(sprintf("Property %s of enum is different from number, string and null.", $propertyName));
+                    throw new Exception(sprintf("Property %s of enum is different from number, string and null.", $propertyName));
                 }
                 $properties[] = new DtoEnumProperty(
                     name: $propertyName,
@@ -68,7 +69,7 @@ class DtoVisitor extends ConverterVisitor
 
             if ($stmt instanceof Node\Stmt\Property) {
                 if ($stmt->type === null) {
-                    throw new \Exception(sprintf("Property %s of class %s has no type. Please add PHP type", $stmt->props[0]->name->name, $node->name->name));
+                    throw new Exception(sprintf("Property %s of class %s has no type. Please add PHP type", $stmt->props[0]->name->name, $node->name->name));
                 }
 
                 $type = $this->createSingleType($stmt->type, $stmt->getDocComment()?->getText());
@@ -86,7 +87,7 @@ class DtoVisitor extends ConverterVisitor
                     }
 
                     if ($param->type === null) {
-                        throw new \Exception(sprintf("Property %s of class %s has no type. Please add PHP type", $param->var->name, $node->name->name));
+                        throw new Exception(sprintf("Property %s of class %s has no type. Please add PHP type", $param->var->name, $node->name->name));
                     }
                     $type = $this->createSingleType($param->type, $param->getDocComment()?->getText());
 
@@ -101,10 +102,10 @@ class DtoVisitor extends ConverterVisitor
                 $expr = $stmt->expr;
                 $propertyName = $stmt->name->name;
                 if (!$expr) {
-                    throw new \Exception(sprintf("Non-backed enums are not supported because they are not serializable. Please use backed enums: %s\n Error in enum: %s", 'https://www.php.net/manual/en/language.enumerations.backed.php', $propertyName));
+                    throw new Exception(sprintf("Non-backed enums are not supported because they are not serializable. Please use backed enums: %s\n Error in enum: %s", 'https://www.php.net/manual/en/language.enumerations.backed.php', $propertyName));
                 }
                 if (!$expr instanceof Node\Scalar\LNumber && !$expr instanceof Node\Scalar\String_) {
-                    throw new \Exception(sprintf('A backed enum should be type of int or string, %s given. Error in enum %s', get_class($expr), $propertyName));
+                    throw new Exception(sprintf('A backed enum should be type of int or string, %s given. Error in enum %s', get_class($expr), $propertyName));
                 }
                 $propertyValue = $expr->value;
                 $properties[] = new DtoEnumProperty(

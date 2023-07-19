@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Riverwaysoft\PhpConverter\Dto\ApiClient;
 
+use Exception;
+
 class ApiEndpointMethod
 {
     private function __construct(
@@ -56,7 +58,7 @@ class ApiEndpointMethod
             'patch' => self::patch(),
             'post' => self::post(),
             'delete' => self::delete(),
-            default => throw new \Exception('Unsupported method: ' . $methodString),
+            default => throw new Exception('Unsupported method: ' . $methodString),
         };
     }
 }

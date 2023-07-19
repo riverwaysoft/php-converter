@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\PhpConverter\Language;
+namespace Riverwaysoft\PhpConverter\OutputGenerator;
 
 use Riverwaysoft\PhpConverter\Dto\DtoType;
 

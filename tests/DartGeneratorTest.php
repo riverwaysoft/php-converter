@@ -8,12 +8,12 @@ use App\Tests\SnapshotComparator\DartSnapshotComparator;
 use PHPUnit\Framework\TestCase;
 use Riverwaysoft\PhpConverter\Ast\Converter;
 use Riverwaysoft\PhpConverter\Ast\DtoVisitor;
-use Riverwaysoft\PhpConverter\Language\Dart\DartClassFactoryGenerator;
-use Riverwaysoft\PhpConverter\Language\Dart\DartEquitableGenerator;
-use Riverwaysoft\PhpConverter\Language\Dart\DartGenerator;
-use Riverwaysoft\PhpConverter\Language\Dart\DartImportGenerator;
-use Riverwaysoft\PhpConverter\Language\UnknownTypeResolver\ClassNameTypeResolver;
-use Riverwaysoft\PhpConverter\Language\UnknownTypeResolver\DateTimeTypeResolver;
+use Riverwaysoft\PhpConverter\OutputGenerator\Dart\DartClassFactoryGenerator;
+use Riverwaysoft\PhpConverter\OutputGenerator\Dart\DartEquitableGenerator;
+use Riverwaysoft\PhpConverter\OutputGenerator\Dart\DartOutputGenerator;
+use Riverwaysoft\PhpConverter\OutputGenerator\Dart\DartImportGenerator;
+use Riverwaysoft\PhpConverter\OutputGenerator\UnknownTypeResolver\ClassNameTypeResolver;
+use Riverwaysoft\PhpConverter\OutputGenerator\UnknownTypeResolver\DateTimeTypeResolver;
 use Riverwaysoft\PhpConverter\OutputWriter\EntityPerClassOutputWriter\DtoTypeDependencyCalculator;
 use Riverwaysoft\PhpConverter\OutputWriter\EntityPerClassOutputWriter\EntityPerClassOutputWriter;
 use Riverwaysoft\PhpConverter\OutputWriter\EntityPerClassOutputWriter\SnakeCaseFileNameGenerator;
@@ -71,7 +71,7 @@ CODE;
 
         $normalized = (new Converter([new DtoVisitor()]))->convert([$codeDart]);
 
-        $results = (new DartGenerator(
+        $results = (new DartOutputGenerator(
             new SingleFileOutputWriter('generated.dart'),
             [new ClassNameTypeResolver()],
             new OutputFilesProcessor([
@@ -169,7 +169,7 @@ CODE;
 
         $normalized = (new Converter([new DtoVisitor()]))->convert([$codeDart]);
 
-        $results = (new DartGenerator(
+        $results = (new DartOutputGenerator(
             new SingleFileOutputWriter('generated.dart'),
             [
                 new DateTimeTypeResolver(),
@@ -211,7 +211,7 @@ CODE;
         $normalized = (new Converter([new DtoVisitor()]))->convert([$codeNestedDto]);
 
         $fileNameGenerator = new SnakeCaseFileNameGenerator('.dart');
-        $dartGenerator = new DartGenerator(
+        $dartGenerator = new DartOutputGenerator(
             new EntityPerClassOutputWriter(
                 $fileNameGenerator,
                 new DartImportGenerator(

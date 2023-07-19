@@ -1,12 +1,15 @@
 <?php
 
-namespace Riverwaysoft\PhpConverter\Language\Dart;
+declare(strict_types=1);
+
+namespace Riverwaysoft\PhpConverter\OutputGenerator\Dart;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Riverwaysoft\PhpConverter\Dto\DtoEnumProperty;
 use Riverwaysoft\PhpConverter\Dto\DtoType;
 use Riverwaysoft\PhpConverter\Dto\ExpressionType;
+use Generator;
 
 class DartEnumValidatorTest extends TestCase
 {
@@ -51,7 +54,7 @@ class DartEnumValidatorTest extends TestCase
         $dartEnumValidator->assertIsValidEnumForDart($enumInvalid);
     }
 
-    public static function provideInvalidData(): \Generator
+    public static function provideInvalidData(): Generator
     {
         yield [
             new DtoType(
