@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Riverwaysoft\PhpConverter\Dto\ApiClient;
 
-class ApiEndpointList implements \JsonSerializable
+use JsonSerializable;
+use Exception;
+
+class ApiEndpointList implements JsonSerializable
 {
     /** @var array<string, ApiEndpoint> */
     private array $apiEndpointMap = [];
@@ -24,7 +27,7 @@ class ApiEndpointList implements \JsonSerializable
     {
         $apiEndpointHash = $apiEndpoint->route . $apiEndpoint->method->getType();
         if (!empty($this->apiEndpointMap[$apiEndpointHash])) {
-            throw new \Exception(sprintf(
+            throw new Exception(sprintf(
                 "Non-unique api endpoint with route %s and method %s",
                 $apiEndpoint->route,
                 $apiEndpoint->method->getType(),

@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Riverwaysoft\PhpConverter\Dto;
 
+use JsonSerializable;
+
 /**
  * An expression is either class or enum: https://github.com/nikic/PHP-Parser/blob/master/doc/2_Usage_of_basic_components.markdown#node-tree-structure
  */
-class ExpressionType implements \JsonSerializable
+class ExpressionType implements JsonSerializable
 {
     private function __construct(private string $type)
     {

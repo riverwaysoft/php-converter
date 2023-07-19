@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Riverwaysoft\PhpConverter\Dto\ApiClient;
 
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeInterface;
+use JsonSerializable;
+use Exception;
 
-class ApiEndpoint implements \JsonSerializable
+class ApiEndpoint implements JsonSerializable
 {
     public function __construct(
         public string $route,
@@ -19,7 +21,7 @@ class ApiEndpoint implements \JsonSerializable
         public array $queryParams = [],
     ) {
         if (str_contains($this->route, '.')) {
-            throw new \Exception(sprintf("Invalid character . in route %s", $this->route));
+            throw new Exception(sprintf("Invalid character . in route %s", $this->route));
         }
     }
 

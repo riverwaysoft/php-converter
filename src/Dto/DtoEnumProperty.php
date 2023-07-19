@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Riverwaysoft\PhpConverter\Dto;
 
-class DtoEnumProperty implements \JsonSerializable
+use JsonSerializable;
+
+class DtoEnumProperty implements JsonSerializable
 {
     public function __construct(
         private string $name,

@@ -9,8 +9,9 @@ use Riverwaysoft\PhpConverter\Dto\PhpType\PhpListType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeInterface;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnionType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
+use JsonSerializable;
 
-class DtoClassProperty implements \JsonSerializable
+class DtoClassProperty implements JsonSerializable
 {
     public function __construct(
         private PhpTypeInterface $type,

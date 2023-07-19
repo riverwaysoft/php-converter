@@ -25,6 +25,7 @@ use Riverwaysoft\PhpConverter\OutputWriter\OutputFile;
 use Riverwaysoft\PhpConverter\OutputWriter\OutputProcessor\OutputFilesProcessor;
 use Riverwaysoft\PhpConverter\OutputWriter\OutputWriterInterface;
 use Webmozart\Assert\Assert;
+use Exception;
 
 class TypeScriptOutputGenerator implements OutputGeneratorInterface
 {
@@ -139,7 +140,7 @@ class TypeScriptOutputGenerator implements OutputGeneratorInterface
             }
             return sprintf("export enum %s {%s\n}", $dto->getName(), $this->convertEnumToTypeScriptEnumProperties($dto->getProperties()));
         }
-        throw new \Exception('Unknown expression type ' . $dto->getExpressionType()->jsonSerialize());
+        throw new Exception('Unknown expression type ' . $dto->getExpressionType()->jsonSerialize());
     }
 
     // TS only supports string or number backed enums. If one of the enum values is null TS gives compilation error
@@ -235,7 +236,7 @@ class TypeScriptOutputGenerator implements OutputGeneratorInterface
                 $type->equalsTo(PhpBaseType::array()), $type->equalsTo(PhpBaseType::iterable()) => 'any[]',
                 $type->equalsTo(PhpBaseType::null()) => 'null',
                 $type->equalsTo(PhpBaseType::self()) => $dto->getName(),
-                default => throw new \Exception(sprintf("Unknown base PHP type: %s", $type->jsonSerialize()))
+                default => throw new Exception(sprintf("Unknown base PHP type: %s", $type->jsonSerialize()))
             };
         }
 

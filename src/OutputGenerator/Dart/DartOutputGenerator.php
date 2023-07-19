@@ -20,6 +20,7 @@ use Riverwaysoft\PhpConverter\OutputGenerator\UnsupportedTypeException;
 use Riverwaysoft\PhpConverter\OutputWriter\OutputProcessor\OutputFilesProcessor;
 use Riverwaysoft\PhpConverter\OutputWriter\OutputWriterInterface;
 use Webmozart\Assert\Assert;
+use Exception;
 
 class DartOutputGenerator implements OutputGeneratorInterface
 {
@@ -71,7 +72,7 @@ class DartOutputGenerator implements OutputGeneratorInterface
             return sprintf("enum %s {%s\n}", $dto->getName(), $this->convertEnumToTypeScriptProperties($dto->getProperties()));
         }
 
-        throw new \Exception('Unknown expression type '.$dto->getExpressionType()->jsonSerialize());
+        throw new Exception('Unknown expression type '.$dto->getExpressionType()->jsonSerialize());
     }
 
     private function convertToDartProperties(DtoType $dto, DtoList $dtoList): string
@@ -127,7 +128,7 @@ class DartOutputGenerator implements OutputGeneratorInterface
                 $type->equalsTo(PhpBaseType::mixed()), $type->equalsTo(PhpBaseType::iterable()), $type->equalsTo(PhpBaseType::array()) => 'dynamic',
                 $type->equalsTo(PhpBaseType::null()) => 'null',
                 $type->equalsTo(PhpBaseType::self()) => $dto->getName(),
-                default => throw new \Exception(sprintf("Unknown base PHP type: %s", $type->jsonSerialize()))
+                default => throw new Exception(sprintf("Unknown base PHP type: %s", $type->jsonSerialize()))
             };
         }
 

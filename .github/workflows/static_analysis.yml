@@ -36,3 +36,6 @@ jobs:
 
     - name: Run phpstan
       run: composer run-script phpstan
+
+    - name: Check code style
+      run: composer run test:cs

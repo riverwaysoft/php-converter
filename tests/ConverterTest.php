@@ -13,6 +13,7 @@ use Riverwaysoft\PhpConverter\ClassFilter\DocBlockCommentFilter;
 use Riverwaysoft\PhpConverter\ClassFilter\NotFilter;
 use Riverwaysoft\PhpConverter\ClassFilter\PhpAttributeFilter;
 use Spatie\Snapshots\MatchesSnapshots;
+use Generator;
 
 class ConverterTest extends TestCase
 {
@@ -326,7 +327,7 @@ CODE;
         $converter->convert([$codeWithDateTime]);
     }
 
-    public static function provideInvalidControllers(): \Generator
+    public static function provideInvalidControllers(): Generator
     {
         yield [
             <<<'CODE'

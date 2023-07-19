@@ -7,6 +7,7 @@ namespace Riverwaysoft\PhpConverter\Dto;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpBaseType;
+use Generator;
 
 class DtoTypeTest extends TestCase
 {
@@ -22,7 +23,7 @@ class DtoTypeTest extends TestCase
         $this->assertEquals($isStringExpected, $dto->isStringEnum());
     }
 
-    /** @return \Generator<array{0: DtoType, 1: bool}> */
+    /** @return Generator<array{0: DtoType, 1: bool}> */
     public static function provideEmptyDto(): iterable
     {
         yield [new DtoType(
@@ -55,7 +56,7 @@ class DtoTypeTest extends TestCase
         ), false];
     }
 
-    /** @return \Generator<array{0: DtoType, 1: bool}> */
+    /** @return Generator<array{0: DtoType, 1: bool}> */
     public static function provideStringEnumDto(): iterable
     {
         yield [new DtoType(

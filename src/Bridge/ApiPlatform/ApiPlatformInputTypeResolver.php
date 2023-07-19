@@ -13,6 +13,7 @@ use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
 use Riverwaysoft\PhpConverter\OutputGenerator\UnknownTypeResolver\UnknownTypeResolverInterface;
 use Riverwaysoft\PhpConverter\OutputGenerator\UnsupportedTypeException;
 use Webmozart\Assert\Assert;
+use InvalidArgumentException;
 
 class ApiPlatformInputTypeResolver implements UnknownTypeResolverInterface
 {
@@ -53,7 +54,7 @@ class ApiPlatformInputTypeResolver implements UnknownTypeResolverInterface
 
         if ($this->isEmbeddable($type)) {
             if (empty($this->classMap[$type->getName()])) {
-                throw new \InvalidArgumentException(sprintf(
+                throw new InvalidArgumentException(sprintf(
                     "There is no TypeScript type for %s. Please add %s to ApiPlatformInputTypeResolver constructor arguments",
                     $type->getName(),
                     $type->getName(),

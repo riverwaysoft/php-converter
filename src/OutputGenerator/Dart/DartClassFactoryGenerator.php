@@ -14,6 +14,7 @@ use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnionType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
 use Riverwaysoft\PhpConverter\OutputGenerator\UnknownTypeResolver\InlineTypeResolver;
 use Webmozart\Assert\Assert;
+use Exception;
 
 class DartClassFactoryGenerator
 {
@@ -87,13 +88,13 @@ class DartClassFactoryGenerator
                     $collectionType->equalsTo(PhpBaseType::mixed()), $collectionType->equalsTo(PhpBaseType::iterable()), $collectionType->equalsTo(PhpBaseType::array()) => 'dynamic',
                     $collectionType->equalsTo(PhpBaseType::null()) => 'null',
                     $collectionType->equalsTo(PhpBaseType::self()) => $dto->getName(),
-                    default => throw new \Exception(sprintf("Unknown base PHP type: %s", $type->jsonSerialize()))
+                    default => throw new Exception(sprintf("Unknown base PHP type: %s", $type->jsonSerialize()))
                 };
 
                 return sprintf("List<%s>.from(json['%s'])", $dartType, $propertyName);
             }
 
-            throw new \Exception(sprintf("Only PHP base types and class instance can be converted to collection. Property: %s#%s", $dto->getName(), $propertyName));
+            throw new Exception(sprintf("Only PHP base types and class instance can be converted to collection. Property: %s#%s", $dto->getName(), $propertyName));
         }
 
         if ($type instanceof PhpUnknownType) {
