@@ -26,6 +26,17 @@ use Riverwaysoft\PhpConverter\OutputWriter\OutputProcessor\OutputFilesProcessor;
 use Riverwaysoft\PhpConverter\OutputWriter\OutputWriterInterface;
 use Webmozart\Assert\Assert;
 use Exception;
+use function array_map;
+use function array_merge;
+use function count;
+use function implode;
+use function array_filter;
+use function sprintf;
+use function json_encode;
+use function preg_replace;
+use function ucwords;
+use function lcfirst;
+use function str_replace;
 
 class TypeScriptOutputGenerator implements OutputGeneratorInterface
 {
@@ -87,7 +98,6 @@ class TypeScriptOutputGenerator implements OutputGeneratorInterface
         }
 
         $params = implode(', ', array_filter($params));
-
 
         $formParams = [];
         if ($apiEndpoint->input) {

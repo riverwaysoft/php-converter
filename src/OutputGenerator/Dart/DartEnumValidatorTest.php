@@ -47,7 +47,6 @@ class DartEnumValidatorTest extends TestCase
             $this->markTestSkipped('Test requires PHP 8.1');
         }
 
-
         $dartEnumValidator = new DartEnumValidator();
 
         $this->expectExceptionMessage($message);

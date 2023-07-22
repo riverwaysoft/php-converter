@@ -51,7 +51,7 @@ class DtoTypeTest extends TestCase
                 new DtoClassProperty(
                     type: PhpBaseType::string(),
                     name: 'name',
-                )
+                ),
             ]
         ), false];
     }

@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Riverwaysoft\PhpConverter\Dto\PhpType;
 
 use Webmozart\Assert\Assert;
+use function array_values;
+use function array_unique;
 
 class PhpUnionType implements PhpTypeInterface
 {
-    /** @var PhpTypeInterface[] $types */
+    /** @var PhpTypeInterface[] */
     private array $types;
 
     /** @param PhpTypeInterface[] $types */

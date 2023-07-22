@@ -9,8 +9,9 @@ use PhpParser\Node\Stmt\Enum_;
 
 class NotFilter implements ClassFilterInterface
 {
-    public function __construct(private ClassFilterInterface $filter)
-    {
+    public function __construct(
+        private ClassFilterInterface $filter
+    ) {
     }
 
     public function isMatch(Class_|Enum_ $class): bool

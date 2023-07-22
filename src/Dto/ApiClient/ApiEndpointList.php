@@ -6,12 +6,14 @@ namespace Riverwaysoft\PhpConverter\Dto\ApiClient;
 
 use JsonSerializable;
 use Exception;
+use function array_values;
+use function usort;
+use function sprintf;
 
 class ApiEndpointList implements JsonSerializable
 {
     /** @var array<string, ApiEndpoint> */
     private array $apiEndpointMap = [];
-
 
     /** @return ApiEndpoint[] */
     public function getList(): array

@@ -15,6 +15,8 @@ use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
 use Riverwaysoft\PhpConverter\OutputGenerator\UnknownTypeResolver\InlineTypeResolver;
 use Webmozart\Assert\Assert;
 use Exception;
+use function preg_match;
+use function sprintf;
 
 class DartClassFactoryGenerator
 {

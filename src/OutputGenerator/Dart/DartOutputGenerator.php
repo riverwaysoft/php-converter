@@ -21,6 +21,7 @@ use Riverwaysoft\PhpConverter\OutputWriter\OutputProcessor\OutputFilesProcessor;
 use Riverwaysoft\PhpConverter\OutputWriter\OutputWriterInterface;
 use Webmozart\Assert\Assert;
 use Exception;
+use function sprintf;
 
 class DartOutputGenerator implements OutputGeneratorInterface
 {
@@ -38,7 +39,6 @@ class DartOutputGenerator implements OutputGeneratorInterface
         $this->dartEnumValidator = new DartEnumValidator();
     }
 
-    /** @inheritDoc */
     public function generate(ConverterResult $converterResult): array
     {
         $this->outputWriter->reset();
@@ -72,7 +72,7 @@ class DartOutputGenerator implements OutputGeneratorInterface
             return sprintf("enum %s {%s\n}", $dto->getName(), $this->convertEnumToTypeScriptProperties($dto->getProperties()));
         }
 
-        throw new Exception('Unknown expression type '.$dto->getExpressionType()->jsonSerialize());
+        throw new Exception('Unknown expression type ' . $dto->getExpressionType()->jsonSerialize());
     }
 
     private function convertToDartProperties(DtoType $dto, DtoList $dtoList): string

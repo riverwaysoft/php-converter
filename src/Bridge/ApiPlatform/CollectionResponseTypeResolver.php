@@ -9,6 +9,7 @@ use Riverwaysoft\PhpConverter\Dto\DtoType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeInterface;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
 use Riverwaysoft\PhpConverter\OutputGenerator\UnknownTypeResolver\ClassNameTypeResolver;
+use function sprintf;
 
 class CollectionResponseTypeResolver extends ClassNameTypeResolver
 {

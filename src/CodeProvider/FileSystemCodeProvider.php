@@ -7,6 +7,7 @@ namespace Riverwaysoft\PhpConverter\CodeProvider;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
 use RegexIterator;
+use function file_get_contents;
 
 class FileSystemCodeProvider
 {

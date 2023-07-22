@@ -9,6 +9,7 @@ use Riverwaysoft\PhpConverter\Dto\DtoType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeInterface;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
 use Exception;
+use function sprintf;
 
 class InlineTypeResolver implements UnknownTypeResolverInterface
 {

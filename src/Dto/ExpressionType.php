@@ -11,8 +11,9 @@ use JsonSerializable;
  */
 class ExpressionType implements JsonSerializable
 {
-    private function __construct(private string $type)
-    {
+    private function __construct(
+        private string $type
+    ) {
     }
 
     public static function class(): self

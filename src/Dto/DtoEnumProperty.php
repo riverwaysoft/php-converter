@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Riverwaysoft\PhpConverter\Dto;
 
 use JsonSerializable;
+use function is_numeric;
 
 class DtoEnumProperty implements JsonSerializable
 {
@@ -37,8 +38,8 @@ class DtoEnumProperty implements JsonSerializable
     public function jsonSerialize(): mixed
     {
         return [
-            'name' =>$this->name,
-            'value'=>$this->value,
+            'name' => $this->name,
+            'value' => $this->value,
         ];
     }
 }

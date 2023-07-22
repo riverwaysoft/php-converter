@@ -6,6 +6,8 @@ namespace Riverwaysoft\PhpConverter\OutputDiffCalculator;
 
 use Jfcherng\Diff\DiffHelper;
 use Jfcherng\Diff\Renderer\RendererConstant;
+use const JSON_UNESCAPED_SLASHES;
+use const JSON_UNESCAPED_UNICODE;
 
 class OutputDiffCalculator
 {
@@ -35,7 +37,7 @@ class OutputDiffCalculator
             'mergeThreshold' => 0.8,
             'cliColorization' => $this->cliColorization,
             'outputTagAsString' => false,
-            'jsonEncodeFlags' => \JSON_UNESCAPED_SLASHES | \JSON_UNESCAPED_UNICODE,
+            'jsonEncodeFlags' => JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
             'wordGlues' => [' ', '-'],
             'resultForIdenticals' => null,
         ];

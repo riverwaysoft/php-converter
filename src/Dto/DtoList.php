@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Riverwaysoft\PhpConverter\Dto;
 
 use Exception;
+use function sprintf;
+use function array_values;
+use function usort;
 
 class DtoList
 {

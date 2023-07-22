@@ -7,8 +7,10 @@ namespace Riverwaysoft\PhpConverter\Dto\PhpType;
 class PhpUnknownType implements PhpTypeInterface
 {
     /** @param array<string, mixed> $context */
-    public function __construct(private string $name, private array $context = [])
-    {
+    public function __construct(
+        private string $name,
+        private array $context = []
+    ) {
     }
 
     public function getName(): string

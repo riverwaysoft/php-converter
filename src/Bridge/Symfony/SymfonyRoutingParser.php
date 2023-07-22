@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Riverwaysoft\PhpConverter\Bridge\Symfony;
 
+use function preg_match_all;
+
 class SymfonyRoutingParser
 {
     /** @return string[] */

@@ -19,7 +19,7 @@ class PhpListType implements PhpTypeInterface
     public function jsonSerialize(): mixed
     {
         return [
-            'array' => $this->type
+            'array' => $this->type,
         ];
     }
 }

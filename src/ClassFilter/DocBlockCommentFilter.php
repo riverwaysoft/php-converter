@@ -6,11 +6,13 @@ namespace Riverwaysoft\PhpConverter\ClassFilter;
 
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Enum_;
+use function str_contains;
 
 class DocBlockCommentFilter implements ClassFilterInterface
 {
-    public function __construct(private string $string)
-    {
+    public function __construct(
+        private string $string
+    ) {
     }
 
     public function isMatch(Class_|Enum_ $class): bool

@@ -14,6 +14,9 @@ use Riverwaysoft\PhpConverter\OutputGenerator\UnknownTypeResolver\UnknownTypeRes
 use Riverwaysoft\PhpConverter\OutputGenerator\UnsupportedTypeException;
 use Webmozart\Assert\Assert;
 use InvalidArgumentException;
+use function sprintf;
+use function str_ends_with;
+use function preg_match;
 
 class ApiPlatformInputTypeResolver implements UnknownTypeResolverInterface
 {
@@ -71,7 +74,7 @@ class ApiPlatformInputTypeResolver implements UnknownTypeResolverInterface
                 $pluralizedTypeName = $this->apiPlatformIriGenerator->generate($type->getName());
                 return sprintf('`/api/%s/${string}`', $pluralizedTypeName);
             }
-            return'`/api/${string}`';
+            return '`/api/${string}`';
         }
 
         return PhpBaseType::string();

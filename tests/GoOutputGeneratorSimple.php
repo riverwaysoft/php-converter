@@ -19,6 +19,7 @@ use Riverwaysoft\PhpConverter\OutputGenerator\UnsupportedTypeException;
 use Riverwaysoft\PhpConverter\OutputWriter\OutputWriterInterface;
 use Webmozart\Assert\Assert;
 use Exception;
+use function sprintf;
 
 class GoOutputGeneratorSimple implements OutputGeneratorInterface
 {
@@ -84,7 +85,6 @@ class GoOutputGeneratorSimple implements OutputGeneratorInterface
                 default => throw new Exception(sprintf("Unknown base PHP type: %s", $type->jsonSerialize()))
             };
         }
-
 
         /** @var PhpUnknownType $type */
         return $this->handleUnknownType($type, $dto, $dtoList);

@@ -17,10 +17,14 @@ use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeFactory;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeInterface;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnionType;
 use Exception;
+use function sprintf;
+use function get_class;
+use function array_map;
 
 class DtoVisitor extends ConverterVisitor
 {
     private PhpDocTypeParser $phpDocTypeParser;
+
     private ConverterResult $converterResult;
 
     public function __construct(
@@ -98,21 +102,23 @@ class DtoVisitor extends ConverterVisitor
                 }
             }
 
-            if ($stmt instanceof Node\Stmt\EnumCase) {
-                $expr = $stmt->expr;
-                $propertyName = $stmt->name->name;
-                if (!$expr) {
-                    throw new Exception(sprintf("Non-backed enums are not supported because they are not serializable. Please use backed enums: %s\n Error in enum: %s", 'https://www.php.net/manual/en/language.enumerations.backed.php', $propertyName));
-                }
-                if (!$expr instanceof Node\Scalar\LNumber && !$expr instanceof Node\Scalar\String_) {
-                    throw new Exception(sprintf('A backed enum should be type of int or string, %s given. Error in enum %s', get_class($expr), $propertyName));
-                }
-                $propertyValue = $expr->value;
-                $properties[] = new DtoEnumProperty(
-                    name: $propertyName,
-                    value: $propertyValue,
-                );
+            if (!($stmt instanceof Node\Stmt\EnumCase)) {
+                continue;
             }
+
+            $expr = $stmt->expr;
+            $propertyName = $stmt->name->name;
+            if (!$expr) {
+                throw new Exception(sprintf("Non-backed enums are not supported because they are not serializable. Please use backed enums: %s\n Error in enum: %s", 'https://www.php.net/manual/en/language.enumerations.backed.php', $propertyName));
+            }
+            if (!$expr instanceof Node\Scalar\LNumber && !$expr instanceof Node\Scalar\String_) {
+                throw new Exception(sprintf('A backed enum should be type of int or string, %s given. Error in enum %s', get_class($expr), $propertyName));
+            }
+            $propertyValue = $expr->value;
+            $properties[] = new DtoEnumProperty(
+                name: $propertyName,
+                value: $propertyValue,
+            );
         }
 
         $this->converterResult->dtoList->add(new DtoType(

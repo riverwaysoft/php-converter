@@ -5,12 +5,17 @@ declare(strict_types=1);
 namespace Riverwaysoft\PhpConverter\Ast;
 
 use Webmozart\Assert\Assert;
+use function memory_get_peak_usage;
+use function microtime;
 
 class UsageCollector
 {
     private int|null $startMemory = null;
+
     private int|null $endMemory = null;
+
     private float|null $startTime = null;
+
     private float|null $endTime = null;
 
     public function startMeasuring(): void
@@ -49,7 +54,7 @@ class UsageCollector
             ],
             'time' => [
                 'seconds' => $this->endTime - $this->startTime,
-            ]
+            ],
         ];
     }
 }

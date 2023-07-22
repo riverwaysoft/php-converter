@@ -7,7 +7,6 @@ namespace Riverwaysoft\PhpConverter\Bridge\ApiPlatform;
 use Doctrine\Inflector\Inflector;
 use Doctrine\Inflector\InflectorFactory;
 use Jawira\CaseConverter\Convert;
-use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
 
 class ApiPlatformIriGenerator
 {

@@ -14,7 +14,6 @@ use Riverwaysoft\PhpConverter\Bridge\ApiPlatform\ApiPlatformInputTypeResolver;
 use Riverwaysoft\PhpConverter\Bridge\ApiPlatform\AppendCollectionResponseFileProcessor;
 use Riverwaysoft\PhpConverter\Bridge\ApiPlatform\CollectionResponseTypeResolver;
 use Riverwaysoft\PhpConverter\Bridge\Symfony\SymfonyControllerVisitor;
-use Riverwaysoft\PhpConverter\ClassFilter\Dto;
 use Riverwaysoft\PhpConverter\ClassFilter\PhpAttributeFilter;
 use Riverwaysoft\PhpConverter\CodeProvider\FileSystemCodeProvider;
 use Riverwaysoft\PhpConverter\OutputGenerator\TypeScript\TypeScriptOutputGenerator;
@@ -107,7 +106,6 @@ CODE;
         $this->assertCount(1, $results);
         $this->assertMatchesSnapshot($results[0]->getContent(), new TypeScriptSnapshotComparator());
     }
-
 
     public function testUseTypeOverEnumTs(): void
     {

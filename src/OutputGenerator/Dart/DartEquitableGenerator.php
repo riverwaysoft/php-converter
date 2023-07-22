@@ -6,11 +6,16 @@ namespace Riverwaysoft\PhpConverter\OutputGenerator\Dart;
 
 use Riverwaysoft\PhpConverter\Dto\DtoClassProperty;
 use Riverwaysoft\PhpConverter\Dto\DtoType;
+use function preg_match;
+use function array_map;
+use function implode;
+use function sprintf;
 
 class DartEquitableGenerator
 {
-    public function __construct(private string|null $excludePattern = null)
-    {
+    public function __construct(
+        private string|null $excludePattern = null
+    ) {
     }
 
     public function generateEquitableHeader(DtoType $dto): string

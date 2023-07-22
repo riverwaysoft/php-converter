@@ -16,12 +16,19 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Webmozart\Assert\Assert;
+use function sprintf;
+use function rtrim;
+use function file_get_contents;
+use function json_encode;
 
 class ConvertCommand extends Command
 {
     protected static $defaultName = 'generate';
+
     private UsageCollector $usageCollector;
+
     private OutputDiffCalculator $diffWriter;
+
     private Filesystem $fileSystem;
 
     public function __construct()

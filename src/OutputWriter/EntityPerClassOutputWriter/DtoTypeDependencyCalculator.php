@@ -6,7 +6,6 @@ namespace Riverwaysoft\PhpConverter\OutputWriter\EntityPerClassOutputWriter;
 
 use Riverwaysoft\PhpConverter\Dto\DtoClassProperty;
 use Riverwaysoft\PhpConverter\Dto\DtoType;
-use Riverwaysoft\PhpConverter\Dto\ExpressionType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnionType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
 
@@ -28,11 +27,13 @@ class DtoTypeDependencyCalculator
             if ($type instanceof PhpUnknownType && $type->getName() !== $dtoType->getName()) {
                 $dependencies[] = $type;
             }
-            if ($type instanceof PhpUnionType) {
-                foreach ($type->getTypes() as $innerType) {
-                    if ($innerType instanceof PhpUnknownType && $dtoType->getName() !== $innerType->getName()) {
-                        $dependencies[] = $innerType;
-                    }
+            if (!($type instanceof PhpUnionType)) {
+                continue;
+            }
+
+            foreach ($type->getTypes() as $innerType) {
+                if ($innerType instanceof PhpUnknownType && $dtoType->getName() !== $innerType->getName()) {
+                    $dependencies[] = $innerType;
                 }
             }
         }

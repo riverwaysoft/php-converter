@@ -19,10 +19,12 @@ use Riverwaysoft\PhpConverter\Dto\PhpType\PhpListType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeFactory;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeInterface;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnionType;
+use function array_map;
 
 class PhpDocTypeParser
 {
     private Lexer $lexer;
+
     private PhpDocParser $phpDocParser;
 
     public function __construct()

@@ -8,6 +8,8 @@ use Riverwaysoft\PhpConverter\Dto\DtoType;
 use Riverwaysoft\PhpConverter\OutputGenerator\ImportGeneratorInterface;
 use Riverwaysoft\PhpConverter\OutputWriter\EntityPerClassOutputWriter\DtoTypeDependencyCalculator;
 use Riverwaysoft\PhpConverter\OutputWriter\EntityPerClassOutputWriter\FileNameGeneratorInterface;
+use function count;
+use function sprintf;
 
 class TypeScriptImportGenerator implements ImportGeneratorInterface
 {
