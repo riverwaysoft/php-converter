@@ -8,6 +8,7 @@ use Riverwaysoft\PhpConverter\Dto\ApiClient\ApiEndpoint;
 use Riverwaysoft\PhpConverter\Dto\DtoType;
 use Riverwaysoft\PhpConverter\OutputWriter\OutputFile;
 use Riverwaysoft\PhpConverter\OutputWriter\OutputWriterInterface;
+use function sprintf;
 
 class SingleFileOutputWriter implements OutputWriterInterface
 {

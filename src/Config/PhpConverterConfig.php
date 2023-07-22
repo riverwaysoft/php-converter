@@ -12,9 +12,10 @@ class PhpConverterConfig
 {
     /** @var ConverterVisitor[] */
     private array $visitors = [];
-    private OutputGeneratorInterface|null $outputGenerator = null;
-    private FileSystemCodeProvider|null $codeProvider = null;
 
+    private OutputGeneratorInterface|null $outputGenerator = null;
+
+    private FileSystemCodeProvider|null $codeProvider = null;
 
     public function addVisitor(ConverterVisitor $visitor): void
     {
@@ -46,5 +47,4 @@ class PhpConverterConfig
     {
         $this->codeProvider = $codeProvider;
     }
-
 }

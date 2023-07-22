@@ -17,6 +17,13 @@ use Riverwaysoft\PhpConverter\Dto\PhpType\PhpBaseType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpListType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeFactory;
 use Exception;
+use function in_array;
+use function count;
+use function array_flip;
+use function sprintf;
+use function array_key_first;
+use function implode;
+use function array_map;
 
 class SymfonyControllerVisitor extends ConverterVisitor
 {

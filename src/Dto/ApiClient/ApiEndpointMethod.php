@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Riverwaysoft\PhpConverter\Dto\ApiClient;
 
 use Exception;
+use function mb_strtolower;
 
 class ApiEndpointMethod
 {

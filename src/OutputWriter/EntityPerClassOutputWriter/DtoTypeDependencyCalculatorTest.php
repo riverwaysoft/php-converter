@@ -35,7 +35,7 @@ class DtoTypeDependencyCalculatorTest extends TestCase
                     name: 'name',
                 ),
                 new DtoClassProperty(type: PhpBaseType::int(), name: 'age'),
-                new DtoClassProperty(type: new PhpUnknownType('Unknown'), name: 'unknownField')
+                new DtoClassProperty(type: new PhpUnknownType('Unknown'), name: 'unknownField'),
             ]
         );
 

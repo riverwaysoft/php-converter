@@ -7,6 +7,8 @@ namespace Riverwaysoft\PhpConverter\Dto\ApiClient;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeInterface;
 use JsonSerializable;
 use Exception;
+use function str_contains;
+use function sprintf;
 
 class ApiEndpoint implements JsonSerializable
 {

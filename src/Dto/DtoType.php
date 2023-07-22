@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Riverwaysoft\PhpConverter\Dto;
 
 use JsonSerializable;
+use function gettype;
+use function count;
 
 class DtoType implements JsonSerializable
 {

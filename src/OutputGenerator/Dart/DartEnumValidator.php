@@ -8,6 +8,10 @@ use Riverwaysoft\PhpConverter\Dto\DtoEnumProperty;
 use Riverwaysoft\PhpConverter\Dto\DtoType;
 use Webmozart\Assert\Assert;
 use Exception;
+use function sprintf;
+use function array_map;
+use function sort;
+use function join;
 
 class DartEnumValidator
 {

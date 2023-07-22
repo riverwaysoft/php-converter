@@ -8,8 +8,9 @@ use Riverwaysoft\PhpConverter\OutputWriter\OutputFile;
 
 class PrependTextFileProcessor implements SingleOutputFileProcessorInterface
 {
-    public function __construct(private string $text)
-    {
+    public function __construct(
+        private string $text
+    ) {
     }
 
     public function process(OutputFile $outputFile): OutputFile

@@ -17,10 +17,14 @@ use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeFactory;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeInterface;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnionType;
 use Exception;
+use function sprintf;
+use function get_class;
+use function array_map;
 
 class DtoVisitor extends ConverterVisitor
 {
     private PhpDocTypeParser $phpDocTypeParser;
+
     private ConverterResult $converterResult;
 
     public function __construct(

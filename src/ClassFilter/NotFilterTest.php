@@ -12,7 +12,7 @@ class NotFilterTest extends TestCase
 {
     private function getAlwaysYes(): ClassFilterInterface
     {
-        return new class () implements ClassFilterInterface {
+        return new class() implements ClassFilterInterface {
             public function isMatch(Enum_|Class_ $class): bool
             {
                 return true;

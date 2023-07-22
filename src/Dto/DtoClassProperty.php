@@ -4,11 +4,7 @@ declare(strict_types=1);
 
 namespace Riverwaysoft\PhpConverter\Dto;
 
-use Riverwaysoft\PhpConverter\Dto\PhpType\PhpBaseType;
-use Riverwaysoft\PhpConverter\Dto\PhpType\PhpListType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeInterface;
-use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnionType;
-use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
 use JsonSerializable;
 
 class DtoClassProperty implements JsonSerializable
@@ -33,7 +29,7 @@ class DtoClassProperty implements JsonSerializable
     {
         return [
             'type' => $this->type,
-            'name' => $this->name
+            'name' => $this->name,
         ];
     }
 }

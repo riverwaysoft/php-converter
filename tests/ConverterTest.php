@@ -161,7 +161,6 @@ CODE;
         $this->assertFalse($result->dtoList->hasDtoWithType('IgnoreMe'));
     }
 
-
     public function testFilterClassesByPhpAttribute(): void
     {
         $codeWithDateTime = <<<'CODE'
@@ -348,7 +347,7 @@ CODE,
   ) {
   }
 CODE,
-            '#[Route()] argument "methods" is required'
+            '#[Route()] argument "methods" is required',
         ];
 
         yield [
@@ -376,7 +375,6 @@ CODE,
             '#[DtoEndpoint] is used on a method, that does not have #[Route] attribute',
         ];
     }
-
 
     public function testPhp81EnumsFailedWhenNonBacked(): void
     {

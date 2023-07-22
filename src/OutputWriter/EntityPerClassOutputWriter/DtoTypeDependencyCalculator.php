@@ -6,7 +6,6 @@ namespace Riverwaysoft\PhpConverter\OutputWriter\EntityPerClassOutputWriter;
 
 use Riverwaysoft\PhpConverter\Dto\DtoClassProperty;
 use Riverwaysoft\PhpConverter\Dto\DtoType;
-use Riverwaysoft\PhpConverter\Dto\ExpressionType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnionType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
 

@@ -6,6 +6,7 @@ namespace Riverwaysoft\PhpConverter\OutputGenerator;
 
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
 use Exception;
+use function sprintf;
 
 class UnsupportedTypeException extends Exception
 {

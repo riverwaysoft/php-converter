@@ -10,6 +10,7 @@ use Riverwaysoft\PhpConverter\Dto\DtoList;
 class ConverterResult
 {
     public DtoList $dtoList;
+
     public ApiEndpointList $apiEndpointList;
 
     public function __construct()

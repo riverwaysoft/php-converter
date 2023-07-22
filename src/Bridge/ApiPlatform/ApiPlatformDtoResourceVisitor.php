@@ -21,20 +21,32 @@ use Riverwaysoft\PhpConverter\Dto\ApiClient\ApiEndpointParam;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpBaseType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpOptionalType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeFactory;
-use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeInterface;
 use Exception;
+use function sprintf;
+use function array_key_last;
+use function str_replace;
+use function count;
+use function array_map;
+use function rtrim;
+use function ltrim;
+use function in_array;
 
 class ApiPlatformDtoResourceVisitor extends ConverterVisitor
 {
     private ApiPlatformIriGenerator $iriGenerator;
+
     private ConverterResult $converterResult;
+
     private Standard $prettyPrinter;
+
     public const API_PLATFORM_ATTRIBUTE = 'ApiResource';
+
     // Is used to wrap output types in CollectionResponse<T>
     public const COLLECTION_RESPONSE_CONTEXT_KEY = 'isCollectionResponse';
 
-    public function __construct(private ?ClassFilterInterface $classFilter = null)
-    {
+    public function __construct(
+        private ?ClassFilterInterface $classFilter = null
+    ) {
         $this->converterResult = new ConverterResult();
         $this->iriGenerator = new ApiPlatformIriGenerator();
         $this->prettyPrinter = new Standard();
@@ -175,7 +187,9 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
         if (!$output) {
             throw new Exception(sprintf("The output is required for ApiResource %s. Context: %s", $node->name->name, $this->prettyPrinter->prettyPrint([$apiResourceAttribute])));
         }
-        $outputTypeContext = $isCollection ? [self::COLLECTION_RESPONSE_CONTEXT_KEY => true] : [];
+        $outputTypeContext = $isCollection ? [
+            self::COLLECTION_RESPONSE_CONTEXT_KEY => true,
+        ] : [];
         $outputType = PhpTypeFactory::create($output, $outputTypeContext);
 
         $queryParams = [];
@@ -280,7 +294,9 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
         if (!$output) {
             throw new Exception(sprintf("The output is required for ApiResource %s. Context: %s", $node->name->name, $this->prettyPrinter->prettyPrint([$apiResourceAttribute])));
         }
-        $outputTypeContext = $isCollection && $method->equals(ApiEndpointMethod::get()) ? [self::COLLECTION_RESPONSE_CONTEXT_KEY => true] : [];
+        $outputTypeContext = $isCollection && $method->equals(ApiEndpointMethod::get()) ? [
+            self::COLLECTION_RESPONSE_CONTEXT_KEY => true,
+        ] : [];
         $outputType = PhpTypeFactory::create($output, $outputTypeContext);
 
         $input = null;
@@ -324,7 +340,7 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
                     }
                 }
 
-                throw new Exception('Expected to have string value for key '.$arrayItem->key->value);
+                throw new Exception('Expected to have string value for key ' . $arrayItem->key->value);
             }
         }
 
