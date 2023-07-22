@@ -84,9 +84,6 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
             if ($outputNode?->value instanceof Node\Expr\ClassConstFetch) {
                 $defaultOutput = $outputNode->value->class->getParts()[array_key_last($outputNode->value->class->getParts())];
             }
-            if (!$defaultOutput) {
-                throw new Exception(sprintf("The output is required for ApiResource %s. Context: %s", $node->name->name, $this->prettyPrinter->prettyPrint([$apiResourceAttribute])));
-            }
 
             // Main input
             $defaultInput = null;
@@ -102,7 +99,7 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
 
             if ($legacyCollectionOperationsArg?->value instanceof Node\Expr\Array_) {
                 foreach ($legacyCollectionOperationsArg->value->items as $item) {
-                    $apiEndpoint = $this->createApiEndpointFromLegacyCode($item, true, $node, $defaultOutput, $defaultInput, $shortName);
+                    $apiEndpoint = $this->createApiEndpointFromLegacyCode($item, true, $node, $defaultOutput, $defaultInput, $shortName, $apiResourceAttribute);
                     if ($apiEndpoint) {
                         $this->converterResult->apiEndpointList->add($apiEndpoint);
                     }
@@ -111,7 +108,7 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
 
             if ($legacyItemOperationsArg?->value instanceof Node\Expr\Array_) {
                 foreach ($legacyItemOperationsArg->value->items as $item) {
-                    $apiEndpoint = $this->createApiEndpointFromLegacyCode($item, false, $node, $defaultOutput, $defaultInput, $shortName);
+                    $apiEndpoint = $this->createApiEndpointFromLegacyCode($item, false, $node, $defaultOutput, $defaultInput, $shortName, $apiResourceAttribute);
                     if ($apiEndpoint) {
                         $this->converterResult->apiEndpointList->add($apiEndpoint);
                     }
@@ -127,7 +124,7 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
                 }
 
                 foreach ($operationsArg->value->items as $item) {
-                    $apiEndpoint = $this->createApiEndpoint($item, $node, $defaultOutput, $defaultInput, $forceSubresourcePath, $shortName);
+                    $apiEndpoint = $this->createApiEndpoint($item, $node, $defaultOutput, $defaultInput, $forceSubresourcePath, $shortName, $apiResourceAttribute);
                     if ($apiEndpoint) {
                         $this->converterResult->apiEndpointList->add($apiEndpoint);
                     }
@@ -141,10 +138,11 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
     private function createApiEndpoint(
         Node\Expr\ArrayItem $item,
         Class_ $node,
-        string $defaultOutput,
+        string|null $defaultOutput,
         string|null $defaultInput,
         string|null $forcePath,
         string|null $shortName,
+        Attribute $apiResourceAttribute,
     ): null|ApiEndpoint {
         if (!$item->value instanceof Node\Expr\New_) {
             return null;
@@ -173,8 +171,12 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
         if ($maybeOutput?->value instanceof Node\Expr\ClassConstFetch) {
             $localOutputClass = $maybeOutput->value->class->getParts()[array_key_last($maybeOutput->value->class->getParts())];
         }
+        $output = $localOutputClass ?? $defaultOutput;
+        if (!$output) {
+            throw new Exception(sprintf("The output is required for ApiResource %s. Context: %s", $node->name->name, $this->prettyPrinter->prettyPrint([$apiResourceAttribute])));
+        }
         $outputTypeContext = $isCollection ? [self::COLLECTION_RESPONSE_CONTEXT_KEY => true] : [];
-        $outputType = PhpTypeFactory::create($localOutputClass ?? $defaultOutput, $outputTypeContext);
+        $outputType = PhpTypeFactory::create($output, $outputTypeContext);
 
         $queryParams = [];
         $routeParams = [];
@@ -225,9 +227,10 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
         Node\Expr\ArrayItem $item,
         bool $isCollection,
         Class_ $node,
-        string $defaultOutput,
+        string|null $defaultOutput,
         string|null $defaultInput,
         string|null $shortName,
+        Attribute $apiResourceAttribute,
     ): null|ApiEndpoint {
         $arrayItemValue = $item->value instanceof Node\Expr\Array_ ? $item->value->items : null;
 
@@ -274,6 +277,9 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
         }
 
         $output = $arrayItemValue ? ($this->findArrayAttributeValueByKey('output', $arrayItemValue) ?? $defaultOutput) : $defaultOutput;
+        if (!$output) {
+            throw new Exception(sprintf("The output is required for ApiResource %s. Context: %s", $node->name->name, $this->prettyPrinter->prettyPrint([$apiResourceAttribute])));
+        }
         $outputTypeContext = $isCollection && $method->equals(ApiEndpointMethod::get()) ? [self::COLLECTION_RESPONSE_CONTEXT_KEY => true] : [];
         $outputType = PhpTypeFactory::create($output, $outputTypeContext);
 

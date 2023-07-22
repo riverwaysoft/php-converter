@@ -569,7 +569,7 @@ CODE;
         $this->assertMatchesGeneratedTypeScriptApi($result);
     }
 
-    public function testApiClientGenerationWithApiPlatformResource(): void
+    public function testApiClientGenerationWithApiPlatformLegacyResource(): void
     {
         $code = <<<'CODE'
 <?php
@@ -906,11 +906,19 @@ class JobSheetTagCollectionOutput {}
     uriVariables: [
         'id' => new Link(fromProperty: 'tagCollection', fromClass: 'App\Modules\Workshop\JobSheet\Entity\JobSheet'),
     ],
-    status: 200,
     output: JobSheetTagCollectionOutput::class
 )]
 #[DtoResource]
 class TagCollection {}
+
+#[Dto]
+class UserOutput {}
+
+#[ApiResource(
+    operations: [new Get(output: UserOutput::class)],
+)]
+#[DtoResource]
+class User {}
 CODE;
 
         $converter = new Converter([
@@ -920,7 +928,7 @@ CODE;
 
         $result = $converter->convert([$code]);
 
-        $this->assertCount(9, $result->apiEndpointList->getList());
+        $this->assertCount(10, $result->apiEndpointList->getList());
 
         $this->assertMatchesGeneratedTypeScriptApi($result);
     }
