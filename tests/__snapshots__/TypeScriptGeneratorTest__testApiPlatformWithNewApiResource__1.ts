@@ -26,6 +26,9 @@ export type HubUserUpdateInput = {
 export type JobSheetTagCollectionOutput = {
 };
 
+export type UserOutput = {
+};
+
 export const apiBookingsGet = (filters: any | null = null): Promise<CollectionResponse<FullBookingOutput>> => {
   return axios
     .get<CollectionResponse<FullBookingOutput>>(`/api/bookings`, { params: filters })
@@ -77,6 +80,12 @@ export const apiHubUsersIdUpdateBranchContextPut = (id: string, body: BranchCont
 export const apiJobSheetsIdTagsGet = (id: string): Promise<JobSheetTagCollectionOutput> => {
   return axios
     .get<JobSheetTagCollectionOutput>(`/api/job_sheets/${id}/tags`)
+    .then((response) => response.data);
+}
+
+export const apiUsersIdGet = (id: string): Promise<UserOutput> => {
+  return axios
+    .get<UserOutput>(`/api/users/${id}`)
     .then((response) => response.data);
 }
 

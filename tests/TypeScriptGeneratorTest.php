@@ -569,7 +569,7 @@ CODE;
         $this->assertMatchesGeneratedTypeScriptApi($result);
     }
 
-    public function testApiClientGenerationWithApiPlatformResource(): void
+    public function testApiClientGenerationWithApiPlatformLegacyResource(): void
     {
         $code = <<<'CODE'
 <?php
@@ -776,23 +776,12 @@ class ApiResource {
         ?array $defaults = null,
         ?array $requirements = null,
         ?array $options = null,
-        ?bool $stateless = null,
-        ?string $sunset = null,
-        ?string $acceptPatch = null,
         ?int $status = null,
         ?string $host = null,
         ?array $schemes = null,
-        ?string $condition = null,
         ?string $controller = null,
         ?string $class = null,
         ?int $urlGenerationStrategy = null,
-        ?string $deprecationReason = null,
-        ?array $cacheHeaders = null,
-        ?array $normalizationContext = null,
-        ?array $denormalizationContext = null,
-        ?array $hydraContext = null,
-        ?array $openapiContext = null,
-        ?array $validationContext = null,
         ?array $filters = null,
         ?bool $elasticsearch = null,
         $mercure = null,
@@ -800,18 +789,6 @@ class ApiResource {
         $input = null,
         $output = null,
         ?array $order = null,
-        ?bool $fetchPartial = null,
-        ?bool $forceEager = null,
-        ?bool $paginationClientEnabled = null,
-        ?bool $paginationClientItemsPerPage = null,
-        ?bool $paginationClientPartial = null,
-        ?array $paginationViaCursor = null,
-        ?bool $paginationEnabled = null,
-        ?bool $paginationFetchJoinCollection = null,
-        ?bool $paginationUseOutputWalkers = null,
-        ?int $paginationItemsPerPage = null,
-        ?int $paginationMaximumItemsPerPage = null,
-        ?bool $paginationPartial = null,
         ?string $paginationType = null,
         ?string $security = null,
         ?string $securityMessage = null,
@@ -906,11 +883,19 @@ class JobSheetTagCollectionOutput {}
     uriVariables: [
         'id' => new Link(fromProperty: 'tagCollection', fromClass: 'App\Modules\Workshop\JobSheet\Entity\JobSheet'),
     ],
-    status: 200,
     output: JobSheetTagCollectionOutput::class
 )]
 #[DtoResource]
 class TagCollection {}
+
+#[Dto]
+class UserOutput {}
+
+#[ApiResource(
+    operations: [new Get(output: UserOutput::class)],
+)]
+#[DtoResource]
+class User {}
 CODE;
 
         $converter = new Converter([
@@ -920,9 +905,146 @@ CODE;
 
         $result = $converter->convert([$code]);
 
-        $this->assertCount(9, $result->apiEndpointList->getList());
+        $this->assertCount(10, $result->apiEndpointList->getList());
 
         $this->assertMatchesGeneratedTypeScriptApi($result);
+    }
+
+    public function testApiPlatformModernAtLeastOneOutputIsRequired(): void
+    {
+        $code = <<<'CODE'
+<?php
+
+use \Riverwaysoft\PhpConverter\ClassFilter\Dto;
+use \Riverwaysoft\PhpConverter\Bridge\ApiPlatform\DtoResource;
+
+#[\Attribute(\Attribute::TARGET_CLASS)]
+class ApiResource {
+// Copied from API Platform source
+     public function __construct(
+        ?string $uriTemplate = null,
+        ?string $shortName = null,
+        ?string $description = null,
+        $types = null,
+        $operations = null,
+        $formats = null,
+        $inputFormats = null,
+        $outputFormats = null,
+        $uriVariables = null,
+        ?string $routePrefix = null,
+        ?array $defaults = null,
+        ?array $requirements = null,
+        ?array $options = null,
+        ?int $status = null,
+        ?string $host = null,
+        ?array $schemes = null,
+        ?string $controller = null,
+        ?string $class = null,
+        ?int $urlGenerationStrategy = null,
+        ?array $filters = null,
+        ?bool $elasticsearch = null,
+        $mercure = null,
+        $messenger = null,
+        $input = null,
+        $output = null,
+        ?array $order = null,
+        ?string $paginationType = null,
+        ?string $security = null,
+        ?string $securityMessage = null,
+        ?string $securityPostDenormalize = null,
+        ?string $securityPostDenormalizeMessage = null,
+        ?string $securityPostValidation = null,
+        ?string $securityPostValidationMessage = null,
+        ?bool $compositeIdentifier = null,
+        ?array $exceptionToStatus = null,
+        ?bool $queryParameterValidationEnabled = null,
+        ?array $graphQlOperations = null,
+        $provider = null,
+        $processor = null,
+        array $extraProperties = []
+        ) {}
+}
+
+#[ApiResource(
+    operations: [new Get()],
+)]
+#[DtoResource]
+class User {}
+CODE;
+
+        $converter = new Converter([
+            new DtoVisitor(new PhpAttributeFilter('Dto')),
+            new ApiPlatformDtoResourceVisitor(new PhpAttributeFilter('DtoResource')),
+        ]);
+
+        $this->expectExceptionMessage('The output is required for ApiResource User. Context: ApiResource(operations: [new Get()])');
+        $result = $converter->convert([$code]);
+    }
+
+    public function testApiPlatformLegacyAtLeastOneOutputIsRequired(): void
+    {
+        $code = <<<'CODE'
+<?php
+
+use \Riverwaysoft\PhpConverter\ClassFilter\Dto;
+use \Riverwaysoft\PhpConverter\Bridge\ApiPlatform\DtoResource;
+
+#[\Attribute(\Attribute::TARGET_CLASS)]
+class ApiResource {
+// Copied from API Platform source
+  public function __construct(
+        $description = null,
+        ?array $collectionOperations = null,
+        ?string $iri = null,
+        ?array $itemOperations = null,
+        ?string $shortName = null,
+        ?array $subresourceOperations = null,
+        ?array $cacheHeaders = null,
+        ?string $deprecationReason = null,
+        ?bool $elasticsearch = null,
+        ?bool $fetchPartial = null,
+        ?bool $forceEager = null,
+        ?array $formats = null,
+        ?array $filters = null,
+        ?array $hydraContext = null,
+        $input = null,
+        ?array $openapiContext = null,
+        ?array $order = null,
+        $output = null,
+        ?string $routePrefix = null,
+  ) {}
+}
+
+#[Dto]
+class StudentNotesOutput {
+public string $id;
+}
+
+#[ApiResource(
+    collectionOperations: [
+        'post' => ['output' => StudentNotesOutput::class],
+        'get' => ['output' => StudentNotesOutput::class]
+    ],
+    itemOperations: [
+        'put' => [
+            'input' => StudentNotesUpdateInput::class
+        ],
+    ],
+    attributes: ['order' => ['createdAt' => 'DESC']],
+)]
+#[DtoResource]
+class StudentNotes {}
+
+
+CODE;
+
+        $converter = new Converter([
+            new DtoVisitor(new PhpAttributeFilter('Dto')),
+            new ApiPlatformDtoResourceVisitor(new PhpAttributeFilter('DtoResource')),
+        ]);
+
+        $this->expectExceptionMessage("The output is required for ApiResource StudentNotes. Context: ApiResource(collectionOperations: ['post' => ['output' => StudentNotesOutput::class], 'get' => ['output' => StudentNotesOutput::class]], itemOperations: ['put' => ['input' => StudentNotesUpdateInput::class]], attributes: ['order' => ['createdAt' => 'DESC']])");
+        $result = $converter->convert([$code]);
     }
 
     private function assertMatchesGeneratedTypeScriptApi(ConverterResult $result): void
