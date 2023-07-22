@@ -8,6 +8,7 @@ use PhpCsFixer\Fixer\Import\OrderedImportsFixer;
 use PhpCsFixer\Fixer\Operator\NotOperatorWithSuccessorSpaceFixer;
 use PhpCsFixer\Fixer\Phpdoc\PhpdocLineSpanFixer;
 use PhpCsFixer\Fixer\Strict\DeclareStrictTypesFixer;
+use SlevomatCodingStandard\Sniffs\ControlStructures\EarlyExitSniff;
 use SlevomatCodingStandard\Sniffs\Namespaces\DisallowGroupUseSniff;
 use SlevomatCodingStandard\Sniffs\Namespaces\FullyQualifiedGlobalFunctionsSniff;
 use SlevomatCodingStandard\Sniffs\Namespaces\ReferenceUsedNamesOnlySniff;
@@ -24,6 +25,11 @@ return function (ECSConfig $ecsConfig): void {
         NoUnusedImportsFixer::class,
         DeclareStrictTypesFixer::class,
         GlobalNamespaceImportFixer::class,
+    ]);
+
+    $ecsConfig->ruleWithConfiguration(EarlyExitSniff::class, [
+        'ignoreStandaloneIfInScope' => true,
+        'ignoreOneLineTrailingIf' => true,
     ]);
 
     $ecsConfig->sets([

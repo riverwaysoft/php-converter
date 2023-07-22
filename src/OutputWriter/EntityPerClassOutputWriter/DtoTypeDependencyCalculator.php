@@ -27,11 +27,13 @@ class DtoTypeDependencyCalculator
             if ($type instanceof PhpUnknownType && $type->getName() !== $dtoType->getName()) {
                 $dependencies[] = $type;
             }
-            if ($type instanceof PhpUnionType) {
-                foreach ($type->getTypes() as $innerType) {
-                    if ($innerType instanceof PhpUnknownType && $dtoType->getName() !== $innerType->getName()) {
-                        $dependencies[] = $innerType;
-                    }
+            if (!($type instanceof PhpUnionType)) {
+                continue;
+            }
+
+            foreach ($type->getTypes() as $innerType) {
+                if ($innerType instanceof PhpUnknownType && $dtoType->getName() !== $innerType->getName()) {
+                    $dependencies[] = $innerType;
                 }
             }
         }

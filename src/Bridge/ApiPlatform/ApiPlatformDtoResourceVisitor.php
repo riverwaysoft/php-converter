@@ -127,19 +127,21 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
                 }
             }
 
-            if ($operationsArg?->value instanceof Node\Expr\Array_) {
-                if ($forceSubresourcePath) {
-                    $endpointCount = count($operationsArg->value->items);
-                    if ($endpointCount !== 1) {
-                        throw new Exception(sprintf('ApiResource %s should have only 1 array item in the "operations" field since it is subresource. %s given: ', $node->name->name, $endpointCount));
-                    }
-                }
+            if (!($operationsArg?->value instanceof Node\Expr\Array_)) {
+                continue;
+            }
 
-                foreach ($operationsArg->value->items as $item) {
-                    $apiEndpoint = $this->createApiEndpoint($item, $node, $defaultOutput, $defaultInput, $forceSubresourcePath, $shortName, $apiResourceAttribute);
-                    if ($apiEndpoint) {
-                        $this->converterResult->apiEndpointList->add($apiEndpoint);
-                    }
+            if ($forceSubresourcePath) {
+                $endpointCount = count($operationsArg->value->items);
+                if ($endpointCount !== 1) {
+                    throw new Exception(sprintf('ApiResource %s should have only 1 array item in the "operations" field since it is subresource. %s given: ', $node->name->name, $endpointCount));
+                }
+            }
+
+            foreach ($operationsArg->value->items as $item) {
+                $apiEndpoint = $this->createApiEndpoint($item, $node, $defaultOutput, $defaultInput, $forceSubresourcePath, $shortName, $apiResourceAttribute);
+                if ($apiEndpoint) {
+                    $this->converterResult->apiEndpointList->add($apiEndpoint);
                 }
             }
         }
