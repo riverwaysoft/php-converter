@@ -21,39 +21,6 @@
         "generics": []
     },
     {
-        "name": "Profile",
-        "expressionType": {
-            "type": "class"
-        },
-        "properties": [
-            {
-                "type": {
-                    "types": [
-                        {
-                            "name": "FullName",
-                            "context": [],
-                            "genericTypes": []
-                        },
-                        {
-                            "name": "null"
-                        },
-                        {
-                            "name": "string"
-                        }
-                    ]
-                },
-                "name": "name"
-            },
-            {
-                "type": {
-                    "name": "int"
-                },
-                "name": "age"
-            }
-        ],
-        "generics": []
-    },
-    {
         "name": "UserCreate",
         "expressionType": {
             "type": "class"
@@ -69,7 +36,7 @@
                 "type": {
                     "types": [
                         {
-                            "name": "Profile",
+                            "name": "FullName",
                             "context": [],
                             "genericTypes": []
                         },
@@ -78,7 +45,7 @@
                         }
                     ]
                 },
-                "name": "profile"
+                "name": "fullName"
             }
         ],
         "generics": []

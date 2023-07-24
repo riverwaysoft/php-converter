@@ -1,0 +1,35 @@
+[
+    {
+        "name": "PaginatedResponse1",
+        "expressionType": {
+            "type": "class"
+        },
+        "properties": [
+            {
+                "type": {
+                    "array": {
+                        "name": "T",
+                        "context": [],
+                        "genericTypes": []
+                    }
+                },
+                "name": "array"
+            },
+            {
+                "type": {
+                    "name": "T",
+                    "context": [],
+                    "genericTypes": []
+                },
+                "name": "one"
+            }
+        ],
+        "generics": [
+            {
+                "name": "T",
+                "context": [],
+                "genericTypes": []
+            }
+        ]
+    }
+]

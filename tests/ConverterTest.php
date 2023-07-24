@@ -44,6 +44,91 @@ CODE;
         $this->assertMatchesJsonSnapshot($normalized->dtoList->getList());
     }
 
+    public function testConstructorParamsParse(): void
+    {
+        $codeNestedDto = <<<'CODE'
+<?php
+
+class UserCreate {
+    /** 
+    * @param FullName|null $fullName, 
+    * @param string $id, 
+    */
+    public function __construct(
+        public $id,
+        public $fullName,
+    ) {
+    
+    }
+}
+
+class FullName {
+    public string $firstName;
+    public string $lastName;
+}
+CODE;
+
+        $normalized = (new Converter([new DtoVisitor()]))->convert([$codeNestedDto]);
+        $this->assertMatchesJsonSnapshot($normalized->dtoList->getList());
+    }
+
+    public function testGenerics(): void
+    {
+        $codeNestedDto = <<<'CODE'
+<?php
+
+/** 
+ * @template T 
+ */
+class PaginatedResponse1 {
+    /**
+    * @param T[] $array 
+    * @param T $one 
+    */
+    public function __construct(
+       /** @var string $array */
+        public $array,
+       /** @var string $one */
+        public $one,
+    ) {
+    }
+}
+
+// TODO:
+///** 
+// * @template T 
+// */
+//class PaginatedResponse2 {
+//    /** @param T[] $array */
+//    /** @param T $one */
+//    public function __construct(
+//        public $array,
+//        public $one,
+//    ) {
+//    }
+//}
+
+
+///** 
+// * @template T 
+// */
+//class PaginatedResponse2 {
+//    /** @var T $data */
+//    public $data;
+//
+//    /**
+//    * @param T $data
+//    */
+//    public function __construct($data) {
+//        $this->data = $data;
+//    }
+//}
+CODE;
+
+        $normalized = (new Converter([new DtoVisitor()]))->convert([$codeNestedDto]);
+        $this->assertMatchesJsonSnapshot($normalized->dtoList->getList());
+    }
+
     public function testFilterClassesByDocBlock(): void
     {
         $codeWithDateTime = <<<'CODE'

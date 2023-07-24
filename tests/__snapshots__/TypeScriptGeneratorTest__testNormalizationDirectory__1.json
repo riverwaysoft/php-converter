@@ -17,7 +17,8 @@
                 },
                 "name": "createdAt"
             }
-        ]
+        ],
+        "generics": []
     },
     {
         "name": "FullName",
@@ -37,7 +38,8 @@
                 },
                 "name": "lastName"
             }
-        ]
+        ],
+        "generics": []
     },
     {
         "name": "NumberEnum",
@@ -57,7 +59,8 @@
                 "name": "CREATE",
                 "value": 2
             }
-        ]
+        ],
+        "generics": []
     },
     {
         "name": "PermissionsEnum",
@@ -73,7 +76,8 @@
                 "name": "EDIT",
                 "value": "edit"
             }
-        ]
+        ],
+        "generics": []
     },
     {
         "name": "Profile",
@@ -102,7 +106,8 @@
                 },
                 "name": "age"
             }
-        ]
+        ],
+        "generics": []
     },
     {
         "name": "User",
@@ -153,7 +158,8 @@
                 },
                 "name": "selfConstructor"
             }
-        ]
+        ],
+        "generics": []
     },
     {
         "name": "UserCreate",
@@ -264,6 +270,7 @@
                 },
                 "name": "isApproved"
             }
-        ]
+        ],
+        "generics": []
     }
 ]

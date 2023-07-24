@@ -24,7 +24,8 @@
                 },
                 "name": "fcmToken"
             }
-        ]
+        ],
+        "generics": []
     },
     {
         "name": "UserCreate",
@@ -126,6 +127,7 @@
                 },
                 "name": "mixed"
             }
-        ]
+        ],
+        "generics": []
     }
 ]
