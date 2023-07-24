@@ -8,6 +8,7 @@ use PhpCsFixer\Fixer\Import\OrderedImportsFixer;
 use PhpCsFixer\Fixer\Operator\NotOperatorWithSuccessorSpaceFixer;
 use PhpCsFixer\Fixer\Phpdoc\PhpdocLineSpanFixer;
 use PhpCsFixer\Fixer\Strict\DeclareStrictTypesFixer;
+use SlevomatCodingStandard\Sniffs\Attributes\RequireAttributeAfterDocCommentSniff;
 use SlevomatCodingStandard\Sniffs\ControlStructures\EarlyExitSniff;
 use Symplify\EasyCodingStandard\Config\ECSConfig;
 use Symplify\EasyCodingStandard\ValueObject\Set\SetList;
@@ -24,6 +25,7 @@ return function (ECSConfig $ecsConfig): void {
         NoUnusedImportsFixer::class,
         DeclareStrictTypesFixer::class,
         GlobalNamespaceImportFixer::class,
+        RequireAttributeAfterDocCommentSniff::class,
     ]);
 
     $ecsConfig->ruleWithConfiguration(EarlyExitSniff::class, [
