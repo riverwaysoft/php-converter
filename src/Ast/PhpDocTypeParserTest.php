@@ -117,8 +117,8 @@ class PhpDocTypeParserTest extends TestCase
                   */',
                 new PhpUnknownType('JsonResponse', [], [
                     new PhpUnknownType('PaginatedResponse', [], [
-                        new PhpUnknownType('User')
-                    ])
+                        new PhpUnknownType('User'),
+                    ]),
                 ]),
             ],
         ];

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Riverwaysoft\PhpConverter\Ast;
 
-use PHPStan\PhpDoc\Tag\ReturnTag;
 use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTagNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\ReturnTagValueNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\VarTagValueNode;

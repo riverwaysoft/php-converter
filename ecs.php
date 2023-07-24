@@ -6,6 +6,7 @@ use PhpCsFixer\Fixer\Import\GlobalNamespaceImportFixer;
 use PhpCsFixer\Fixer\Import\NoUnusedImportsFixer;
 use PhpCsFixer\Fixer\Import\OrderedImportsFixer;
 use PhpCsFixer\Fixer\Operator\NotOperatorWithSuccessorSpaceFixer;
+use PhpCsFixer\Fixer\Phpdoc\NoSuperfluousPhpdocTagsFixer;
 use PhpCsFixer\Fixer\Phpdoc\PhpdocLineSpanFixer;
 use PhpCsFixer\Fixer\Strict\DeclareStrictTypesFixer;
 use SlevomatCodingStandard\Sniffs\Attributes\RequireAttributeAfterDocCommentSniff;
@@ -44,6 +45,7 @@ return function (ECSConfig $ecsConfig): void {
     $ecsConfig->skip([
         OrderedImportsFixer::class,
         NotOperatorWithSuccessorSpaceFixer::class,
+        NoSuperfluousPhpdocTagsFixer::class,
         PhpdocLineSpanFixer::class,
     ]);
 };
