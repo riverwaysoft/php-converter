@@ -6,10 +6,14 @@ namespace Riverwaysoft\PhpConverter\Dto\PhpType;
 
 class PhpTypeFactory
 {
-    /** @param array<string, mixed> $context */
+    /**
+     * @param array<string, mixed> $context
+     * @param PhpTypeInterface[] $genericTypes
+     */
     public static function create(
         string $typeName,
         array $context = [],
+        array $genericTypes = [],
     ): PhpBaseType|PhpUnknownType {
         return match ($typeName) {
             'int', => PhpBaseType::int(),
@@ -22,7 +26,7 @@ class PhpTypeFactory
             'iterable', => PhpBaseType::iterable(),
             'null' => PhpBaseType::null(),
             'self' => PhpBaseType::self(),
-            default => new PhpUnknownType($typeName, $context),
+            default => new PhpUnknownType($typeName, $context, $genericTypes),
         };
     }
 }

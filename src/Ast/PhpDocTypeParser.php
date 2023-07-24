@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace Riverwaysoft\PhpConverter\Ast;
 
+use PHPStan\PhpDoc\Tag\ReturnTag;
 use PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTagNode;
+use PHPStan\PhpDocParser\Ast\PhpDoc\ReturnTagValueNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\VarTagValueNode;
 use PHPStan\PhpDocParser\Ast\Type\ArrayTypeNode;
+use PHPStan\PhpDocParser\Ast\Type\GenericTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\IdentifierTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\TypeNode;
 use PHPStan\PhpDocParser\Ast\Type\UnionTypeNode;
@@ -39,6 +42,7 @@ class PhpDocTypeParser
     {
         $tokens = new TokenIterator($this->lexer->tokenize($input));
         $result = $this->phpDocParser->parse($tokens)->children;
+        /** @var TypeNode|null $varTagNode */
         $varTagNode = null;
 
         foreach ($result as $node) {
@@ -47,7 +51,11 @@ class PhpDocTypeParser
             }
 
             if ($node->value instanceof VarTagValueNode) {
-                $varTagNode = $node->value;
+                $varTagNode = $node->value->type;
+            }
+
+            if ($node->value instanceof ReturnTagValueNode) {
+                $varTagNode = $node->value->type;
             }
         }
 
@@ -55,7 +63,7 @@ class PhpDocTypeParser
             return null;
         }
 
-        return $this->convertToDto($varTagNode->type);
+        return $this->convertToDto($varTagNode);
     }
 
     private function convertToDto(TypeNode $node): PhpTypeInterface|null
@@ -68,6 +76,12 @@ class PhpDocTypeParser
         }
         if ($node instanceof UnionTypeNode) {
             return new PhpUnionType(array_map(fn (TypeNode $child) => $this->convertToDto($child), $node->types));
+        }
+        if ($node instanceof GenericTypeNode) {
+            return PhpTypeFactory::create($node->type->name, [], array_map(
+                fn (TypeNode $child) => $this->convertToDto($child),
+                $node->genericTypes,
+            ));
         }
         return null;
     }

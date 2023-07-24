@@ -110,6 +110,17 @@ class PhpDocTypeParserTest extends TestCase
                  */',
                 PhpBaseType::int(),
             ],
+            [
+                'generics',
+                '/**
+                  * @return JsonResponse<PaginatedResponse<User>>
+                  */',
+                new PhpUnknownType('JsonResponse', [], [
+                    new PhpUnknownType('PaginatedResponse', [], [
+                        new PhpUnknownType('User')
+                    ])
+                ]),
+            ],
         ];
     }
 }
