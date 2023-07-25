@@ -28,6 +28,29 @@
         "generics": []
     },
     {
+        "name": "Response",
+        "expressionType": {
+            "type": "class"
+        },
+        "properties": [
+            {
+                "type": {
+                    "name": "T",
+                    "context": [],
+                    "genericTypes": []
+                },
+                "name": "data"
+            }
+        ],
+        "generics": [
+            {
+                "name": "T",
+                "context": [],
+                "genericTypes": []
+            }
+        ]
+    },
+    {
         "name": "UserCreate",
         "expressionType": {
             "type": "class"

@@ -36,4 +36,10 @@ class PhpUnknownType implements PhpTypeInterface
             'genericTypes' => $this->genericTypes,
         ];
     }
+
+    /** @return PhpTypeInterface[] */
+    public function getGenericTypes(): array
+    {
+        return $this->genericTypes;
+    }
 }

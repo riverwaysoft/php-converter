@@ -64,7 +64,8 @@ class UserCreate {
 
 class FullName {
     public string $firstName;
-    public string $lastName;
+    /** @var string $lastName */
+    public $lastName;
 }
 CODE;
 
@@ -94,35 +95,20 @@ class PaginatedResponse1 {
     }
 }
 
-// TODO:
-///** 
-// * @template T 
-// */
-//class PaginatedResponse2 {
-//    /** @param T[] $array */
-//    /** @param T $one */
-//    public function __construct(
-//        public $array,
-//        public $one,
-//    ) {
-//    }
-//}
+/** 
+ * @template T 
+ */
+class PaginatedResponse2 {
+    /** @var T $data */
+    public $data;
 
-
-///** 
-// * @template T 
-// */
-//class PaginatedResponse2 {
-//    /** @var T $data */
-//    public $data;
-//
-//    /**
-//    * @param T $data
-//    */
-//    public function __construct($data) {
-//        $this->data = $data;
-//    }
-//}
+    /**
+    * @param T $data
+    */
+    public function __construct($data) {
+        $this->data = $data;
+    }
+}
 CODE;
 
         $normalized = (new Converter([new DtoVisitor()]))->convert([$codeNestedDto]);

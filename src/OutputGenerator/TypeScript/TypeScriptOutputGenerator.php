@@ -19,6 +19,7 @@ use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeInterface;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnionType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
 use Riverwaysoft\PhpConverter\OutputGenerator\OutputGeneratorInterface;
+use Riverwaysoft\PhpConverter\OutputGenerator\UnknownTypeResolver\GenericTypeResolver;
 use Riverwaysoft\PhpConverter\OutputGenerator\UnknownTypeResolver\UnknownTypeResolverInterface;
 use Riverwaysoft\PhpConverter\OutputGenerator\UnsupportedTypeException;
 use Riverwaysoft\PhpConverter\OutputWriter\OutputFile;
@@ -42,15 +43,22 @@ class TypeScriptOutputGenerator implements OutputGeneratorInterface
 {
     private TypeScriptGeneratorOptions $options;
 
+    /** @var UnknownTypeResolverInterface[] */
+    private array $unknownTypeResolvers = [];
+
+    /** @param UnknownTypeResolverInterface[] $unknownTypeResolvers */
     public function __construct(
         private OutputWriterInterface $outputWriter,
-        /** @var UnknownTypeResolverInterface[] $unknownTypeResolvers */
-        private array $unknownTypeResolvers = [],
+        array $unknownTypeResolvers = [],
         private ?OutputFilesProcessor $outputFilesProcessor = null,
         ?TypeScriptGeneratorOptions $options = null,
     ) {
         $this->options = $options ?? new TypeScriptGeneratorOptions(useTypesInsteadOfEnums: false);
         $this->outputFilesProcessor = $this->outputFilesProcessor ?? new OutputFilesProcessor();
+        $this->unknownTypeResolvers = [
+            new GenericTypeResolver(),
+            ...$unknownTypeResolvers,
+        ];
     }
 
     /** @return OutputFile[] */
@@ -142,7 +150,12 @@ class TypeScriptOutputGenerator implements OutputGeneratorInterface
     private function convertToTypeScriptType(DtoType $dto, DtoList $dtoList): string
     {
         if ($dto->getExpressionType()->equals(ExpressionType::class())) {
-            return sprintf("export type %s = {%s\n};", $dto->getName(), $this->convertToTypeScriptProperties($dto, $dtoList));
+            $typeName = $dto->getName();
+            if ($dto->isGeneric()) {
+                $generics = array_map(fn (PhpUnknownType $generic) => $generic->getName(), $dto->getGenerics());
+                $typeName .= sprintf("<%s>", join(', ', $generics));
+            }
+            return sprintf("export type %s = {%s\n};", $typeName, $this->convertToTypeScriptProperties($dto, $dtoList));
         }
         if ($dto->getExpressionType()->isAnyEnum()) {
             if ($this->shouldEnumBeConverterToUnion($dto)) {

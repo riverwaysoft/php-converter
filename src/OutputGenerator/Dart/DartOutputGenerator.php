@@ -27,16 +27,22 @@ class DartOutputGenerator implements OutputGeneratorInterface
 {
     private DartEnumValidator $dartEnumValidator;
 
+    /** @var UnknownTypeResolverInterface[] */
+    private array $unknownTypeResolvers = [];
+
+    /** @param UnknownTypeResolverInterface[] $unknownTypeResolvers */
     public function __construct(
         private OutputWriterInterface $outputWriter,
-        /** @var UnknownTypeResolverInterface[] */
-        private array $unknownTypeResolvers = [],
+        array $unknownTypeResolvers = [],
         private ?OutputFilesProcessor $outputFilesProcessor = null,
         private ?DartClassFactoryGenerator $classFactoryGenerator = null,
         private ?DartEquitableGenerator $equitableGenerator = null,
     ) {
         $this->outputFilesProcessor = $this->outputFilesProcessor ?? new OutputFilesProcessor();
         $this->dartEnumValidator = new DartEnumValidator();
+        $this->unknownTypeResolvers = [
+            ...$unknownTypeResolvers,
+        ];
     }
 
     public function generate(ConverterResult $converterResult): array
@@ -56,9 +62,15 @@ class DartOutputGenerator implements OutputGeneratorInterface
         if ($dto->getExpressionType()->equals(ExpressionType::class())) {
             // https://dart-lang.github.io/linter/lints/empty_constructor_bodies.html
             $isEmpty = $dto->isEmpty();
+            $typeName = $dto->getName();
+            if ($dto->isGeneric()) {
+                $generics = array_map(fn (PhpUnknownType $generic) => $generic->getName(), $dto->getGenerics());
+                $typeName .= sprintf("<%s>", join(', ', $generics));
+            }
+
             return sprintf(
                 "class %s%s {%s\n\n  %s\n%s%s}",
-                $dto->getName(),
+                $typeName,
                 $this->equitableGenerator && !$isEmpty ? $this->equitableGenerator->generateEquitableHeader($dto) : '',
                 $this->convertToDartProperties($dto, $dtoList),
                 !$isEmpty ? $this->generateConstructor($dto) : '',
@@ -144,6 +156,10 @@ class DartOutputGenerator implements OutputGeneratorInterface
 
     private function handleUnknownType(PhpUnknownType $type, DtoType|null $dto, DtoList $dtoList): string|PhpTypeInterface
     {
+        if ($dto->isGeneric() && $dto->hasGeneric($type)) {
+            return $type->getName();
+        }
+
         foreach ($this->unknownTypeResolvers as $unknownTypeResolver) {
             if ($unknownTypeResolver->supports($type, $dto, $dtoList)) {
                 return $unknownTypeResolver->resolve($type, $dto, $dtoList);

@@ -36,6 +36,14 @@ class Recipe {
   });
 }
 
+class Response<T> {
+  final T data;
+
+  Response({
+    required this.data,
+  });
+}
+
 class User {
   final String id;
   final User? bestFriend;

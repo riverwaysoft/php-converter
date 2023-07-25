@@ -19,6 +19,12 @@ export type UserOutput = {
   id: string;
 };
 
+export const apiRouteWithAnnotationsReturnGet = (): Promise<UserOutput> => {
+  return axios
+    .get<UserOutput>(`/api/route-with-annotations-return`)
+    .then((response) => response.data);
+}
+
 export const apiRouteWithNameGet = (): Promise<null> => {
   return axios
     .get<null>(`/api/route-with-name`)

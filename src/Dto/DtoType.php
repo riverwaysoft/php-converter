@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Riverwaysoft\PhpConverter\Dto;
 
 use JsonSerializable;
-use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeInterface;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
 use function gettype;
 use function count;
 
@@ -16,7 +16,7 @@ class DtoType implements JsonSerializable
         private ExpressionType $expressionType,
         /** @var DtoClassProperty[]|DtoEnumProperty[] $properties */
         private array $properties,
-        /** @var PhpTypeInterface[] */
+        /** @var PhpUnknownType[] */
         private array $generics = [],
     ) {
     }
@@ -40,6 +40,23 @@ class DtoType implements JsonSerializable
     public function isGeneric(): bool
     {
         return count($this->generics) > 0;
+    }
+
+    public function hasGeneric(PhpUnknownType $type): bool
+    {
+        foreach ($this->generics as $generic) {
+            if ($type->getName() === $generic->getName()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /** @return PhpUnknownType[] */
+    public function getGenerics(): array
+    {
+        return $this->generics;
     }
 
     public function isStringEnum(): bool

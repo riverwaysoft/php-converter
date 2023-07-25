@@ -17,6 +17,7 @@ use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeFactory;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeInterface;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnionType;
 use Exception;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
 use function sprintf;
 use function get_class;
 use function array_map;
@@ -73,11 +74,21 @@ class DtoVisitor extends ConverterVisitor
             }
 
             if ($stmt instanceof Node\Stmt\Property) {
-                if ($stmt->type === null) {
+                $comment = $stmt->getDocComment()?->getText() ?? '';
+
+                /** @var PhpTypeInterface|null $docBlockType */
+                $docBlockType = null;
+                $nativeType = $stmt->type;
+
+                if ($comment) {
+                    $docBlockType = $this->phpDocTypeParser->parseVarOrReturn($comment);
+                }
+
+                if (!$nativeType && !$docBlockType) {
                     throw new Exception(sprintf("Property %s#%s has no type. Please add PHP type", $node->name->name, $stmt->props[0]->name->name));
                 }
 
-                $type = $this->createSingleType($stmt->type, $stmt->getDocComment()?->getText());
+                $type = $docBlockType ?? $this->createSingleType($nativeType);
 
                 $properties[] = new DtoClassProperty(
                     type: $type,
@@ -142,6 +153,7 @@ class DtoVisitor extends ConverterVisitor
             );
         }
 
+        /** @var PhpUnknownType[] $generics */
         $generics = [];
         if ($classComments) {
             $generics = $this->phpDocTypeParser->parseClassComments($classComments);
@@ -167,10 +179,12 @@ class DtoVisitor extends ConverterVisitor
         }
 
         if ($param instanceof Node\UnionType) {
+            // TODO: remove doc comment?
             return new PhpUnionType(array_map(fn ($singleParam) => $this->createSingleType($singleParam, $docComment), $param->types));
         }
 
         if ($param instanceof Node\NullableType) {
+            // TODO: remove doc comment?
             return PhpUnionType::nullable($this->createSingleType($param->type, $docComment));
         }
 

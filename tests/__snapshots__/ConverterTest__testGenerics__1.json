@@ -31,5 +31,28 @@
                 "genericTypes": []
             }
         ]
+    },
+    {
+        "name": "PaginatedResponse2",
+        "expressionType": {
+            "type": "class"
+        },
+        "properties": [
+            {
+                "type": {
+                    "name": "T",
+                    "context": [],
+                    "genericTypes": []
+                },
+                "name": "data"
+            }
+        ],
+        "generics": [
+            {
+                "name": "T",
+                "context": [],
+                "genericTypes": []
+            }
+        ]
     }
 ]

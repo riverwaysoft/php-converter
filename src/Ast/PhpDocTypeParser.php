@@ -25,6 +25,7 @@ use Riverwaysoft\PhpConverter\Dto\PhpType\PhpListType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeFactory;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeInterface;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnionType;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
 use function array_map;
 
 class PhpDocTypeParser
@@ -72,11 +73,11 @@ class PhpDocTypeParser
         return $results;
     }
 
-    /** @return PhpTypeInterface[]  */
+    /** @return PhpUnknownType[]  */
     public function parseClassComments(string $input): array
     {
         $phpDocNodes = $this->commentToPhpDocNodes($input);
-        /** @var PhpTypeInterface[] $generics */
+        /** @var PhpUnknownType[] $generics */
         $generics = [];
 
         foreach ($phpDocNodes as $node) {
@@ -87,7 +88,7 @@ class PhpDocTypeParser
             if (!($node->value instanceof TemplateTagValueNode)) {
                 continue;
             }
-            $generics[] = PhpTypeFactory::create($node->value->name);
+            $generics[] = new PhpUnknownType($node->value->name);
         }
 
         return $generics;
