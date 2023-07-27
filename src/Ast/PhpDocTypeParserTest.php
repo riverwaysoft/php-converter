@@ -66,6 +66,16 @@ class PhpDocTypeParserTest extends TestCase
                     new DtoClassProperty(new PhpUnknownType('T'), 'one'),
                 ],
             ],
+            [
+                'properties without variable name',
+                "/** @param string test */",
+                [],
+            ],
+            [
+                'properties without variable name',
+                "/** @param */",
+                [],
+            ],
         ];
     }
 
