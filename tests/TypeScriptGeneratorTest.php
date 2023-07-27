@@ -685,6 +685,41 @@ CODE;
         $this->assertMatchesGeneratedTypeScriptApi($result);
     }
 
+    public function testGenericDtoWithArrayField(): void
+    {
+        $code = <<<'CODE'
+<?php
+
+use \Riverwaysoft\PhpConverter\ClassFilter\DtoEndpoint;
+use \Riverwaysoft\PhpConverter\ClassFilter\Dto;
+
+/**
+ * @template T
+ */
+#[Dto]
+class Paginated
+{
+    /**
+     * @param T[] $items
+     */
+    public function __construct(
+        public array $items,
+        public int $totalCount,
+        public int $pagesCount,
+        public int $page,
+    )
+    {
+    }
+}
+CODE;
+
+        $converter = new Converter([
+            new DtoVisitor(new PhpAttributeFilter('Dto')),
+        ]);
+        $result = $converter->convert([$code]);
+        $this->assertMatchesGeneratedTypeScriptApi($result);
+    }
+
     public function testApiClientGenerationWithApiPlatformLegacyResource(): void
     {
         $code = <<<'CODE'

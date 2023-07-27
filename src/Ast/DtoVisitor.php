@@ -108,7 +108,7 @@ class DtoVisitor extends ConverterVisitor
                     $paramType = $param->type;
                     $paramName = $param->var->name;
 
-                    if ($paramType === null && $classMethodComments) {
+                    if ($classMethodComments) {
                         if ($classMethodCommentsParsed === null) {
                             $classMethodCommentsParsed = $this->phpDocTypeParser->parseMethodParams($classMethodComments);
                         }
