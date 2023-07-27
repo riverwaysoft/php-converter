@@ -125,7 +125,7 @@ class DtoVisitor extends ConverterVisitor
                         throw new Exception(sprintf("Property %s#%s has no type. Please add PHP type", $node->name->name, $paramName));
                     }
 
-                    $type = $this->createSingleType($paramType);
+                    $type = $this->createSingleType($paramType, $param->getDocComment()?->getText());
 
                     $properties[] = new DtoClassProperty(
                         type: $type,
