@@ -32,7 +32,7 @@
                         {
                             "name": "FullName",
                             "context": [],
-                            "genericTypes": []
+                            "generics": []
                         },
                         {
                             "name": "null"
@@ -71,7 +71,7 @@
                         {
                             "name": "Profile",
                             "context": [],
-                            "genericTypes": []
+                            "generics": []
                         },
                         {
                             "name": "null"

@@ -27,22 +27,16 @@ class DartOutputGenerator implements OutputGeneratorInterface
 {
     private DartEnumValidator $dartEnumValidator;
 
-    /** @var UnknownTypeResolverInterface[] */
-    private array $unknownTypeResolvers = [];
-
     /** @param UnknownTypeResolverInterface[] $unknownTypeResolvers */
     public function __construct(
         private OutputWriterInterface $outputWriter,
-        array $unknownTypeResolvers = [],
+        private array $unknownTypeResolvers = [],
         private ?OutputFilesProcessor $outputFilesProcessor = null,
         private ?DartClassFactoryGenerator $classFactoryGenerator = null,
         private ?DartEquitableGenerator $equitableGenerator = null,
     ) {
         $this->outputFilesProcessor = $this->outputFilesProcessor ?? new OutputFilesProcessor();
         $this->dartEnumValidator = new DartEnumValidator();
-        $this->unknownTypeResolvers = [
-            ...$unknownTypeResolvers,
-        ];
     }
 
     public function generate(ConverterResult $converterResult): array
@@ -156,8 +150,21 @@ class DartOutputGenerator implements OutputGeneratorInterface
 
     private function handleUnknownType(PhpUnknownType $type, DtoType|null $dto, DtoList $dtoList): string|PhpTypeInterface
     {
-        if ($dto->isGeneric() && $dto->hasGeneric($type)) {
+        if ($type instanceof PhpUnknownType && $dto?->isGeneric() && $dto->hasGeneric($type)) {
             return $type->getName();
+        }
+
+        if ($type instanceof PhpUnknownType && $type->hasGenerics() && $dtoList->hasDtoWithType($type->getName())) {
+            $result = $type->getName();
+
+            $generics = array_map(fn (PhpTypeInterface $innerGeneric) => $this->getDartTypeFromPhp(
+                $innerGeneric,
+                $dto,
+                $dtoList,
+            ), $type->getGenerics());
+
+            $result .= sprintf("<%s>", join(', ', $generics));
+            return $result;
         }
 
         foreach ($this->unknownTypeResolvers as $unknownTypeResolver) {

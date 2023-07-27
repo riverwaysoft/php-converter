@@ -8,12 +8,12 @@ class PhpTypeFactory
 {
     /**
      * @param array<string, mixed> $context
-     * @param PhpTypeInterface[] $genericTypes
+     * @param PhpTypeInterface[] $generics
      */
     public static function create(
         string $typeName,
         array $context = [],
-        array $genericTypes = [],
+        array $generics = [],
     ): PhpBaseType|PhpUnknownType {
         return match ($typeName) {
             'int', => PhpBaseType::int(),
@@ -26,7 +26,7 @@ class PhpTypeFactory
             'iterable', => PhpBaseType::iterable(),
             'null' => PhpBaseType::null(),
             'self' => PhpBaseType::self(),
-            default => new PhpUnknownType($typeName, $context, $genericTypes),
+            default => new PhpUnknownType($typeName, $context, $generics),
         };
     }
 }

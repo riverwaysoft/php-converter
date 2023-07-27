@@ -91,7 +91,7 @@
                         {
                             "name": "FullName",
                             "context": [],
-                            "genericTypes": []
+                            "generics": []
                         },
                         {
                             "name": "null"
@@ -127,7 +127,7 @@
                         {
                             "name": "User",
                             "context": [],
-                            "genericTypes": []
+                            "generics": []
                         },
                         {
                             "name": "null"
@@ -141,7 +141,7 @@
                     "array": {
                         "name": "User",
                         "context": [],
-                        "genericTypes": []
+                        "generics": []
                     }
                 },
                 "name": "friends"
@@ -177,7 +177,7 @@
                 "type": {
                     "name": "PermissionsEnum",
                     "context": [],
-                    "genericTypes": []
+                    "generics": []
                 },
                 "name": "permissions"
             },
@@ -187,7 +187,7 @@
                         {
                             "name": "Profile",
                             "context": [],
-                            "genericTypes": []
+                            "generics": []
                         },
                         {
                             "name": "null"
@@ -246,7 +246,7 @@
                     "array": {
                         "name": "Activity",
                         "context": [],
-                        "genericTypes": []
+                        "generics": []
                     }
                 },
                 "name": "activities"

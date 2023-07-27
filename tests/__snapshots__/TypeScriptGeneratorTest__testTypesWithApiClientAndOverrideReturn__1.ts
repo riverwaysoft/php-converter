@@ -10,9 +10,21 @@ export type UserOutput = {
   id: string;
 };
 
-export const apiRouteWithAnnotationsReturnGet = (): Promise<UserOutput> => {
+export const apiAnnotationsReturnGet = (): Promise<UserOutput> => {
   return axios
-    .get<UserOutput>(`/api/route-with-annotations-return`)
+    .get<UserOutput>(`/api/annotations-return`)
+    .then((response) => response.data);
+}
+
+export const apiRouteWithNestedGenericsAnnotationsReturnGet = (): Promise<JsonResponse<UserOutput>> => {
+  return axios
+    .get<JsonResponse<UserOutput>>(`/api/route-with-nested-generics-annotations-return`)
+    .then((response) => response.data);
+}
+
+export const apiRouteWithNestedGenericsUnionAnnotationsReturnGet = (): Promise<JsonResponse<UserOutput[]>> => {
+  return axios
+    .get<JsonResponse<UserOutput[]>>(`/api/route-with-nested-generics-union-annotations-return`)
     .then((response) => response.data);
 }
 

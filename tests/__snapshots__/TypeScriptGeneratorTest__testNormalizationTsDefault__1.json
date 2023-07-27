@@ -37,7 +37,7 @@
                 "type": {
                     "name": "T",
                     "context": [],
-                    "genericTypes": []
+                    "generics": []
                 },
                 "name": "data"
             }
@@ -46,7 +46,7 @@
             {
                 "name": "T",
                 "context": [],
-                "genericTypes": []
+                "generics": []
             }
         ]
     },

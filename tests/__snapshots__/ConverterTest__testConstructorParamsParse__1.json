@@ -38,7 +38,7 @@
                         {
                             "name": "FullName",
                             "context": [],
-                            "genericTypes": []
+                            "generics": []
                         },
                         {
                             "name": "null"

@@ -19,7 +19,6 @@ use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeInterface;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnionType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
 use Riverwaysoft\PhpConverter\OutputGenerator\OutputGeneratorInterface;
-use Riverwaysoft\PhpConverter\OutputGenerator\UnknownTypeResolver\GenericTypeResolver;
 use Riverwaysoft\PhpConverter\OutputGenerator\UnknownTypeResolver\UnknownTypeResolverInterface;
 use Riverwaysoft\PhpConverter\OutputGenerator\UnsupportedTypeException;
 use Riverwaysoft\PhpConverter\OutputWriter\OutputFile;
@@ -43,22 +42,15 @@ class TypeScriptOutputGenerator implements OutputGeneratorInterface
 {
     private TypeScriptGeneratorOptions $options;
 
-    /** @var UnknownTypeResolverInterface[] */
-    private array $unknownTypeResolvers = [];
-
     /** @param UnknownTypeResolverInterface[] $unknownTypeResolvers */
     public function __construct(
         private OutputWriterInterface $outputWriter,
-        array $unknownTypeResolvers = [],
+        private array $unknownTypeResolvers = [],
         private ?OutputFilesProcessor $outputFilesProcessor = null,
         ?TypeScriptGeneratorOptions $options = null,
     ) {
         $this->options = $options ?? new TypeScriptGeneratorOptions(useTypesInsteadOfEnums: false);
         $this->outputFilesProcessor = $this->outputFilesProcessor ?? new OutputFilesProcessor();
-        $this->unknownTypeResolvers = [
-            new GenericTypeResolver(),
-            ...$unknownTypeResolvers,
-        ];
     }
 
     /** @return OutputFile[] */
@@ -91,7 +83,6 @@ class TypeScriptOutputGenerator implements OutputGeneratorInterface
             $apiEndpoint->routeParams,
         );
 
-        $inputType = null;
         if ($apiEndpoint->input) {
             $inputType = $this->getTypeScriptTypeFromPhp($apiEndpoint->input->type, null, $dtoList);
             $params = array_merge($params, ["{$apiEndpoint->input->name}: {$inputType}"]);
@@ -239,10 +230,9 @@ class TypeScriptOutputGenerator implements OutputGeneratorInterface
 
         if ($type instanceof PhpListType) {
             $listType = $this->getTypeScriptTypeFromPhp($type->getType(), $dto, $dtoList);
-            if ($type->getType() instanceof PhpUnionType) {
-                return sprintf('(%s)[]', $listType);
-            }
-            return sprintf('%s[]', $listType);
+            return $type->getType() instanceof PhpUnionType
+                ? sprintf('(%s)[]', $listType)
+                : sprintf('%s[]', $listType);
         }
 
         if ($type instanceof PhpOptionalType) {
@@ -261,6 +251,23 @@ class TypeScriptOutputGenerator implements OutputGeneratorInterface
                 $type->equalsTo(PhpBaseType::self()) => $dto->getName(),
                 default => throw new Exception(sprintf("Unknown base PHP type: %s", $type->jsonSerialize()))
             };
+        }
+
+        if ($type instanceof PhpUnknownType && $dto?->isGeneric() && $dto->hasGeneric($type)) {
+            return $type->getName();
+        }
+
+        if ($type instanceof PhpUnknownType && $type->hasGenerics() && $dtoList->hasDtoWithType($type->getName())) {
+            $result = $type->getName();
+
+            $generics = array_map(fn (PhpTypeInterface $innerGeneric) => $this->getTypeScriptTypeFromPhp(
+                $innerGeneric,
+                $dto,
+                $dtoList,
+            ), $type->getGenerics());
+
+            $result .= sprintf("<%s>", join(', ', $generics));
+            return $result;
         }
 
         /** @var PhpUnknownType $type */

@@ -8,12 +8,12 @@ class PhpUnknownType implements PhpTypeInterface
 {
     /**
      * @param array<string, mixed> $context
-     * @param PhpTypeInterface[] $genericTypes,
+     * @param PhpTypeInterface[] $generics,
      */
     public function __construct(
         private string $name,
         private array $context = [],
-        private array $genericTypes = [],
+        private array $generics = [],
     ) {
     }
 
@@ -33,13 +33,18 @@ class PhpUnknownType implements PhpTypeInterface
         return [
             'name' => $this->name,
             'context' => $this->context,
-            'genericTypes' => $this->genericTypes,
+            'generics' => $this->generics,
         ];
     }
 
     /** @return PhpTypeInterface[] */
-    public function getGenericTypes(): array
+    public function getGenerics(): array
     {
-        return $this->genericTypes;
+        return $this->generics;
+    }
+
+    public function hasGenerics(): bool
+    {
+        return count($this->generics) > 0;
     }
 }

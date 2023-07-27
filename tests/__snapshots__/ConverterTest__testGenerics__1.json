@@ -10,7 +10,7 @@
                     "array": {
                         "name": "T",
                         "context": [],
-                        "genericTypes": []
+                        "generics": []
                     }
                 },
                 "name": "array"
@@ -19,7 +19,7 @@
                 "type": {
                     "name": "T",
                     "context": [],
-                    "genericTypes": []
+                    "generics": []
                 },
                 "name": "one"
             }
@@ -28,7 +28,7 @@
             {
                 "name": "T",
                 "context": [],
-                "genericTypes": []
+                "generics": []
             }
         ]
     },
@@ -42,7 +42,7 @@
                 "type": {
                     "name": "T",
                     "context": [],
-                    "genericTypes": []
+                    "generics": []
                 },
                 "name": "data"
             }
@@ -51,7 +51,7 @@
             {
                 "name": "T",
                 "context": [],
-                "genericTypes": []
+                "generics": []
             }
         ]
     }
