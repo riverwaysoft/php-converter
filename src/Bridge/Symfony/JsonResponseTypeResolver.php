@@ -9,6 +9,7 @@ use Riverwaysoft\PhpConverter\Dto\DtoType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeInterface;
 use Riverwaysoft\PhpConverter\OutputGenerator\UnknownTypeResolver\UnknownTypeResolverInterface;
+use Exception;
 
 class JsonResponseTypeResolver implements UnknownTypeResolverInterface
 {
@@ -20,7 +21,7 @@ class JsonResponseTypeResolver implements UnknownTypeResolverInterface
     public function resolve(PhpUnknownType $type, DtoType|null $dto, DtoList $dtoList): string|PhpTypeInterface
     {
         if (!$type->hasGenerics()) {
-            throw new \Exception(sprintf('Should not be reached. Type %s is expected to be generic', $type->getName()));
+            throw new Exception(sprintf('Should not be reached. Type %s is expected to be generic', $type->getName()));
         }
 
         return $type->getGenerics()[0];
