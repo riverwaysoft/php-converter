@@ -59,18 +59,31 @@ class PhpDocTypeParser
             }
 
             $convertedType = $this->convertToDto($node->value->type);
-            $isParameterNameValid = str_starts_with($node->value->parameterName, '$') && mb_strlen($node->value->parameterName) > 1;
-            if ($convertedType === null || !$isParameterNameValid) {
+            if (!$convertedType) {
+                continue;
+            }
+
+            $variableName = $this->getVariableNameWithoutDollarSign($node->value);
+            if (!$variableName) {
                 continue;
             }
 
             $results[] = new DtoClassProperty(
                 type: $convertedType,
-                name: ltrim($node->value->parameterName, '$')
+                name: $variableName,
             );
         }
 
         return $results;
+    }
+
+    private function getVariableNameWithoutDollarSign(ParamTagValueNode $nodeValue): string|null
+    {
+        $isParameterNameValid = str_starts_with($nodeValue->parameterName, '$') && mb_strlen($nodeValue->parameterName) > 1;
+        if (!$isParameterNameValid) {
+            return null;
+        }
+        return ltrim($nodeValue->parameterName, '$');
     }
 
     /** @return PhpUnknownType[]  */

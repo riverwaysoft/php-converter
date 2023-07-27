@@ -10,9 +10,25 @@ export type UserOutput = {
   id: string;
 };
 
+export type UserShortOutput = {
+  id: string;
+};
+
 export const apiAnnotationsReturnGet = (): Promise<UserOutput> => {
   return axios
     .get<UserOutput>(`/api/annotations-return`)
+    .then((response) => response.data);
+}
+
+export const apiAnnotationsReturnPrecedenceGet = (): Promise<UserOutput> => {
+  return axios
+    .get<UserOutput>(`/api/annotations-return-precedence`)
+    .then((response) => response.data);
+}
+
+export const apiNestedGenericsSimpleTypeGet = (): Promise<JsonResponse<string[]>> => {
+  return axios
+    .get<JsonResponse<string[]>>(`/api/nested-generics-simple-type`)
     .then((response) => response.data);
 }
 

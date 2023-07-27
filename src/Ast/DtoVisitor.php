@@ -179,13 +179,11 @@ class DtoVisitor extends ConverterVisitor
         }
 
         if ($param instanceof Node\UnionType) {
-            // TODO: remove doc comment?
-            return new PhpUnionType(array_map(fn ($singleParam) => $this->createSingleType($singleParam, $docComment), $param->types));
+            return new PhpUnionType(array_map(fn ($singleParam) => $this->createSingleType($singleParam), $param->types));
         }
 
         if ($param instanceof Node\NullableType) {
-            // TODO: remove doc comment?
-            return PhpUnionType::nullable($this->createSingleType($param->type, $docComment));
+            return PhpUnionType::nullable($this->createSingleType($param->type));
         }
 
         $typeName = get_class($param) === Node\Name::class || get_class($param) === Node\Name\FullyQualified::class

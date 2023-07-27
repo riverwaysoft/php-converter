@@ -641,11 +641,23 @@ class UserOutput {
     }
 }
 
+#[Dto]
+class UserShortOutput {
+    public function __construct(public string $id)
+    {
+    }
+}
+
 class UserController {
    /** @return UserOutput */
   #[DtoEndpoint()]
   #[Route(name: '/api/annotations-return', methods: ['GET'])]
   public function annotationsReturn() {}
+  
+  /** @return UserOutput */
+  #[DtoEndpoint(returnOne: UserShortOutput::class)]
+  #[Route(name: '/api/annotations-return-precedence', methods: ['GET'])]
+  public function annotationsReturnTakePrecedenceOverDtoEndpoint() {}
   
   /** @return JsonResponse<UserOutput> */
   #[DtoEndpoint()]
@@ -656,6 +668,11 @@ class UserController {
   #[DtoEndpoint()]
   #[Route(name: '/api/route-with-nested-generics-union-annotations-return', methods: ['GET'])]
   public function nestedGenericAnnotationUnionReturn() {}
+  
+    /** @return JsonResponse<string[]> */
+  #[DtoEndpoint()]
+  #[Route(name: '/api/nested-generics-simple-type', methods: ['GET'])]
+  public function nestedGenericsSimpleType() {}
 }
 CODE;
 
@@ -664,7 +681,7 @@ CODE;
             new SymfonyControllerVisitor('DtoEndpoint'),
         ]);
         $result = $converter->convert([$codeWithDateTime]);
-        $this->assertCount(3, $result->apiEndpointList->getList());
+        $this->assertCount(5, $result->apiEndpointList->getList());
         $this->assertMatchesGeneratedTypeScriptApi($result);
     }
 
