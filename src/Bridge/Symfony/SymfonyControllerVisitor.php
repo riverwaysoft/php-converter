@@ -10,6 +10,7 @@ use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\NodeTraverser;
 use Riverwaysoft\PhpConverter\Ast\ConverterResult;
 use Riverwaysoft\PhpConverter\Ast\ConverterVisitor;
+use Riverwaysoft\PhpConverter\Ast\PhpDocTypeParser;
 use Riverwaysoft\PhpConverter\Dto\ApiClient\ApiEndpoint;
 use Riverwaysoft\PhpConverter\Dto\ApiClient\ApiEndpointMethod;
 use Riverwaysoft\PhpConverter\Dto\ApiClient\ApiEndpointParam;
@@ -29,11 +30,14 @@ class SymfonyControllerVisitor extends ConverterVisitor
 {
     private ConverterResult $converterResult;
 
+    private PhpDocTypeParser $phpDocTypeParser;
+
     public function __construct(
         // TODO: consider using class filter interface?
         private string $attribute,
     ) {
         $this->converterResult = new ConverterResult();
+        $this->phpDocTypeParser = new PhpDocTypeParser();
     }
 
     public function enterNode(Node $node)
@@ -132,17 +136,23 @@ class SymfonyControllerVisitor extends ConverterVisitor
         }
 
         $outputType = PhpBaseType::null();
-        if ($arg = $this->getAttributeArgumentByName($dtoReturnAttribute, 'returnOne')) {
-            if (!($arg->value instanceof Node\Expr\ClassConstFetch)) {
-                throw new Exception('Argument of returnOne should be a class string');
+        $methodComment = $node->getDocComment()?->getText();
+
+        if ($methodComment && $returnType = $this->phpDocTypeParser->parseVarOrReturn($methodComment)) {
+            $outputType = $returnType;
+        } else {
+            if ($arg = $this->getAttributeArgumentByName($dtoReturnAttribute, 'returnOne')) {
+                if (!($arg->value instanceof Node\Expr\ClassConstFetch)) {
+                    throw new Exception('Argument of returnOne should be a class string');
+                }
+                $outputType = PhpTypeFactory::create($arg->value->class->getParts()[0]);
             }
-            $outputType = PhpTypeFactory::create($arg->value->class->getParts()[0]);
-        }
-        if ($arg = $this->getAttributeArgumentByName($dtoReturnAttribute, 'returnMany')) {
-            if (!($arg->value instanceof Node\Expr\ClassConstFetch)) {
-                throw new Exception('Argument of returnMany should be a class string');
+            if ($arg = $this->getAttributeArgumentByName($dtoReturnAttribute, 'returnMany')) {
+                if (!($arg->value instanceof Node\Expr\ClassConstFetch)) {
+                    throw new Exception('Argument of returnMany should be a class string');
+                }
+                $outputType = new PhpListType(PhpTypeFactory::create($arg->value->class->getParts()[0]));
             }
-            $outputType = new PhpListType(PhpTypeFactory::create($arg->value->class->getParts()[0]));
         }
 
         $inputParam = null;

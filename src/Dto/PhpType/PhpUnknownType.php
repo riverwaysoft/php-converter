@@ -6,10 +6,14 @@ namespace Riverwaysoft\PhpConverter\Dto\PhpType;
 
 class PhpUnknownType implements PhpTypeInterface
 {
-    /** @param array<string, mixed> $context */
+    /**
+     * @param array<string, mixed> $context
+     * @param PhpTypeInterface[] $generics,
+     */
     public function __construct(
         private string $name,
-        private array $context = []
+        private array $context = [],
+        private array $generics = [],
     ) {
     }
 
@@ -29,6 +33,18 @@ class PhpUnknownType implements PhpTypeInterface
         return [
             'name' => $this->name,
             'context' => $this->context,
+            'generics' => $this->generics,
         ];
+    }
+
+    /** @return PhpTypeInterface[] */
+    public function getGenerics(): array
+    {
+        return $this->generics;
+    }
+
+    public function hasGenerics(): bool
+    {
+        return count($this->generics) > 0;
     }
 }

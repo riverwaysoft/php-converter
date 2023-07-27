@@ -67,6 +67,18 @@ class User
     public ColorEnum $themeColor;
     public string|int $stringOrInteger;
 }
+
+/**
+* @template T
+ */
+class Response {
+    /**
+    * @param T $data
+    */
+    public function __construct(
+        public $data,
+    ) {}
+}
 CODE;
 
         $normalized = (new Converter([new DtoVisitor()]))->convert([$codeDart]);

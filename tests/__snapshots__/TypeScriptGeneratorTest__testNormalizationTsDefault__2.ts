@@ -5,6 +5,10 @@ export type CloudNotify = {
   fcmToken: string | null;
 };
 
+export type Response<T> = {
+  data: T;
+};
+
 export type UserCreate = {
   achievements: string[];
   matrix: number[][];

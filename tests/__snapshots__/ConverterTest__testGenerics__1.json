@@ -1,0 +1,58 @@
+[
+    {
+        "name": "PaginatedResponse1",
+        "expressionType": {
+            "type": "class"
+        },
+        "properties": [
+            {
+                "type": {
+                    "array": {
+                        "name": "T",
+                        "context": [],
+                        "generics": []
+                    }
+                },
+                "name": "array"
+            },
+            {
+                "type": {
+                    "name": "T",
+                    "context": [],
+                    "generics": []
+                },
+                "name": "one"
+            }
+        ],
+        "generics": [
+            {
+                "name": "T",
+                "context": [],
+                "generics": []
+            }
+        ]
+    },
+    {
+        "name": "PaginatedResponse2",
+        "expressionType": {
+            "type": "class"
+        },
+        "properties": [
+            {
+                "type": {
+                    "name": "T",
+                    "context": [],
+                    "generics": []
+                },
+                "name": "data"
+            }
+        ],
+        "generics": [
+            {
+                "name": "T",
+                "context": [],
+                "generics": []
+            }
+        ]
+    }
+]

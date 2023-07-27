@@ -6,6 +6,7 @@ namespace Riverwaysoft\PhpConverter\Ast;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Riverwaysoft\PhpConverter\Dto\DtoClassProperty;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpBaseType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpListType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeInterface;
@@ -15,16 +16,71 @@ use function sprintf;
 
 class PhpDocTypeParserTest extends TestCase
 {
-    #[DataProvider('getData')]
+    #[DataProvider('getDataVarAndReturn')]
     public function testBasicScenario(string $explanation, string $input, PhpTypeInterface|null $expected): void
     {
         $parser = new PhpDocTypeParser();
-        $result = $parser->parse($input);
+        $result = $parser->parseVarOrReturn($input);
         $this->assertEquals($result, $expected, sprintf("Assert failed. Data row: '%s'", $explanation));
     }
 
+    /**
+     * @param PhpTypeInterface[] $expected
+     */
+    #[DataProvider('getDataParamTags')]
+    public function testMethodParams(string $explanation, string $input, array $expected): void
+    {
+        $parser = new PhpDocTypeParser();
+        $result = $parser->parseMethodParams($input);
+        $this->assertEquals($result, $expected, sprintf("Assert failed. Data row: '%s'", $explanation));
+    }
+
+    public function testClassComments(): void
+    {
+        $parser = new PhpDocTypeParser();
+        $input = "/**
+         * @template K The key type
+         * @template V The input value type
+         * @template V2 The output value type
+         */";
+        $result = $parser->parseClassComments($input);
+        $this->assertEquals($result, [
+            new PhpUnknownType('K'),
+            new PhpUnknownType('V'),
+            new PhpUnknownType('V2'),
+        ]);
+    }
+
+    /** @return array{string, string, DtoClassProperty[]}[] */
+    public static function getDataParamTags(): array
+    {
+        return [
+            [
+                'generic properties',
+                "/**
+    * @param T[] \$array 
+    * @param T \$one 
+    */",
+                [
+                    new DtoClassProperty(new PhpListType(new PhpUnknownType('T')), 'array'),
+                    new DtoClassProperty(new PhpUnknownType('T'), 'one'),
+                ],
+            ],
+            [
+                'properties without variable name',
+                "/** @param string test */",
+                [],
+            ],
+            [
+                'properties without variable name',
+                "/** @param */",
+                [],
+            ],
+        ];
+    }
+
     /** @return array{string, string, PhpTypeInterface|null}[] */
-    public static function getData(): array
+    public static function getDataVarAndReturn(): array
     {
         return [
             [
@@ -87,10 +143,12 @@ class PhpDocTypeParserTest extends TestCase
             [
                 'array with union inside',
                 '/** @var (int|string)[] */',
-                new PhpListType(new PhpUnionType([
-                    PhpBaseType::int(),
-                    PhpBaseType::string(),
-                ]), ),
+                new PhpListType(
+                    new PhpUnionType([
+                        PhpBaseType::int(),
+                        PhpBaseType::string(),
+                    ]),
+                ),
             ],
             [
                 '@var is required',
@@ -109,6 +167,17 @@ class PhpDocTypeParserTest extends TestCase
                   *  @var int
                  */',
                 PhpBaseType::int(),
+            ],
+            [
+                'return generics',
+                '/**
+                  * @return JsonResponse<PaginatedResponse<User>>
+                  */',
+                new PhpUnknownType('JsonResponse', [], [
+                    new PhpUnknownType('PaginatedResponse', [], [
+                        new PhpUnknownType('User'),
+                    ]),
+                ]),
             ],
         ];
     }

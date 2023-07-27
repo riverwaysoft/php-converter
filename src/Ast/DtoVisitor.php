@@ -17,6 +17,7 @@ use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeFactory;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeInterface;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnionType;
 use Exception;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
 use function sprintf;
 use function get_class;
 use function array_map;
@@ -52,6 +53,7 @@ class DtoVisitor extends ConverterVisitor
     {
         $properties = [];
         $expressionType = $this->resolveExpressionType($node);
+        $classComments = $node->getDocComment()?->getText();
 
         foreach ($node->stmts as $stmt) {
             if ($stmt instanceof Node\Stmt\ClassConst) {
@@ -72,11 +74,21 @@ class DtoVisitor extends ConverterVisitor
             }
 
             if ($stmt instanceof Node\Stmt\Property) {
-                if ($stmt->type === null) {
-                    throw new Exception(sprintf("Property %s of class %s has no type. Please add PHP type", $stmt->props[0]->name->name, $node->name->name));
+                $comment = $stmt->getDocComment()?->getText() ?? '';
+
+                /** @var PhpTypeInterface|null $docBlockType */
+                $docBlockType = null;
+                $nativeType = $stmt->type;
+
+                if ($comment) {
+                    $docBlockType = $this->phpDocTypeParser->parseVarOrReturn($comment);
                 }
 
-                $type = $this->createSingleType($stmt->type, $stmt->getDocComment()?->getText());
+                if (!$nativeType && !$docBlockType) {
+                    throw new Exception(sprintf("Property %s#%s has no type. Please add PHP type", $node->name->name, $stmt->props[0]->name->name));
+                }
+
+                $type = $docBlockType ?? $this->createSingleType($nativeType);
 
                 $properties[] = new DtoClassProperty(
                     type: $type,
@@ -85,19 +97,39 @@ class DtoVisitor extends ConverterVisitor
             }
 
             if ($stmt instanceof Node\Stmt\ClassMethod) {
+                $classMethodComments = $stmt->getDocComment()?->getText();
+                /** @var DtoClassProperty[]|null $classMethodCommentsParsed */
+                $classMethodCommentsParsed = null;
                 foreach ($stmt->params as $param) {
                     if ($param->flags !== Node\Stmt\Class_::MODIFIER_PUBLIC) {
                         continue;
                     }
 
-                    if ($param->type === null) {
-                        throw new Exception(sprintf("Property %s of class %s has no type. Please add PHP type", $param->var->name, $node->name->name));
+                    $paramType = $param->type;
+                    $paramName = $param->var->name;
+
+                    if ($paramType === null && $classMethodComments) {
+                        if ($classMethodCommentsParsed === null) {
+                            $classMethodCommentsParsed = $this->phpDocTypeParser->parseMethodParams($classMethodComments);
+                        }
+
+                        foreach ($classMethodCommentsParsed as $classMethodCommentParsed) {
+                            if ($classMethodCommentParsed->getName() === $paramName) {
+                                $properties[] = $classMethodCommentParsed;
+                                continue 2;
+                            }
+                        }
                     }
-                    $type = $this->createSingleType($param->type, $param->getDocComment()?->getText());
+
+                    if ($paramType === null) {
+                        throw new Exception(sprintf("Property %s#%s has no type. Please add PHP type", $node->name->name, $paramName));
+                    }
+
+                    $type = $this->createSingleType($paramType, $param->getDocComment()?->getText());
 
                     $properties[] = new DtoClassProperty(
                         type: $type,
-                        name: $param->var->name,
+                        name: $paramName,
                     );
                 }
             }
@@ -121,10 +153,17 @@ class DtoVisitor extends ConverterVisitor
             );
         }
 
+        /** @var PhpUnknownType[] $generics */
+        $generics = [];
+        if ($classComments) {
+            $generics = $this->phpDocTypeParser->parseClassComments($classComments);
+        }
+
         $this->converterResult->dtoList->add(new DtoType(
             name: $node->name->name,
             expressionType: $expressionType,
             properties: $properties,
+            generics: $generics,
         ));
     }
 
@@ -133,18 +172,18 @@ class DtoVisitor extends ConverterVisitor
         ?string $docComment = null,
     ): PhpTypeInterface {
         if ($docComment) {
-            $docBlockType = $this->phpDocTypeParser->parse($docComment);
+            $docBlockType = $this->phpDocTypeParser->parseVarOrReturn($docComment);
             if ($docBlockType) {
                 return $docBlockType;
             }
         }
 
         if ($param instanceof Node\UnionType) {
-            return new PhpUnionType(array_map(fn ($singleParam) => $this->createSingleType($singleParam, $docComment), $param->types));
+            return new PhpUnionType(array_map(fn ($singleParam) => $this->createSingleType($singleParam), $param->types));
         }
 
         if ($param instanceof Node\NullableType) {
-            return PhpUnionType::nullable($this->createSingleType($param->type, $docComment));
+            return PhpUnionType::nullable($this->createSingleType($param->type));
         }
 
         $typeName = get_class($param) === Node\Name::class || get_class($param) === Node\Name\FullyQualified::class

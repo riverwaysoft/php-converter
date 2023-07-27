@@ -8,7 +8,8 @@
             "output": {
                 "array": {
                     "name": "User",
-                    "context": []
+                    "context": [],
+                    "generics": []
                 }
             },
             "queryParams": []
@@ -21,12 +22,14 @@
                 "name": "input",
                 "type": {
                     "name": "CreateUserInput",
-                    "context": []
+                    "context": [],
+                    "generics": []
                 }
             },
             "output": {
                 "name": "User",
-                "context": []
+                "context": [],
+                "generics": []
             },
             "queryParams": []
         },
@@ -44,7 +47,8 @@
             "input": null,
             "output": {
                 "name": "User",
-                "context": []
+                "context": [],
+                "generics": []
             },
             "queryParams": []
         },
@@ -55,7 +59,8 @@
             "input": null,
             "output": {
                 "name": "User",
-                "context": []
+                "context": [],
+                "generics": []
             },
             "queryParams": []
         },
@@ -67,7 +72,8 @@
             "output": {
                 "array": {
                     "name": "User",
-                    "context": []
+                    "context": [],
+                    "generics": []
                 }
             },
             "queryParams": []

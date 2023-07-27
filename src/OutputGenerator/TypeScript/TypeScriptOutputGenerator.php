@@ -42,9 +42,9 @@ class TypeScriptOutputGenerator implements OutputGeneratorInterface
 {
     private TypeScriptGeneratorOptions $options;
 
+    /** @param UnknownTypeResolverInterface[] $unknownTypeResolvers */
     public function __construct(
         private OutputWriterInterface $outputWriter,
-        /** @var UnknownTypeResolverInterface[] $unknownTypeResolvers */
         private array $unknownTypeResolvers = [],
         private ?OutputFilesProcessor $outputFilesProcessor = null,
         ?TypeScriptGeneratorOptions $options = null,
@@ -83,7 +83,6 @@ class TypeScriptOutputGenerator implements OutputGeneratorInterface
             $apiEndpoint->routeParams,
         );
 
-        $inputType = null;
         if ($apiEndpoint->input) {
             $inputType = $this->getTypeScriptTypeFromPhp($apiEndpoint->input->type, null, $dtoList);
             $params = array_merge($params, ["{$apiEndpoint->input->name}: {$inputType}"]);
@@ -142,7 +141,12 @@ class TypeScriptOutputGenerator implements OutputGeneratorInterface
     private function convertToTypeScriptType(DtoType $dto, DtoList $dtoList): string
     {
         if ($dto->getExpressionType()->equals(ExpressionType::class())) {
-            return sprintf("export type %s = {%s\n};", $dto->getName(), $this->convertToTypeScriptProperties($dto, $dtoList));
+            $typeName = $dto->getName();
+            if ($dto->isGeneric()) {
+                $generics = array_map(fn (PhpUnknownType $generic) => $generic->getName(), $dto->getGenerics());
+                $typeName .= sprintf("<%s>", join(', ', $generics));
+            }
+            return sprintf("export type %s = {%s\n};", $typeName, $this->convertToTypeScriptProperties($dto, $dtoList));
         }
         if ($dto->getExpressionType()->isAnyEnum()) {
             if ($this->shouldEnumBeConverterToUnion($dto)) {
@@ -226,10 +230,9 @@ class TypeScriptOutputGenerator implements OutputGeneratorInterface
 
         if ($type instanceof PhpListType) {
             $listType = $this->getTypeScriptTypeFromPhp($type->getType(), $dto, $dtoList);
-            if ($type->getType() instanceof PhpUnionType) {
-                return sprintf('(%s)[]', $listType);
-            }
-            return sprintf('%s[]', $listType);
+            return $type->getType() instanceof PhpUnionType
+                ? sprintf('(%s)[]', $listType)
+                : sprintf('%s[]', $listType);
         }
 
         if ($type instanceof PhpOptionalType) {
@@ -248,6 +251,23 @@ class TypeScriptOutputGenerator implements OutputGeneratorInterface
                 $type->equalsTo(PhpBaseType::self()) => $dto->getName(),
                 default => throw new Exception(sprintf("Unknown base PHP type: %s", $type->jsonSerialize()))
             };
+        }
+
+        if ($type instanceof PhpUnknownType && $dto?->isGeneric() && $dto->hasGeneric($type)) {
+            return $type->getName();
+        }
+
+        if ($type instanceof PhpUnknownType && $type->hasGenerics() && $dtoList->hasDtoWithType($type->getName())) {
+            $result = $type->getName();
+
+            $generics = array_map(fn (PhpTypeInterface $innerGeneric) => $this->getTypeScriptTypeFromPhp(
+                $innerGeneric,
+                $dto,
+                $dtoList,
+            ), $type->getGenerics());
+
+            $result .= sprintf("<%s>", join(', ', $generics));
+            return $result;
         }
 
         /** @var PhpUnknownType $type */

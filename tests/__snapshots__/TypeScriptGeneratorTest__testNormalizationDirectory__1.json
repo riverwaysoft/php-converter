@@ -17,7 +17,8 @@
                 },
                 "name": "createdAt"
             }
-        ]
+        ],
+        "generics": []
     },
     {
         "name": "FullName",
@@ -37,7 +38,8 @@
                 },
                 "name": "lastName"
             }
-        ]
+        ],
+        "generics": []
     },
     {
         "name": "NumberEnum",
@@ -57,7 +59,8 @@
                 "name": "CREATE",
                 "value": 2
             }
-        ]
+        ],
+        "generics": []
     },
     {
         "name": "PermissionsEnum",
@@ -73,7 +76,8 @@
                 "name": "EDIT",
                 "value": "edit"
             }
-        ]
+        ],
+        "generics": []
     },
     {
         "name": "Profile",
@@ -86,7 +90,8 @@
                     "types": [
                         {
                             "name": "FullName",
-                            "context": []
+                            "context": [],
+                            "generics": []
                         },
                         {
                             "name": "null"
@@ -101,7 +106,8 @@
                 },
                 "name": "age"
             }
-        ]
+        ],
+        "generics": []
     },
     {
         "name": "User",
@@ -120,7 +126,8 @@
                     "types": [
                         {
                             "name": "User",
-                            "context": []
+                            "context": [],
+                            "generics": []
                         },
                         {
                             "name": "null"
@@ -133,7 +140,8 @@
                 "type": {
                     "array": {
                         "name": "User",
-                        "context": []
+                        "context": [],
+                        "generics": []
                     }
                 },
                 "name": "friends"
@@ -150,7 +158,8 @@
                 },
                 "name": "selfConstructor"
             }
-        ]
+        ],
+        "generics": []
     },
     {
         "name": "UserCreate",
@@ -167,7 +176,8 @@
             {
                 "type": {
                     "name": "PermissionsEnum",
-                    "context": []
+                    "context": [],
+                    "generics": []
                 },
                 "name": "permissions"
             },
@@ -176,7 +186,8 @@
                     "types": [
                         {
                             "name": "Profile",
-                            "context": []
+                            "context": [],
+                            "generics": []
                         },
                         {
                             "name": "null"
@@ -234,7 +245,8 @@
                 "type": {
                     "array": {
                         "name": "Activity",
-                        "context": []
+                        "context": [],
+                        "generics": []
                     }
                 },
                 "name": "activities"
@@ -258,6 +270,7 @@
                 },
                 "name": "isApproved"
             }
-        ]
+        ],
+        "generics": []
     }
 ]

@@ -24,6 +24,30 @@
                 },
                 "name": "fcmToken"
             }
+        ],
+        "generics": []
+    },
+    {
+        "name": "Response",
+        "expressionType": {
+            "type": "class"
+        },
+        "properties": [
+            {
+                "type": {
+                    "name": "T",
+                    "context": [],
+                    "generics": []
+                },
+                "name": "data"
+            }
+        ],
+        "generics": [
+            {
+                "name": "T",
+                "context": [],
+                "generics": []
+            }
         ]
     },
     {
@@ -126,6 +150,7 @@
                 },
                 "name": "mixed"
             }
-        ]
+        ],
+        "generics": []
     }
 ]

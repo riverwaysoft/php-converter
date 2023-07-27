@@ -1,0 +1,22 @@
+<?php
+
+namespace Symfony\Component\HttpFoundation;
+
+/**
+ * @template T
+ */
+class JsonResponse
+{
+    /** @var T $data */
+    protected $data;
+
+    /**
+     * @param T $data
+     * @param int $status
+     * @param mixed[] $headers
+     * @param bool $json
+     */
+    public function __construct(mixed $data = null, int $status = 200, array $headers = [], bool $json = false)
+    {
+    }
+}
