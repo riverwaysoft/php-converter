@@ -6,14 +6,17 @@ namespace Riverwaysoft\PhpConverter\Dto\PhpType;
 
 class PhpUnknownType implements PhpTypeInterface
 {
+    // The constant is going to be used until this feature is implemented: https://github.com/riverwaysoft/php-converter/issues/36
+    public const GENERIC_IGNORE_NO_RESOLVER = 'GENERIC_IGNORE_NO_RESOLVER';
+
     /**
      * @param array<string, mixed> $context
-     * @param PhpTypeInterface[] $generics,
+     * @param PhpTypeInterface[] $generics
      */
     public function __construct(
         private string $name,
-        private array $context = [],
         private array $generics = [],
+        private array $context = [],
     ) {
     }
 

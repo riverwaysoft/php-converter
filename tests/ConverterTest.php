@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\Tests;
 
+use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Riverwaysoft\PhpConverter\Ast\Converter;
 use Riverwaysoft\PhpConverter\Ast\DtoVisitor;
 use Riverwaysoft\PhpConverter\Bridge\Symfony\SymfonyControllerVisitor;
-use Riverwaysoft\PhpConverter\ClassFilter\DocBlockCommentFilter;
-use Riverwaysoft\PhpConverter\ClassFilter\NotFilter;
-use Riverwaysoft\PhpConverter\ClassFilter\PhpAttributeFilter;
+use Riverwaysoft\PhpConverter\Filter\Combinators\NotFilter;
+use Riverwaysoft\PhpConverter\Filter\DocBlockFilter;
+use Riverwaysoft\PhpConverter\Filter\PhpAttributeFilter;
 use Spatie\Snapshots\MatchesSnapshots;
-use Generator;
 
 class ConverterTest extends TestCase
 {
@@ -165,7 +165,7 @@ class User
 
 CODE;
 
-        $converter = new Converter([new DtoVisitor(new DocBlockCommentFilter('@DTO'))]);
+        $converter = new Converter([new DtoVisitor(new DocBlockFilter('@DTO'))]);
         $result = $converter->convert([$codeWithDateTime]);
 
         $this->assertTrue($result->dtoList->hasDtoWithType('User'));
@@ -221,7 +221,7 @@ class User
 
 CODE;
 
-        $classesWithoutIgnoreFilter = new NotFilter(new DocBlockCommentFilter('@ignore'));
+        $classesWithoutIgnoreFilter = new NotFilter(new DocBlockFilter('@ignore'));
         $converter = new Converter([new DtoVisitor($classesWithoutIgnoreFilter)]);
         $result = $converter->convert([$codeWithDateTime]);
 
@@ -237,7 +237,7 @@ CODE;
         $codeWithDateTime = <<<'CODE'
 <?php
 
-use \Riverwaysoft\PhpConverter\ClassFilter\DtoEndpoint;
+use Riverwaysoft\PhpConverter\Filter\Attributes\DtoEndpoint;
 
 #[\Attribute(\Attribute::TARGET_CLASS)]
 class Dto
@@ -306,25 +306,30 @@ class CreateUserInput {
 }
 
 class SomeController {
-  #[DtoEndpoint(returnMany: User::class)]
+  /** @return User[] */
+  #[DtoEndpoint()]
   #[Route('/api/users', methods: ['GET'])]
   public function getUserMethodsArray() {}
   
-  #[DtoEndpoint(returnOne: User::class)]
+  /** @return User */
+  #[DtoEndpoint()]
   #[Route('/api/users', methods: ['POST'])]
   public function createUser(
     #[Input] CreateUserInput $input,
   ) {}
   
-  #[DtoEndpoint(returnOne: User::class)]
+  /** @return User */
+  #[DtoEndpoint()]
   #[Route('/api/users/{id}', methods: ['GET'])]
   public function getUser(User $id) {}
   
+  /** @return User[] */
   #[Route('/api/users_reversed_order', methods: ['GET'])]
-  #[DtoEndpoint(returnMany: User::class)]
+  #[DtoEndpoint()]
   public function getUserMethodsArrayReversedOrder() {}
 
-  #[DtoEndpoint(returnOne: User::class)]
+  /** @return User */
+  #[DtoEndpoint()]
   #[Route('/api/users_methods_string', methods: 'GET')]
   public function getUserMethodsString() {}
 }
@@ -332,7 +337,7 @@ CODE;
 
         $converter = new Converter([
             new DtoVisitor(new PhpAttributeFilter('Dto')),
-            new SymfonyControllerVisitor('DtoEndpoint'),
+            new SymfonyControllerVisitor(new PhpAttributeFilter('DtoEndpoint')),
         ]);
         $result = $converter->convert([$codeWithDateTime]);
 
@@ -345,13 +350,53 @@ CODE;
         $this->assertMatchesJsonSnapshot(json_encode($result->apiEndpointList));
     }
 
+    public function testFilterClassesByPhpAnnotation(): void
+    {
+        $codeWithDateTime = <<<'CODE'
+<?php
+
+#[\Attribute(\Attribute::TARGET_METHOD)]
+class Route {
+  public function __construct(
+     public string|array $path = null,
+     public array|string $methods = [],
+  ) {}
+}
+
+/**
+ * @Dto
+ */
+class User
+{
+    public string $id;
+}
+
+class SomeController {
+  /**
+   * @return User[] 
+   * @DtoEndpoint
+   */
+  #[Route('/api/users', methods: ['GET'])]
+  public function getUserMethodsArray() {}
+}
+CODE;
+
+        $converter = new Converter([
+            new DtoVisitor(new DocBlockFilter('Dto')),
+            new SymfonyControllerVisitor(new DocBlockFilter('DtoEndpoint')),
+        ]);
+        $result = $converter->convert([$codeWithDateTime]);
+
+        $this->assertTrue($result->dtoList->hasDtoWithType('User'));
+
+        $this->assertMatchesJsonSnapshot(json_encode($result->apiEndpointList));
+    }
+
     #[DataProvider('provideInvalidControllers')]
     public function testTheFollowingCodeShouldThrow(string $invalidControllerActionCode, string $expectedError): void
     {
         $codeWithDateTime = <<<'CODE'
 <?php
-
-use \Riverwaysoft\PhpConverter\ClassFilter\DtoEndpoint;
 
 #[\Attribute(\Attribute::TARGET_CLASS)]
 class Dto
@@ -391,7 +436,7 @@ CODE;
 
         $converter = new Converter([
             new DtoVisitor(new PhpAttributeFilter('Dto')),
-            new SymfonyControllerVisitor('DtoEndpoint'),
+            new SymfonyControllerVisitor(new PhpAttributeFilter('DtoEndpoint')),
         ]);
         $this->expectExceptionMessage($expectedError);
         $converter->convert([$codeWithDateTime]);
@@ -401,7 +446,7 @@ CODE;
     {
         yield [
             <<<'CODE'
-#[DtoEndpoint(returnOne: User::class)]
+#[DtoEndpoint()]
 #[Route('/api/users/{id}', methods: ['GET'])]
 public function getUserRouteAndMethodParamDontMatch(User $user) {
 }
@@ -411,7 +456,7 @@ CODE,
 
         yield [
             <<<'CODE'
-  #[DtoEndpoint(returnOne: User::class)]
+  #[DtoEndpoint()]
   #[Route('/api/users_create')]
   public function createUserShouldThrow(
     #[Input] CreateUserInput $input,
@@ -423,13 +468,13 @@ CODE,
 
         yield [
             <<<'CODE'
-  #[DtoEndpoint(returnOne: User::class)]
+  #[DtoEndpoint()]
   #[Route(name: '/api/users', methods: ['GET'])]
   public function getUserWithNamedKey() {
   
   }
   
-  #[DtoEndpoint(returnOne: User::class)]
+  #[DtoEndpoint()]
   #[Route(name: '/api/users', methods: ['GET'])]
   public function anotherMethod() {
   
@@ -443,7 +488,7 @@ CODE,
   #[DtoEndpoint()]
   public function shouldThrow() {}
 CODE,
-            '#[DtoEndpoint] is used on a method, that does not have #[Route] attribute',
+            'The method was marked as generated but it does not have #[Route] attribute',
         ];
     }
 

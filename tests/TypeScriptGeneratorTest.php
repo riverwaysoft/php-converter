@@ -12,13 +12,12 @@ use Riverwaysoft\PhpConverter\Ast\DtoVisitor;
 use Riverwaysoft\PhpConverter\Bridge\ApiPlatform\ApiPlatformDtoResourceVisitor;
 use Riverwaysoft\PhpConverter\Bridge\ApiPlatform\ApiPlatformInputTypeResolver;
 use Riverwaysoft\PhpConverter\Bridge\ApiPlatform\AppendCollectionResponseFileProcessor;
-use Riverwaysoft\PhpConverter\Bridge\ApiPlatform\CollectionResponseTypeResolver;
 use Riverwaysoft\PhpConverter\Bridge\Symfony\SymfonyControllerVisitor;
-use Riverwaysoft\PhpConverter\ClassFilter\PhpAttributeFilter;
 use Riverwaysoft\PhpConverter\CodeProvider\FileSystemCodeProvider;
-use Riverwaysoft\PhpConverter\OutputGenerator\TypeScript\TypeScriptOutputGenerator;
+use Riverwaysoft\PhpConverter\Filter\PhpAttributeFilter;
 use Riverwaysoft\PhpConverter\OutputGenerator\TypeScript\TypeScriptGeneratorOptions;
 use Riverwaysoft\PhpConverter\OutputGenerator\TypeScript\TypeScriptImportGenerator;
+use Riverwaysoft\PhpConverter\OutputGenerator\TypeScript\TypeScriptOutputGenerator;
 use Riverwaysoft\PhpConverter\OutputGenerator\UnknownTypeResolver\ClassNameTypeResolver;
 use Riverwaysoft\PhpConverter\OutputGenerator\UnknownTypeResolver\DateTimeTypeResolver;
 use Riverwaysoft\PhpConverter\OutputWriter\EntityPerClassOutputWriter\DtoTypeDependencyCalculator;
@@ -507,8 +506,7 @@ CODE;
         $codeWithDateTime = <<<'CODE'
 <?php
 
-use \Riverwaysoft\PhpConverter\ClassFilter\DtoEndpoint;
-use \Riverwaysoft\PhpConverter\ClassFilter\Dto;
+use Riverwaysoft\PhpConverter\Filter\Attributes\Dto;use Riverwaysoft\PhpConverter\Filter\Attributes\DtoEndpoint;
 
 #[\Attribute(\Attribute::TARGET_METHOD)]
 class Route {
@@ -560,23 +558,28 @@ class UpdateUserInput {
 }
 
 class UserController {
-  #[DtoEndpoint(returnMany: UserOutput::class)]
+  /** @return UserOutput[] */
+  #[DtoEndpoint()]
   #[Route('/api/users', methods: ['GET'])]
   public function getUsers() {}
   
-  #[DtoEndpoint(returnOne: UserOutput::class)]
+  /** @return UserOutput */
+  #[DtoEndpoint()]
   #[Route('/api/users/{user}', methods: ['GET'])]
   public function getUser(User $user) {}
   
-  #[DtoEndpoint(returnOne: UserOutput::class)]
+  /** @return UserOutput */
+  #[DtoEndpoint()]
   #[Route('/api/users', methods: ['POST'])]
   public function getUser(#[Input] CreateUserInput $input) {}
   
-  #[DtoEndpoint(returnOne: UserOutput::class)]
+  /** @return UserOutput */
+  #[DtoEndpoint()]
   #[Route('/api/users_update-it/{userToUpdate}', methods: ['PUT'])]
   public function getUser(User $userToUpdate, #[Input] UpdateUserInput $input) {}
   
-  #[DtoEndpoint(returnMany: UserOutput::class)]
+  /** @return UserOutput[] */
+  #[DtoEndpoint()]
   #[Route('/api/users-with-filters', methods: ['GET'])]
   public function getUsersWithFilters(#[Query] FilterQuery $query) {}
   
@@ -597,7 +600,7 @@ CODE;
 
         $converter = new Converter([
             new DtoVisitor(new PhpAttributeFilter('Dto')),
-            new SymfonyControllerVisitor('DtoEndpoint'),
+            new SymfonyControllerVisitor(new PhpAttributeFilter('DtoEndpoint')),
         ]);
         $result = $converter->convert([$codeWithDateTime]);
         $this->assertCount(8, $result->apiEndpointList->getList());
@@ -609,8 +612,7 @@ CODE;
         $codeWithDateTime = <<<'CODE'
 <?php
 
-use \Riverwaysoft\PhpConverter\ClassFilter\DtoEndpoint;
-use \Riverwaysoft\PhpConverter\ClassFilter\Dto;
+use Riverwaysoft\PhpConverter\Filter\Attributes\Dto;use Riverwaysoft\PhpConverter\Filter\Attributes\DtoEndpoint;
 
 
 /**
@@ -654,8 +656,8 @@ class UserController {
   #[Route(name: '/api/annotations-return', methods: ['GET'])]
   public function annotationsReturn() {}
   
-  /** @return UserOutput */
-  #[DtoEndpoint(returnOne: UserShortOutput::class)]
+  /** @return UserShortOutput */
+  #[DtoEndpoint()]
   #[Route(name: '/api/annotations-return-precedence', methods: ['GET'])]
   public function annotationsReturnTakePrecedenceOverDtoEndpoint() {}
   
@@ -678,7 +680,7 @@ CODE;
 
         $converter = new Converter([
             new DtoVisitor(new PhpAttributeFilter('Dto')),
-            new SymfonyControllerVisitor('DtoEndpoint'),
+            new SymfonyControllerVisitor(new PhpAttributeFilter('DtoEndpoint')),
         ]);
         $result = $converter->convert([$codeWithDateTime]);
         $this->assertCount(5, $result->apiEndpointList->getList());
@@ -690,8 +692,7 @@ CODE;
         $code = <<<'CODE'
 <?php
 
-use \Riverwaysoft\PhpConverter\ClassFilter\DtoEndpoint;
-use \Riverwaysoft\PhpConverter\ClassFilter\Dto;
+use Riverwaysoft\PhpConverter\Filter\Attributes\Dto;
 
 /**
  * @template T
@@ -725,8 +726,7 @@ CODE;
         $code = <<<'CODE'
 <?php
 
-use \Riverwaysoft\PhpConverter\ClassFilter\Dto;
-use \Riverwaysoft\PhpConverter\Bridge\ApiPlatform\DtoResource;
+use Riverwaysoft\PhpConverter\Bridge\ApiPlatform\DtoResource;use Riverwaysoft\PhpConverter\Filter\Attributes\Dto;
 
 #[\Attribute(\Attribute::TARGET_PARAMETER)]
 class Input {
@@ -902,8 +902,7 @@ CODE;
         $code = <<<'CODE'
 <?php
 
-use \Riverwaysoft\PhpConverter\ClassFilter\Dto;
-use \Riverwaysoft\PhpConverter\Bridge\ApiPlatform\DtoResource;
+use Riverwaysoft\PhpConverter\Bridge\ApiPlatform\DtoResource;use Riverwaysoft\PhpConverter\Filter\Attributes\Dto;
 
 #[\Attribute(\Attribute::TARGET_PARAMETER)]
 class Input {
@@ -1066,8 +1065,7 @@ CODE;
         $code = <<<'CODE'
 <?php
 
-use \Riverwaysoft\PhpConverter\ClassFilter\Dto;
-use \Riverwaysoft\PhpConverter\Bridge\ApiPlatform\DtoResource;
+use Riverwaysoft\PhpConverter\Bridge\ApiPlatform\DtoResource;
 
 #[\Attribute(\Attribute::TARGET_CLASS)]
 class ApiResource {
@@ -1137,8 +1135,7 @@ CODE;
         $code = <<<'CODE'
 <?php
 
-use \Riverwaysoft\PhpConverter\ClassFilter\Dto;
-use \Riverwaysoft\PhpConverter\Bridge\ApiPlatform\DtoResource;
+use Riverwaysoft\PhpConverter\Bridge\ApiPlatform\DtoResource;use Riverwaysoft\PhpConverter\Filter\Attributes\Dto;
 
 #[\Attribute(\Attribute::TARGET_CLASS)]
 class ApiResource {
@@ -1203,7 +1200,6 @@ CODE;
         $typeScriptGenerator = new TypeScriptOutputGenerator(
             new SingleFileOutputWriter('generated.ts'),
             [
-                new CollectionResponseTypeResolver(),
                 new ClassNameTypeResolver(),
             ],
             new OutputFilesProcessor([

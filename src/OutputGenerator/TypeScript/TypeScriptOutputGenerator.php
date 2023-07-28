@@ -257,7 +257,11 @@ class TypeScriptOutputGenerator implements OutputGeneratorInterface
             return $type->getName();
         }
 
-        if ($type instanceof PhpUnknownType && $type->hasGenerics() && $dtoList->hasDtoWithType($type->getName())) {
+        if (
+            $type instanceof PhpUnknownType
+            && $type->hasGenerics()
+            && ($dtoList->hasDtoWithType($type->getName()) || !empty($type->getContext()[PhpUnknownType::GENERIC_IGNORE_NO_RESOLVER]))
+        ) {
             $result = $type->getName();
 
             $generics = array_map(fn (PhpTypeInterface $innerGeneric) => $this->getTypeScriptTypeFromPhp(

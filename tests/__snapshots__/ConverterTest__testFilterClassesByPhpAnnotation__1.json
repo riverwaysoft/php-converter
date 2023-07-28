@@ -1,0 +1,18 @@
+{
+    "map": [
+        {
+            "route": "\/api\/users",
+            "routeParams": [],
+            "method": "get",
+            "input": null,
+            "output": {
+                "array": {
+                    "name": "User",
+                    "context": [],
+                    "generics": []
+                }
+            },
+            "queryParams": []
+        }
+    ]
+}

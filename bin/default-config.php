@@ -3,9 +3,9 @@
 declare(strict_types=1);
 
 use Riverwaysoft\PhpConverter\Ast\DtoVisitor;
-use Riverwaysoft\PhpConverter\ClassFilter\PhpAttributeFilter;
 use Riverwaysoft\PhpConverter\CodeProvider\FileSystemCodeProvider;
 use Riverwaysoft\PhpConverter\Config\PhpConverterConfig;
+use Riverwaysoft\PhpConverter\Filter\PhpAttributeFilter;
 use Riverwaysoft\PhpConverter\OutputGenerator\TypeScript\TypeScriptOutputGenerator;
 use Riverwaysoft\PhpConverter\OutputGenerator\UnknownTypeResolver\ClassNameTypeResolver;
 use Riverwaysoft\PhpConverter\OutputGenerator\UnknownTypeResolver\DateTimeTypeResolver;

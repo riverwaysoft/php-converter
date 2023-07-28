@@ -20,9 +20,9 @@ export const apiAnnotationsReturnGet = (): Promise<UserOutput> => {
     .then((response) => response.data);
 }
 
-export const apiAnnotationsReturnPrecedenceGet = (): Promise<UserOutput> => {
+export const apiAnnotationsReturnPrecedenceGet = (): Promise<UserShortOutput> => {
   return axios
-    .get<UserOutput>(`/api/annotations-return-precedence`)
+    .get<UserShortOutput>(`/api/annotations-return-precedence`)
     .then((response) => response.data);
 }
 
