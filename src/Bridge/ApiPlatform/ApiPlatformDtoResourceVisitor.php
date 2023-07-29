@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Riverwaysoft\PhpConverter\Bridge\ApiPlatform;
 
+use Exception;
 use Jawira\CaseConverter\Convert;
 use PhpParser\Node;
 use PhpParser\Node\Attribute;
@@ -14,22 +15,22 @@ use PhpParser\PrettyPrinter\Standard;
 use Riverwaysoft\PhpConverter\Ast\ConverterResult;
 use Riverwaysoft\PhpConverter\Ast\ConverterVisitor;
 use Riverwaysoft\PhpConverter\Bridge\Symfony\SymfonyRoutingParser;
-use Riverwaysoft\PhpConverter\ClassFilter\ClassFilterInterface;
 use Riverwaysoft\PhpConverter\Dto\ApiClient\ApiEndpoint;
 use Riverwaysoft\PhpConverter\Dto\ApiClient\ApiEndpointMethod;
 use Riverwaysoft\PhpConverter\Dto\ApiClient\ApiEndpointParam;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpBaseType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpOptionalType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeFactory;
-use Exception;
-use function sprintf;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
+use Riverwaysoft\PhpConverter\Filter\FilterInterface;
 use function array_key_last;
-use function str_replace;
-use function count;
 use function array_map;
-use function rtrim;
-use function ltrim;
+use function count;
 use function in_array;
+use function ltrim;
+use function rtrim;
+use function sprintf;
+use function str_replace;
 
 class ApiPlatformDtoResourceVisitor extends ConverterVisitor
 {
@@ -41,11 +42,10 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
 
     public const API_PLATFORM_ATTRIBUTE = 'ApiResource';
 
-    // Is used to wrap output types in CollectionResponse<T>
-    public const COLLECTION_RESPONSE_CONTEXT_KEY = 'isCollectionResponse';
+    public const RESPONSE_TYPE_NAME = 'CollectionResponse';
 
     public function __construct(
-        private ?ClassFilterInterface $classFilter = null
+        private ?FilterInterface $filter = null
     ) {
         $this->converterResult = new ConverterResult();
         $this->iriGenerator = new ApiPlatformIriGenerator();
@@ -58,7 +58,7 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
             return null;
         }
 
-        if ($this->classFilter && !$this->classFilter->isMatch($node)) {
+        if ($this->filter && !$this->filter->isMatch($node)) {
             return null;
         }
 
@@ -189,10 +189,15 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
         if (!$output) {
             throw new Exception(sprintf("The output is required for ApiResource %s. Context: %s", $node->name->name, $this->prettyPrinter->prettyPrint([$apiResourceAttribute])));
         }
-        $outputTypeContext = $isCollection ? [
-            self::COLLECTION_RESPONSE_CONTEXT_KEY => true,
-        ] : [];
-        $outputType = PhpTypeFactory::create($output, $outputTypeContext);
+
+        $outputType = PhpTypeFactory::create($output);
+        if ($isCollection) {
+            $outputType = new PhpUnknownType(self::RESPONSE_TYPE_NAME, [
+                $outputType,
+            ], [
+                PhpUnknownType::GENERIC_IGNORE_NO_RESOLVER => true,
+            ]);
+        }
 
         $queryParams = [];
         $routeParams = [];
@@ -296,10 +301,15 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
         if (!$output) {
             throw new Exception(sprintf("The output is required for ApiResource %s. Context: %s", $node->name->name, $this->prettyPrinter->prettyPrint([$apiResourceAttribute])));
         }
-        $outputTypeContext = $isCollection && $method->equals(ApiEndpointMethod::get()) ? [
-            self::COLLECTION_RESPONSE_CONTEXT_KEY => true,
-        ] : [];
-        $outputType = PhpTypeFactory::create($output, $outputTypeContext);
+
+        $outputType = PhpTypeFactory::create($output);
+        if ($isCollection && $method->equals(ApiEndpointMethod::get())) {
+            $outputType = new PhpUnknownType(self::RESPONSE_TYPE_NAME, [
+                $outputType,
+            ], [
+                PhpUnknownType::GENERIC_IGNORE_NO_RESOLVER => true,
+            ]);
+        }
 
         $input = null;
         if ($arrayItemValue) {

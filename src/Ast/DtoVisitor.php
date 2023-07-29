@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Riverwaysoft\PhpConverter\Ast;
 
+use Exception;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Enum_;
 use PhpParser\NodeTraverser;
-use Riverwaysoft\PhpConverter\ClassFilter\ClassFilterInterface;
 use Riverwaysoft\PhpConverter\Dto\DtoClassProperty;
 use Riverwaysoft\PhpConverter\Dto\DtoEnumProperty;
 use Riverwaysoft\PhpConverter\Dto\DtoType;
@@ -16,11 +16,11 @@ use Riverwaysoft\PhpConverter\Dto\ExpressionType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeFactory;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeInterface;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnionType;
-use Exception;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
-use function sprintf;
-use function get_class;
+use Riverwaysoft\PhpConverter\Filter\FilterInterface;
 use function array_map;
+use function get_class;
+use function sprintf;
 
 class DtoVisitor extends ConverterVisitor
 {
@@ -29,7 +29,7 @@ class DtoVisitor extends ConverterVisitor
     private ConverterResult $converterResult;
 
     public function __construct(
-        private ?ClassFilterInterface $classFilter = null
+        private ?FilterInterface $filter = null
     ) {
         $this->phpDocTypeParser = new PhpDocTypeParser();
         $this->converterResult = new ConverterResult();
@@ -40,7 +40,7 @@ class DtoVisitor extends ConverterVisitor
         if (!$node instanceof Class_ && !$node instanceof Enum_) {
             return null;
         }
-        if ($this->classFilter && !$this->classFilter->isMatch($node)) {
+        if ($this->filter && !$this->filter->isMatch($node)) {
             return null;
         }
 

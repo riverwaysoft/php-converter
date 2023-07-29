@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Riverwaysoft\PhpConverter\Bridge\Symfony;
 
+use Exception;
 use PhpParser\Node;
 use PhpParser\Node\Attribute;
 use PhpParser\Node\Stmt\ClassMethod;
@@ -15,16 +16,15 @@ use Riverwaysoft\PhpConverter\Dto\ApiClient\ApiEndpoint;
 use Riverwaysoft\PhpConverter\Dto\ApiClient\ApiEndpointMethod;
 use Riverwaysoft\PhpConverter\Dto\ApiClient\ApiEndpointParam;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpBaseType;
-use Riverwaysoft\PhpConverter\Dto\PhpType\PhpListType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeFactory;
-use Exception;
-use function in_array;
-use function count;
+use Riverwaysoft\PhpConverter\Filter\FilterInterface;
 use function array_flip;
-use function sprintf;
 use function array_key_first;
-use function implode;
 use function array_map;
+use function count;
+use function implode;
+use function in_array;
+use function sprintf;
 
 class SymfonyControllerVisitor extends ConverterVisitor
 {
@@ -33,8 +33,7 @@ class SymfonyControllerVisitor extends ConverterVisitor
     private PhpDocTypeParser $phpDocTypeParser;
 
     public function __construct(
-        // TODO: consider using class filter interface?
-        private string $attribute,
+        private ?FilterInterface $filter,
     ) {
         $this->converterResult = new ConverterResult();
         $this->phpDocTypeParser = new PhpDocTypeParser();
@@ -42,7 +41,11 @@ class SymfonyControllerVisitor extends ConverterVisitor
 
     public function enterNode(Node $node)
     {
-        if (!$node instanceof ClassMethod || !$this->findAttribute($node, $this->attribute)) {
+        if (!$node instanceof ClassMethod) {
+            return null;
+        }
+
+        if ($this->filter && !$this->filter->isMatch($node)) {
             return null;
         }
 
@@ -53,7 +56,7 @@ class SymfonyControllerVisitor extends ConverterVisitor
 
     private function findAttribute(ClassMethod|Node\Param $node, string $name): Attribute|null
     {
-        $attrGroups = $node instanceof Node\Param ? $node->attrGroups : $node->getAttrGroups();
+        $attrGroups = $node->attrGroups;
 
         foreach ($attrGroups as $attrGroup) {
             foreach ($attrGroup->attrs as $attr) {
@@ -82,7 +85,7 @@ class SymfonyControllerVisitor extends ConverterVisitor
         $routeAttribute = $this->findAttribute($node, 'Route');
 
         if (!$routeAttribute) {
-            throw new Exception('#[DtoEndpoint] is used on a method, that does not have #[Route] attribute');
+            throw new Exception('The method was marked as generated but it does not have #[Route] attribute');
         }
 
         $route = null;
@@ -130,28 +133,13 @@ class SymfonyControllerVisitor extends ConverterVisitor
             throw new Exception('#[Route()] argument "methods" is required');
         }
 
-        $dtoReturnAttribute = $this->findAttribute($node, 'DtoEndpoint');
-        if (!$dtoReturnAttribute) {
-            throw new Exception('Should not be reached, checked earlier');
-        }
-
         $outputType = PhpBaseType::null();
         $methodComment = $node->getDocComment()?->getText();
 
-        if ($methodComment && $returnType = $this->phpDocTypeParser->parseVarOrReturn($methodComment)) {
-            $outputType = $returnType;
-        } else {
-            if ($arg = $this->getAttributeArgumentByName($dtoReturnAttribute, 'returnOne')) {
-                if (!($arg->value instanceof Node\Expr\ClassConstFetch)) {
-                    throw new Exception('Argument of returnOne should be a class string');
-                }
-                $outputType = PhpTypeFactory::create($arg->value->class->getParts()[0]);
-            }
-            if ($arg = $this->getAttributeArgumentByName($dtoReturnAttribute, 'returnMany')) {
-                if (!($arg->value instanceof Node\Expr\ClassConstFetch)) {
-                    throw new Exception('Argument of returnMany should be a class string');
-                }
-                $outputType = new PhpListType(PhpTypeFactory::create($arg->value->class->getParts()[0]));
+        if ($methodComment) {
+            $returnType = $this->phpDocTypeParser->parseVarOrReturn($methodComment);
+            if ($returnType) {
+                $outputType = $returnType;
             }
         }
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\PhpConverter\ClassFilter;
+namespace Riverwaysoft\PhpConverter\Filter\Attributes;
 
 use Attribute;
 

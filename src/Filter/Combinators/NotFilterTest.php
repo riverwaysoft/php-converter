@@ -2,18 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\PhpConverter\ClassFilter;
+namespace Riverwaysoft\PhpConverter\Filter\Combinators;
 
 use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Enum_;
 use PHPUnit\Framework\TestCase;
+use Riverwaysoft\PhpConverter\Filter\FilterInterface;
 
 class NotFilterTest extends TestCase
 {
-    private function getAlwaysYes(): ClassFilterInterface
+    private function getAlwaysYes(): FilterInterface
     {
-        return new class() implements ClassFilterInterface {
-            public function isMatch(Enum_|Class_ $class): bool
+        return new class() implements FilterInterface {
+            public function isMatch(ClassMethod|Class_|Enum_ $value): bool
             {
                 return true;
             }

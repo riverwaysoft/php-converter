@@ -22,8 +22,9 @@ composer require riverwaysoft/php-converter --dev
 If the installation causes dependency conflicts use the [standalone Phar version](#phar-installation) of the package.
 
 2) Mark a few classes with `#[Dto]` annotation to convert them into TypeScript or Dart
+
 ```php
-use Riverwaysoft\PhpConverter\ClassFilter\Dto;
+use Riverwaysoft\PhpConverter\Filter\Attributes\Dto;
 
 #[Dto]
 class UserOutput

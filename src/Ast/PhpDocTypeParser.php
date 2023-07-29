@@ -145,7 +145,7 @@ class PhpDocTypeParser
             return new PhpUnionType(array_map(fn (TypeNode $child) => $this->convertToDto($child), $node->types));
         }
         if ($node instanceof GenericTypeNode) {
-            return PhpTypeFactory::create($node->type->name, [], array_map(
+            return PhpTypeFactory::create($node->type->name, array_map(
                 fn (TypeNode $child) => $this->convertToDto($child),
                 $node->genericTypes,
             ));
