@@ -3,7 +3,7 @@
 namespace Symfony\Component\HttpFoundation;
 
 /**
- * @template T
+ * @template-covariant T
  */
 class JsonResponse
 {
