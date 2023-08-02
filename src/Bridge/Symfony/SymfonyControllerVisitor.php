@@ -34,6 +34,8 @@ class SymfonyControllerVisitor extends ConverterVisitor
 
     public function __construct(
         private ?FilterInterface $filter,
+        private string $queryStringAttributeName = 'Query',
+        private string $requestBodyAttributeName = 'Input',
     ) {
         $this->converterResult = new ConverterResult();
         $this->phpDocTypeParser = new PhpDocTypeParser();
@@ -150,10 +152,10 @@ class SymfonyControllerVisitor extends ConverterVisitor
         /** @var string[] $excessiveRouteParams */
         $excessiveRouteParams = array_flip($routeParams);
         foreach ($node->params as $param) {
-            $maybeDtoInputAttribute = $this->findAttribute($param, 'Input');
+            $maybeDtoInputAttribute = $this->findAttribute($param, $this->requestBodyAttributeName);
             if ($maybeDtoInputAttribute) {
                 if ($inputParam) {
-                    throw new Exception('Multiple #[Input] on controller action are not supported');
+                    throw new Exception(sprintf("Multiple #[%s] on controller action are not supported", $this->requestBodyAttributeName));
                 }
                 $inputParam = new ApiEndpointParam(
                     name: $param->var->name,
@@ -161,10 +163,10 @@ class SymfonyControllerVisitor extends ConverterVisitor
                     type: PhpTypeFactory::create($param->type->getParts()[0]),
                 );
             }
-            $maybeDtoQueryAttribute = $this->findAttribute($param, 'Query');
+            $maybeDtoQueryAttribute = $this->findAttribute($param, $this->queryStringAttributeName);
             if ($maybeDtoQueryAttribute) {
                 if (!empty($queryParams)) {
-                    throw new Exception('Multiple #[Query] on controller action are not supported');
+                    throw new Exception(sprintf("Multiple #[%s] on controller action are not supported", $this->queryStringAttributeName));
                 }
                 $queryParams[] = new ApiEndpointParam(
                     name: $param->var->name,
