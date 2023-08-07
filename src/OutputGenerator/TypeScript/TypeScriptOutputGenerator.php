@@ -11,6 +11,7 @@ use Riverwaysoft\PhpConverter\Dto\DtoEnumProperty;
 use Riverwaysoft\PhpConverter\Dto\DtoList;
 use Riverwaysoft\PhpConverter\Dto\DtoType;
 use Riverwaysoft\PhpConverter\Dto\ExpressionType;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpOptionalType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
 use Riverwaysoft\PhpConverter\OutputGenerator\ApiEndpointGeneratorInterface;
 use Riverwaysoft\PhpConverter\OutputGenerator\OutputGeneratorInterface;
@@ -102,7 +103,12 @@ class TypeScriptOutputGenerator implements OutputGeneratorInterface
         /** @param DtoClassProperty[] $properties */
         $properties = $dto->getProperties();
         foreach ($properties as $property) {
-            $string .= sprintf("\n  %s: %s;", $property->getName(), $this->typeResolver->getTypeFromPhp($property->getType(), $dto, $dtoList));
+            $string .= sprintf(
+                "\n  %s%s: %s;",
+                $property->getName(),
+                $property->getType() instanceof PhpOptionalType ? '?' : '',
+                $this->typeResolver->getTypeFromPhp($property->getType(), $dto, $dtoList)
+            );
         }
 
         return $string;

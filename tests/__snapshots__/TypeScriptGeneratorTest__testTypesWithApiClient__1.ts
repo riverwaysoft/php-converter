@@ -8,7 +8,7 @@ export type CreateUserInput = {
 
 export type FilterQuery = {
   age: number | null;
-  name: string | null;
+  name?: string | null;
 };
 
 export type UpdateUserInput = {

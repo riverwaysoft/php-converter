@@ -29,19 +29,19 @@ export type JobSheetTagCollectionOutput = {
 export type UserOutput = {
 };
 
-export const apiBookingsGet = (filters: any | null = null): Promise<CollectionResponse<FullBookingOutput>> => {
+export const apiBookingsGet = (filters?: any): Promise<CollectionResponse<FullBookingOutput>> => {
   return axios
     .get<CollectionResponse<FullBookingOutput>>(`/api/bookings`, { params: filters })
     .then((response) => response.data);
 }
 
-export const apiCustomerSitesIdBookingsGet = (id: string, filters: any | null = null): Promise<CollectionResponse<FullBookingOutput>> => {
+export const apiCustomerSitesIdBookingsGet = (id: string, filters?: any): Promise<CollectionResponse<FullBookingOutput>> => {
   return axios
     .get<CollectionResponse<FullBookingOutput>>(`/api/customer_sites/${id}/bookings`, { params: filters })
     .then((response) => response.data);
 }
 
-export const apiHubUsersGet = (filters: any | null = null): Promise<CollectionResponse<HubUserOutput>> => {
+export const apiHubUsersGet = (filters?: any): Promise<CollectionResponse<HubUserOutput>> => {
   return axios
     .get<CollectionResponse<HubUserOutput>>(`/api/hub_users`, { params: filters })
     .then((response) => response.data);

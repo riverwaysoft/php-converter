@@ -9,11 +9,11 @@
     ],
     "scripts": {
         "test": "vendor/bin/phpunit --no-coverage",
+        "test:update-snapshots": "vendor/bin/phpunit -d --update-snapshots --no-coverage",
         "test:with-coverage": "XDEBUG_MODE=coverage vendor/bin/phpunit",
         "test:coverage-level": "vendor/bin/coverage-check ./coverage/clover.xml 85",
         "build-phar": "bin/build.sh",
         "build-phar:test": "php build/php-converter.phar --from=./tests/Fixtures/ --to=.",
-        "test:update-snapshots": "vendor/bin/phpunit -d --update-snapshots --no-coverage",
         "cs": "vendor/bin/ecs check --fix",
         "test:cs": " vendor/bin/ecs check",
         "phpstan": "vendor/bin/phpstan analyse src tests bin",

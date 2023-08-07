@@ -35,7 +35,7 @@ export type StudentNotesOutput = {
 export type StudentNotesUpdateInput = {
 };
 
-export const apiChatsGet = (filters: any | null = null): Promise<CollectionResponse<ChatOutput>> => {
+export const apiChatsGet = (filters?: any): Promise<CollectionResponse<ChatOutput>> => {
   return axios
     .get<CollectionResponse<ChatOutput>>(`/api/chats`, { params: filters })
     .then((response) => response.data);
@@ -65,7 +65,7 @@ export const apiChatsIdMutePut = (id: string): Promise<ChatOutput> => {
     .then((response) => response.data);
 }
 
-export const apiChatsAdminZoneGet = (filters: any | null = null): Promise<CollectionResponse<AdminZoneChatOutput>> => {
+export const apiChatsAdminZoneGet = (filters?: any): Promise<CollectionResponse<AdminZoneChatOutput>> => {
   return axios
     .get<CollectionResponse<AdminZoneChatOutput>>(`/api/chats_admin_zone`, { params: filters })
     .then((response) => response.data);
@@ -95,7 +95,7 @@ export const apiPushHistoryItemsIdGet = (id: string): Promise<CloudPushStoreOutp
     .then((response) => response.data);
 }
 
-export const apiStudentNotesGet = (filters: any | null = null): Promise<CollectionResponse<StudentNotesOutput>> => {
+export const apiStudentNotesGet = (filters?: any): Promise<CollectionResponse<StudentNotesOutput>> => {
   return axios
     .get<CollectionResponse<StudentNotesOutput>>(`/api/student_notes`, { params: filters })
     .then((response) => response.data);

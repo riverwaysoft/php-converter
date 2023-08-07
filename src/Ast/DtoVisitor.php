@@ -13,6 +13,7 @@ use Riverwaysoft\PhpConverter\Dto\DtoClassProperty;
 use Riverwaysoft\PhpConverter\Dto\DtoEnumProperty;
 use Riverwaysoft\PhpConverter\Dto\DtoType;
 use Riverwaysoft\PhpConverter\Dto\ExpressionType;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpOptionalType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeFactory;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeInterface;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnionType;
@@ -79,20 +80,23 @@ class DtoVisitor extends ConverterVisitor
                 /** @var PhpTypeInterface|null $docBlockType */
                 $docBlockType = null;
                 $nativeType = $stmt->type;
+                $propertyName = $stmt->props[0]->name->name;
 
                 if ($comment) {
                     $docBlockType = $this->phpDocTypeParser->parseVarOrReturn($comment);
                 }
 
                 if (!$nativeType && !$docBlockType) {
-                    throw new Exception(sprintf("Property %s#%s has no type. Please add PHP type", $node->name->name, $stmt->props[0]->name->name));
+                    throw new Exception(sprintf("Property %s#%s has no type. Please add PHP type", $node->name->name, $propertyName));
                 }
 
-                $type = $docBlockType ?? $this->createSingleType($nativeType);
+                $hasDefaultValue = !!$stmt->props[0]->default;
+
+                $type = $docBlockType ?? $this->createSingleType($nativeType, '', $hasDefaultValue);
 
                 $properties[] = new DtoClassProperty(
                     type: $type,
-                    name: $stmt->props[0]->name->name,
+                    name: $propertyName,
                 );
             }
 
@@ -107,6 +111,7 @@ class DtoVisitor extends ConverterVisitor
 
                     $paramType = $param->type;
                     $paramName = $param->var->name;
+                    $hasDefaultValue = !!$param->default;
 
                     if ($classMethodComments) {
                         if ($classMethodCommentsParsed === null) {
@@ -125,7 +130,7 @@ class DtoVisitor extends ConverterVisitor
                         throw new Exception(sprintf("Property %s#%s has no type. Please add PHP type", $node->name->name, $paramName));
                     }
 
-                    $type = $this->createSingleType($paramType, $param->getDocComment()?->getText());
+                    $type = $this->createSingleType($paramType, $param->getDocComment()?->getText(), $hasDefaultValue);
 
                     $properties[] = new DtoClassProperty(
                         type: $type,
@@ -170,7 +175,12 @@ class DtoVisitor extends ConverterVisitor
     private function createSingleType(
         Node\Name|Node\Identifier|Node\NullableType|Node\UnionType $param,
         ?string $docComment = null,
+        bool $hasDefaultValue = false,
     ): PhpTypeInterface {
+        if ($hasDefaultValue) {
+            return new PhpOptionalType($this->createSingleType($param, $docComment));
+        }
+
         if ($docComment) {
             $docBlockType = $this->phpDocTypeParser->parseVarOrReturn($docComment);
             if ($docBlockType) {

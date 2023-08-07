@@ -39,7 +39,7 @@ class TypeScriptTypeResolver
         }
 
         if ($type instanceof PhpOptionalType) {
-            return sprintf('%s | null = null', $this->getTypeFromPhp($type->getType(), $dto, $dtoList));
+            return $this->getTypeFromPhp($type->getType(), $dto, $dtoList);
         }
 
         if ($type instanceof PhpBaseType) {

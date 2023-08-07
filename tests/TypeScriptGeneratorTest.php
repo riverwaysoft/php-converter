@@ -533,9 +533,8 @@ class Query {
 class FilterQuery {
   public function __construct(
     public int|null $age,
-    public string|null $name,
+    public string|null $name = null,
   ) {
-  
   }
 }
 

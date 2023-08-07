@@ -7,6 +7,7 @@ namespace Riverwaysoft\PhpConverter\OutputGenerator\TypeScript;
 use Riverwaysoft\PhpConverter\Dto\ApiClient\ApiEndpoint;
 use Riverwaysoft\PhpConverter\Dto\ApiClient\ApiEndpointParam;
 use Riverwaysoft\PhpConverter\Dto\DtoList;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpOptionalType;
 use Riverwaysoft\PhpConverter\OutputGenerator\ApiEndpointGeneratorInterface;
 use Webmozart\Assert\Assert;
 
@@ -36,7 +37,12 @@ class AxiosEndpointGenerator implements ApiEndpointGeneratorInterface
 
         if (count($apiEndpoint->queryParams)) {
             $queryParamsAsTs = array_map(
-                fn (ApiEndpointParam $param): string => "{$param->name}: {$this->typeResolver->getTypeFromPhp($param->type, null, $dtoList)}",
+                fn (ApiEndpointParam $param): string => sprintf(
+                    "%s%s: %s",
+                    $param->name,
+                    $param->type instanceof PhpOptionalType ? '?' : '',
+                    $this->typeResolver->getTypeFromPhp($param->type, null, $dtoList)
+                ),
                 $apiEndpoint->queryParams,
             );
             $params = array_merge($params, $queryParamsAsTs);
