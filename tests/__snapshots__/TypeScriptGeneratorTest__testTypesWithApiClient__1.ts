@@ -8,7 +8,7 @@ export type CreateUserInput = {
 
 export type FilterQuery = {
   age: number | null;
-  name: string | null;
+  name?: string | null;
 };
 
 export type UpdateUserInput = {
@@ -17,6 +17,7 @@ export type UpdateUserInput = {
 
 export type UserOutput = {
   id: string;
+  hasDefaultValue: string;
 };
 
 export const apiRouteWithAnnotationsReturnGet = (): Promise<UserOutput> => {

@@ -9,6 +9,7 @@ use Riverwaysoft\PhpConverter\Dto\DtoList;
 use Riverwaysoft\PhpConverter\Dto\DtoType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpBaseType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpListType;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpOptionalType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeInterface;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnionType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
@@ -61,6 +62,10 @@ class DartClassFactoryGenerator
         DtoList $dtoList,
         string $mapArgumentName = "json['%s']",
     ): string {
+        if ($type instanceof PhpOptionalType) {
+            return $this->resolveFactoryProperty($propertyName, $type->getType(), $dto, $dtoList, $mapArgumentName);
+        }
+
         if ($type instanceof PhpUnionType && $type->isNullable()) {
             return sprintf(
                 "json['{$propertyName}'] != null ? %s : null",

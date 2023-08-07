@@ -10,6 +10,12 @@ use PHPUnit\Framework\TestCase;
 use Riverwaysoft\PhpConverter\Ast\Converter;
 use Riverwaysoft\PhpConverter\Ast\DtoVisitor;
 use Riverwaysoft\PhpConverter\Bridge\Symfony\SymfonyControllerVisitor;
+use Riverwaysoft\PhpConverter\Dto\DtoClassProperty;
+use Riverwaysoft\PhpConverter\Dto\DtoType;
+use Riverwaysoft\PhpConverter\Dto\ExpressionType;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpBaseType;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpOptionalType;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnionType;
 use Riverwaysoft\PhpConverter\Filter\Combinators\NotFilter;
 use Riverwaysoft\PhpConverter\Filter\DocBlockFilter;
 use Riverwaysoft\PhpConverter\Filter\PhpAttributeFilter;
@@ -42,6 +48,75 @@ CODE;
 
         $normalized = (new Converter([new DtoVisitor()]))->convert([$codeNestedDto]);
         $this->assertMatchesJsonSnapshot($normalized->dtoList->getList());
+    }
+
+    public function testNestedDtoWithOptionalProperties(): void
+    {
+        $codeNestedDto = <<<'CODE'
+<?php
+
+class UserCreate {
+    public string $a;
+    public null|string $b = null;
+    public string|int $c = '';
+    public ?int $d = null;
+    
+    public function __construct(
+        public ?string $e = null,
+    ) {}
+}
+CODE;
+
+        $normalized = (new Converter([new DtoVisitor()]))->convert([$codeNestedDto]);
+
+        $result = $normalized->dtoList->getList()[0];
+
+        $this->assertEquals(
+            $result,
+            new DtoType(
+                name: 'UserCreate',
+                expressionType: ExpressionType::class(),
+                properties: [
+                    new DtoClassProperty(type: PhpBaseType::string(), name: 'a'),
+                    new DtoClassProperty(
+                        type: new PhpOptionalType(new PhpUnionType(
+                            types: [
+                                PhpBaseType::null(),
+                                PhpBaseType::string(),
+                            ]
+                        )),
+                        name: 'b',
+                    ),
+                    new DtoClassProperty(
+                        type: new PhpOptionalType(new PhpUnionType(
+                            types: [
+                                PhpBaseType::string(),
+                                PhpBaseType::int(),
+                            ]
+                        )),
+                        name: 'c',
+                    ),
+                    new DtoClassProperty(
+                        type: new PhpOptionalType(new PhpUnionType(
+                            types: [
+                                PhpBaseType::int(),
+                                PhpBaseType::null(),
+                            ]
+                        )),
+                        name: 'd',
+                    ),
+                    new DtoClassProperty(
+                        type: new PhpOptionalType(new PhpUnionType(
+                            types: [
+                                PhpBaseType::string(),
+                                PhpBaseType::null(),
+                            ]
+                        )),
+                        name: 'e',
+                    ),
+                ]
+            )
+        );
     }
 
     public function testConstructorParamsParse(): void
