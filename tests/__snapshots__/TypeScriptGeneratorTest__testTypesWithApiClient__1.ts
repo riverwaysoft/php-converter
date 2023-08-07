@@ -17,6 +17,7 @@ export type UpdateUserInput = {
 
 export type UserOutput = {
   id: string;
+  hasDefaultValue: string;
 };
 
 export const apiRouteWithAnnotationsReturnGet = (): Promise<UserOutput> => {

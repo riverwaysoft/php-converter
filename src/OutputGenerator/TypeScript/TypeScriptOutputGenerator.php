@@ -15,6 +15,7 @@ use Riverwaysoft\PhpConverter\Dto\PhpType\PhpOptionalType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
 use Riverwaysoft\PhpConverter\OutputGenerator\ApiEndpointGeneratorInterface;
 use Riverwaysoft\PhpConverter\OutputGenerator\OutputGeneratorInterface;
+use Riverwaysoft\PhpConverter\OutputGenerator\PropertyNameGeneratorInterface;
 use Riverwaysoft\PhpConverter\OutputWriter\OutputFile;
 use Riverwaysoft\PhpConverter\OutputWriter\OutputProcessor\OutputFilesProcessor;
 use Riverwaysoft\PhpConverter\OutputWriter\OutputWriterInterface;
@@ -28,16 +29,21 @@ class TypeScriptOutputGenerator implements OutputGeneratorInterface
     private TypeScriptGeneratorOptions $options;
 
     private ApiEndpointGeneratorInterface $apiEndpointGenerator;
+    /** @var PropertyNameGeneratorInterface[] */
+    private array $propertyNameGenerators;
 
+    /** @param PropertyNameGeneratorInterface[] $propertyNameGenerators */
     public function __construct(
         private OutputWriterInterface $outputWriter,
         private TypeScriptTypeResolver $typeResolver,
         private ?OutputFilesProcessor $outputFilesProcessor = null,
+        array $propertyNameGenerators = [],
         ?TypeScriptGeneratorOptions $options = null,
     ) {
         $this->options = $options ?? new TypeScriptGeneratorOptions(useTypesInsteadOfEnums: false);
         $this->outputFilesProcessor = $this->outputFilesProcessor ?? new OutputFilesProcessor();
         $this->apiEndpointGenerator = new AxiosEndpointGenerator($this->typeResolver);
+        $this->propertyNameGenerators = $propertyNameGenerators ?: [new TypeScriptPropertyNameGenerator()];
     }
 
     /** @return OutputFile[] */
@@ -96,17 +102,33 @@ class TypeScriptOutputGenerator implements OutputGeneratorInterface
         return false;
     }
 
+    private function getPropertyNameGenerator(DtoType $dto): PropertyNameGeneratorInterface
+    {
+        if (count($this->propertyNameGenerators) === 1) {
+            return $this->propertyNameGenerators[0];
+        }
+
+        foreach ($this->propertyNameGenerators as $propertyNameGenerator) {
+            if ($propertyNameGenerator->supports($dto)) {
+                return $propertyNameGenerator;
+            }
+        }
+
+        throw new Exception('Property name generator not found for type ' . $dto->getName());
+    }
+
     private function convertToTypeScriptProperties(DtoType $dto, DtoList $dtoList): string
     {
         $string = '';
 
         /** @param DtoClassProperty[] $properties */
         $properties = $dto->getProperties();
+        $propertyNameGenerator = $this->getPropertyNameGenerator($dto);
+
         foreach ($properties as $property) {
             $string .= sprintf(
-                "\n  %s%s: %s;",
-                $property->getName(),
-                $property->getType() instanceof PhpOptionalType ? '?' : '',
+                "\n  %s: %s;",
+                $propertyNameGenerator->generate($property),
                 $this->typeResolver->getTypeFromPhp($property->getType(), $dto, $dtoList)
             );
         }

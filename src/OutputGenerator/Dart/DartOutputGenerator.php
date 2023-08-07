@@ -9,6 +9,7 @@ use Riverwaysoft\PhpConverter\Dto\DtoEnumProperty;
 use Riverwaysoft\PhpConverter\Dto\DtoList;
 use Riverwaysoft\PhpConverter\Dto\DtoType;
 use Riverwaysoft\PhpConverter\Dto\ExpressionType;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpOptionalType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnionType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
 use Riverwaysoft\PhpConverter\OutputGenerator\OutputGeneratorInterface;
@@ -94,9 +95,14 @@ class DartOutputGenerator implements OutputGeneratorInterface
         $string = '';
 
         foreach ($dtoType->getProperties() as $property) {
+            $type = $property->getType();
+            if ($type instanceof PhpOptionalType) {
+                $type = $type->getType();
+            }
+
             $string .= sprintf(
                 "\n    %sthis.%s,",
-                $property->getType() instanceof PhpUnionType && $property->getType()->isNullable() ? '' : 'required ',
+                $type instanceof PhpUnionType && $type->isNullable() ? '' : 'required ',
                 $property->getName()
             );
         }

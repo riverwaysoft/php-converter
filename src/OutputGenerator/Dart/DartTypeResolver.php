@@ -8,6 +8,7 @@ use Riverwaysoft\PhpConverter\Dto\DtoList;
 use Riverwaysoft\PhpConverter\Dto\DtoType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpBaseType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpListType;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpOptionalType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeInterface;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnionType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
@@ -38,6 +39,10 @@ class DartTypeResolver
 
         if ($type instanceof PhpListType) {
             return sprintf('List<%s>', $this->getDartTypeFromPhp($type->getType(), $dto, $dtoList));
+        }
+
+        if ($type instanceof PhpOptionalType) {
+            return $this->getDartTypeFromPhp($type->getType(), $dto, $dtoList);
         }
 
         if ($type instanceof PhpBaseType) {
