@@ -10,5 +10,6 @@ use Riverwaysoft\PhpConverter\Dto\DtoType;
 interface PropertyNameGeneratorInterface
 {
     public function supports(DtoType $dto): bool;
+
     public function generate(DtoClassProperty $property): string;
 }

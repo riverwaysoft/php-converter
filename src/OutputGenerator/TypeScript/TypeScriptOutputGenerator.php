@@ -11,7 +11,6 @@ use Riverwaysoft\PhpConverter\Dto\DtoEnumProperty;
 use Riverwaysoft\PhpConverter\Dto\DtoList;
 use Riverwaysoft\PhpConverter\Dto\DtoType;
 use Riverwaysoft\PhpConverter\Dto\ExpressionType;
-use Riverwaysoft\PhpConverter\Dto\PhpType\PhpOptionalType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
 use Riverwaysoft\PhpConverter\OutputGenerator\ApiEndpointGeneratorInterface;
 use Riverwaysoft\PhpConverter\OutputGenerator\OutputGeneratorInterface;
@@ -29,6 +28,7 @@ class TypeScriptOutputGenerator implements OutputGeneratorInterface
     private TypeScriptGeneratorOptions $options;
 
     private ApiEndpointGeneratorInterface $apiEndpointGenerator;
+
     /** @var PropertyNameGeneratorInterface[] */
     private array $propertyNameGenerators;
 
