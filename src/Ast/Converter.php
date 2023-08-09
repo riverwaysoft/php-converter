@@ -27,19 +27,18 @@ class Converter
     {
         $converterResult = new ConverterResult();
 
+        $traverser = new NodeTraverser();
+        foreach ($this->visitors as $visitor) {
+            $traverser->addVisitor($visitor);
+        }
+
         foreach ($listings as $listing) {
             $ast = $this->parser->parse($listing);
-            $traverser = new NodeTraverser();
-
-            foreach ($this->visitors as $visitor) {
-                $traverser->addVisitor($visitor);
-            }
-
             $traverser->traverse($ast);
+        }
 
-            foreach ($this->visitors as $visitor) {
-                $converterResult->merge($visitor->popResult());
-            }
+        foreach ($this->visitors as $visitor) {
+            $converterResult->merge($visitor->popResult());
         }
 
         return $converterResult;
