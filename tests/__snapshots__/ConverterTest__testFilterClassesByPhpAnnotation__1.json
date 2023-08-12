@@ -12,7 +12,8 @@
                     "generics": []
                 }
             },
-            "queryParams": []
+            "queryParams": [],
+            "codeReference": "SomeController::getUserMethodsArray"
         }
     ]
 }

@@ -20,48 +20,56 @@ export type UserOutput = {
   hasDefaultValue: string;
 };
 
+/** @see UserController::routeWithAnnotationsReturn */
 export const apiRouteWithAnnotationsReturnGet = (): Promise<UserOutput> => {
   return axios
     .get<UserOutput>(`/api/route-with-annotations-return`)
     .then((response) => response.data);
 }
 
+/** @see UserController::routeWithName */
 export const apiRouteWithNameGet = (): Promise<null> => {
   return axios
     .get<null>(`/api/route-with-name`)
     .then((response) => response.data);
 }
 
+/** @see UserController::routeWithPath */
 export const apiRouteWithPathGet = (): Promise<null> => {
   return axios
     .get<null>(`/api/route-with-path`)
     .then((response) => response.data);
 }
 
+/** @see UserController::getUsers */
 export const apiUsersGet = (): Promise<UserOutput[]> => {
   return axios
     .get<UserOutput[]>(`/api/users`)
     .then((response) => response.data);
 }
 
+/** @see UserController::getUser */
 export const apiUsersPost = (input: CreateUserInput): Promise<UserOutput> => {
   return axios
     .post<UserOutput>(`/api/users`, input)
     .then((response) => response.data);
 }
 
+/** @see UserController::getUsersWithFilters */
 export const apiUsersWithFiltersGet = (query: FilterQuery): Promise<UserOutput[]> => {
   return axios
     .get<UserOutput[]>(`/api/users-with-filters`, { params: query })
     .then((response) => response.data);
 }
 
+/** @see UserController::getUser */
 export const apiUsersUserGet = (user: string): Promise<UserOutput> => {
   return axios
     .get<UserOutput>(`/api/users/${user}`)
     .then((response) => response.data);
 }
 
+/** @see UserController::getUser */
 export const apiUsersUpdateItUserToUpdatePut = (userToUpdate: string, input: UpdateUserInput): Promise<UserOutput> => {
   return axios
     .put<UserOutput>(`/api/users_update-it/${userToUpdate}`, input)

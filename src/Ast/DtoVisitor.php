@@ -218,10 +218,8 @@ class DtoVisitor extends ConverterVisitor
             : ExpressionType::class();
     }
 
-    public function popResult(): ConverterResult
+    public function getResult(): ConverterResult
     {
-        $result = $this->converterResult;
-        $this->converterResult = new ConverterResult();
-        return $result;
+        return $this->converterResult;
     }
 }

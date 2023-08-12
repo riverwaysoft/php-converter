@@ -14,30 +14,35 @@ export type UserShortOutput = {
   id: string;
 };
 
+/** @see UserController::annotationsReturn */
 export const apiAnnotationsReturnGet = (): Promise<UserOutput> => {
   return axios
     .get<UserOutput>(`/api/annotations-return`)
     .then((response) => response.data);
 }
 
+/** @see UserController::annotationsReturnTakePrecedenceOverDtoEndpoint */
 export const apiAnnotationsReturnPrecedenceGet = (): Promise<UserShortOutput> => {
   return axios
     .get<UserShortOutput>(`/api/annotations-return-precedence`)
     .then((response) => response.data);
 }
 
+/** @see UserController::nestedGenericsSimpleType */
 export const apiNestedGenericsSimpleTypeGet = (): Promise<JsonResponse<string[]>> => {
   return axios
     .get<JsonResponse<string[]>>(`/api/nested-generics-simple-type`)
     .then((response) => response.data);
 }
 
+/** @see UserController::nestedGenericAnnotationReturn */
 export const apiRouteWithNestedGenericsAnnotationsReturnGet = (): Promise<JsonResponse<UserOutput>> => {
   return axios
     .get<JsonResponse<UserOutput>>(`/api/route-with-nested-generics-annotations-return`)
     .then((response) => response.data);
 }
 
+/** @see UserController::nestedGenericAnnotationUnionReturn */
 export const apiRouteWithNestedGenericsUnionAnnotationsReturnGet = (): Promise<JsonResponse<UserOutput[]>> => {
   return axios
     .get<JsonResponse<UserOutput[]>>(`/api/route-with-nested-generics-union-annotations-return`)

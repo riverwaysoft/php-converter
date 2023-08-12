@@ -12,7 +12,8 @@
                     "generics": []
                 }
             },
-            "queryParams": []
+            "queryParams": [],
+            "codeReference": "SomeController::getUserMethodsArray"
         },
         {
             "route": "\/api\/users",
@@ -31,7 +32,8 @@
                 "context": [],
                 "generics": []
             },
-            "queryParams": []
+            "queryParams": [],
+            "codeReference": "SomeController::createUser"
         },
         {
             "route": "\/api\/users\/{id}",
@@ -50,7 +52,8 @@
                 "context": [],
                 "generics": []
             },
-            "queryParams": []
+            "queryParams": [],
+            "codeReference": "SomeController::getUser"
         },
         {
             "route": "\/api\/users_methods_string",
@@ -62,7 +65,8 @@
                 "context": [],
                 "generics": []
             },
-            "queryParams": []
+            "queryParams": [],
+            "codeReference": "SomeController::getUserMethodsString"
         },
         {
             "route": "\/api\/users_reversed_order",
@@ -76,7 +80,8 @@
                     "generics": []
                 }
             },
-            "queryParams": []
+            "queryParams": [],
+            "codeReference": "SomeController::getUserMethodsArrayReversedOrder"
         }
     ]
 }
