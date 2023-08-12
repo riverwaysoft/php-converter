@@ -202,13 +202,22 @@ class SymfonyControllerVisitor extends ConverterVisitor
                 $routeParams,
             ),
             queryParams: $queryParams,
+            codeReference: $this->generateCodeReference($node),
         ));
     }
 
-    public function popResult(): ConverterResult
+    private function generateCodeReference(ClassMethod $node): string|null
     {
-        $result = $this->converterResult;
-        $this->converterResult = new ConverterResult();
-        return $result;
+        $parent = $node->getAttribute('parent');
+        if (!($parent instanceof Node\Stmt\Class_)) {
+            return null;
+        }
+
+        return sprintf("%s::%s", $parent->name->name, $node->name->name);
+    }
+
+    public function getResult(): ConverterResult
+    {
+        return $this->converterResult;
     }
 }

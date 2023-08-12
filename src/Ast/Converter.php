@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Riverwaysoft\PhpConverter\Ast;
 
 use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitor\ParentConnectingVisitor;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
 
@@ -28,6 +29,7 @@ class Converter
         $converterResult = new ConverterResult();
 
         $traverser = new NodeTraverser();
+        $traverser->addVisitor(new ParentConnectingVisitor());
         foreach ($this->visitors as $visitor) {
             $traverser->addVisitor($visitor);
         }
@@ -38,7 +40,7 @@ class Converter
         }
 
         foreach ($this->visitors as $visitor) {
-            $converterResult->merge($visitor->popResult());
+            $converterResult->merge($visitor->getResult());
         }
 
         return $converterResult;

@@ -399,10 +399,8 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
         return null;
     }
 
-    public function popResult(): ConverterResult
+    public function getResult(): ConverterResult
     {
-        $result = $this->converterResult;
-        $this->converterResult = new ConverterResult();
-        return $result;
+        return $this->converterResult;
     }
 }

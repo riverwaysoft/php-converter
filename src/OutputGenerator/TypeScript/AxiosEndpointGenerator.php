@@ -20,7 +20,12 @@ class AxiosEndpointGenerator implements ApiEndpointGeneratorInterface
 
     public function generate(ApiEndpoint $apiEndpoint, DtoList $dtoList): string
     {
-        $string = "\nexport const %s = (%s): %s => {\n%s\n}\n";
+        $string = "\n%sexport const %s = (%s): %s => {\n%s\n}\n";
+
+        $codeReference = '';
+        if ($apiEndpoint->codeReference) {
+            $codeReference = sprintf("/** @see %s */\n", $apiEndpoint->codeReference);
+        }
 
         $fullRoute = $apiEndpoint->route . '/' . $apiEndpoint->method->getType();
         $name = $this->normalizeEndpointName($fullRoute);
@@ -70,7 +75,7 @@ class AxiosEndpointGenerator implements ApiEndpointGeneratorInterface
     .%s<%s>(`%s`%s)
     .then((response) => response.data);', $apiEndpoint->method->getType(), $outputType, $route, $formParamsAsString);
 
-        return sprintf($string, $name, $params, $returnType, $body);
+        return sprintf($string, $codeReference, $name, $params, $returnType, $body);
     }
 
     private function normalizeEndpointName(string $str): string
