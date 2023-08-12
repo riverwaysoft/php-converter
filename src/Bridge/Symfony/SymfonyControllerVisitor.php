@@ -206,7 +206,6 @@ class SymfonyControllerVisitor extends ConverterVisitor
         ));
     }
 
-
     private function generateCodeReference(ClassMethod $node): string|null
     {
         $parent = $node->getAttribute('parent');
