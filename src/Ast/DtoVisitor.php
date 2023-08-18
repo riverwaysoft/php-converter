@@ -105,7 +105,7 @@ class DtoVisitor extends ConverterVisitor
                 /** @var DtoClassProperty[]|null $classMethodCommentsParsed */
                 $classMethodCommentsParsed = null;
                 foreach ($stmt->params as $param) {
-                    if ($param->flags !== Node\Stmt\Class_::MODIFIER_PUBLIC) {
+                    if (!($param->flags & Node\Stmt\Class_::MODIFIER_PUBLIC)) {
                         continue;
                     }
 

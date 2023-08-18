@@ -42,7 +42,7 @@ class FullName {
 
 class Profile {
     public FullName|null|string $name;
-    public int $age;
+    public readonly int $age;
 }
 CODE;
 
@@ -131,7 +131,7 @@ class UserCreate {
     */
     public function __construct(
         public $id,
-        public $fullName,
+        public readonly $fullName,
     ) {
     
     }

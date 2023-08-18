@@ -14,5 +14,6 @@ export enum Role {
 
 export type User = {
   color: Color;
+  user: number;
   role: Role;
 };
