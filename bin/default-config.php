@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Riverwaysoft\PhpConverter\Ast\DtoVisitor;
 use Riverwaysoft\PhpConverter\CodeProvider\FileSystemCodeProvider;
+use Riverwaysoft\PhpConverter\Filter\Attributes\Dto;
 use Riverwaysoft\PhpConverter\Config\PhpConverterConfig;
 use Riverwaysoft\PhpConverter\Filter\PhpAttributeFilter;
 use Riverwaysoft\PhpConverter\OutputGenerator\TypeScript\TypeScriptOutputGenerator;
@@ -15,7 +16,7 @@ use Riverwaysoft\PhpConverter\OutputWriter\SingleFileOutputWriter\SingleFileOutp
 return static function (PhpConverterConfig $config) {
     $config->setCodeProvider(new FileSystemCodeProvider('/\.php$/'));
 
-    $config->addVisitor(new DtoVisitor(new PhpAttributeFilter('Dto')));
+    $config->addVisitor(new DtoVisitor(new PhpAttributeFilter(Dto::class)));
 
     $config->setOutputGenerator(new TypeScriptOutputGenerator(
         new SingleFileOutputWriter('generated.ts'),

@@ -9,6 +9,7 @@ use PhpParser\Node;
 use PhpParser\Node\Attribute;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\NodeTraverser;
+use Riverwaysoft\PhpConverter\Ast\ClassName;
 use Riverwaysoft\PhpConverter\Ast\ConverterResult;
 use Riverwaysoft\PhpConverter\Ast\ConverterVisitor;
 use Riverwaysoft\PhpConverter\Ast\PhpDocTypeParser;
@@ -31,13 +32,19 @@ class SymfonyControllerVisitor extends ConverterVisitor
 
     private PhpDocTypeParser $phpDocTypeParser;
 
+    private ClassName $queryStringAttributeName;
+
+    private ClassName $requestBodyAttributeName;
+
     public function __construct(
         private ?FilterInterface $filter,
-        private string $queryStringAttributeName = 'Query',
-        private string $requestBodyAttributeName = 'Input',
+        string|null $queryStringAttributeName = 'Query',
+        string|null $requestBodyAttributeName = 'Input',
     ) {
         $this->converterResult = new ConverterResult();
         $this->phpDocTypeParser = new PhpDocTypeParser();
+        $this->queryStringAttributeName = new ClassName($queryStringAttributeName);
+        $this->requestBodyAttributeName = new ClassName($requestBodyAttributeName);
     }
 
     public function enterNode(Node $node)
@@ -151,26 +158,24 @@ class SymfonyControllerVisitor extends ConverterVisitor
         /** @var string[] $excessiveRouteParams */
         $excessiveRouteParams = array_flip($routeParams);
         foreach ($node->params as $param) {
-            $maybeDtoInputAttribute = $this->findAttribute($param, $this->requestBodyAttributeName);
+            $maybeDtoInputAttribute = $this->findAttribute($param, $this->requestBodyAttributeName->getShortName());
             if ($maybeDtoInputAttribute) {
                 if ($inputParam) {
-                    throw new Exception(sprintf("Multiple #[%s] on controller action are not supported", $this->requestBodyAttributeName));
+                    throw new Exception(sprintf("Multiple #[%s] on controller action are not supported", $this->requestBodyAttributeName->getShortName()));
                 }
                 $inputParam = new ApiEndpointParam(
                     name: $param->var->name,
-                    // TODO: class names with full namespace probably aren't supported
-                    type: PhpTypeFactory::create($param->type->getParts()[0]),
+                    type: PhpTypeFactory::create($param->type->getFirst()),
                 );
             }
-            $maybeDtoQueryAttribute = $this->findAttribute($param, $this->queryStringAttributeName);
+            $maybeDtoQueryAttribute = $this->findAttribute($param, $this->queryStringAttributeName->getShortName());
             if ($maybeDtoQueryAttribute) {
                 if (!empty($queryParams)) {
-                    throw new Exception(sprintf("Multiple #[%s] on controller action are not supported", $this->queryStringAttributeName));
+                    throw new Exception(sprintf("Multiple #[%s] on controller action are not supported", $this->queryStringAttributeName->getShortName()));
                 }
                 $queryParams[] = new ApiEndpointParam(
                     name: $param->var->name,
-                    // TODO: class names with full namespace probably aren't supported
-                    type: PhpTypeFactory::create($param->type->getParts()[0]),
+                    type: PhpTypeFactory::create($param->type->getFirst()),
                 );
             }
 
