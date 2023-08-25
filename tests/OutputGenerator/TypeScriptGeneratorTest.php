@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests;
+namespace App\Tests\OutputGenerator;
 
 use App\Tests\SnapshotComparator\TypeScriptSnapshotComparator;
 use PHPUnit\Framework\TestCase;
@@ -513,7 +513,8 @@ CODE;
         $codeWithDateTime = <<<'CODE'
 <?php
 
-use Riverwaysoft\PhpConverter\Filter\Attributes\Dto;use Riverwaysoft\PhpConverter\Filter\Attributes\DtoEndpoint;
+use Riverwaysoft\PhpConverter\Filter\Attributes\Dto;
+use Riverwaysoft\PhpConverter\Filter\Attributes\DtoEndpoint;
 
 #[\Attribute(\Attribute::TARGET_METHOD)]
 class Route {

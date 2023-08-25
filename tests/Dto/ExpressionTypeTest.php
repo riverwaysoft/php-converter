@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\PhpConverter\Dto;
+namespace App\Tests\Dto;
 
 use PHPUnit\Framework\TestCase;
+use Riverwaysoft\PhpConverter\Dto\ExpressionType;
 
 class ExpressionTypeTest extends TestCase
 {

@@ -2,19 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\PhpConverter\OutputDiffCalculator;
+namespace App\Tests\OutputDiffRenderer;
 
 use Jfcherng\Diff\Renderer\RendererConstant;
 use PHPUnit\Framework\TestCase;
+use Riverwaysoft\PhpConverter\OutputDiffRenderer\OutputDiffRenderer;
 use Spatie\Snapshots\MatchesSnapshots;
 
-class OutputDiffCalculatorTest extends TestCase
+class OutputDiffRendererTest extends TestCase
 {
     use MatchesSnapshots;
 
     public function testBasicDiff(): void
     {
-        $diff = new OutputDiffCalculator(
+        $diff = new OutputDiffRenderer(
             context: 3,
             // Remove terminal codes to have a clean readable test snapshot
             cliColorization: RendererConstant::CLI_COLOR_DISABLE,

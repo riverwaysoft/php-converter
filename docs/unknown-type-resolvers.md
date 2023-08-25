@@ -27,7 +27,7 @@ use Riverwaysoft\PhpConverter\Dto\PhpType\PhpBaseType;
 return static function (PhpConverterConfig $config) {
     $config->setCodeProvider(new FileSystemCodeProvider('/\.php$/'));
 
-    $config->addVisitor(new DtoVisitor(new PhpAttributeFilter('Dto')));
+    $config->addVisitor(new DtoVisitor(new PhpAttributeFilter(Dto::class)));
 
     $config->setOutputGenerator(new TypeScriptGenerator(
         new SingleFileOutputWriter('generated.ts'),

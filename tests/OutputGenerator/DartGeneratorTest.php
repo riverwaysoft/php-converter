@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests;
+namespace App\Tests\OutputGenerator;
 
 use App\Tests\SnapshotComparator\DartSnapshotComparator;
 use PHPUnit\Framework\TestCase;
@@ -10,8 +10,8 @@ use Riverwaysoft\PhpConverter\Ast\Converter;
 use Riverwaysoft\PhpConverter\Ast\DtoVisitor;
 use Riverwaysoft\PhpConverter\OutputGenerator\Dart\DartClassFactoryGenerator;
 use Riverwaysoft\PhpConverter\OutputGenerator\Dart\DartEquitableGenerator;
-use Riverwaysoft\PhpConverter\OutputGenerator\Dart\DartOutputGenerator;
 use Riverwaysoft\PhpConverter\OutputGenerator\Dart\DartImportGenerator;
+use Riverwaysoft\PhpConverter\OutputGenerator\Dart\DartOutputGenerator;
 use Riverwaysoft\PhpConverter\OutputGenerator\Dart\DartTypeResolver;
 use Riverwaysoft\PhpConverter\OutputGenerator\UnknownTypeResolver\ClassNameTypeResolver;
 use Riverwaysoft\PhpConverter\OutputGenerator\UnknownTypeResolver\DateTimeTypeResolver;

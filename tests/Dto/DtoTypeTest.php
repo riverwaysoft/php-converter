@@ -2,12 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\PhpConverter\Dto;
+namespace App\Tests\Dto;
 
+use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Riverwaysoft\PhpConverter\Dto\DtoClassProperty;
+use Riverwaysoft\PhpConverter\Dto\DtoEnumProperty;
+use Riverwaysoft\PhpConverter\Dto\DtoType;
+use Riverwaysoft\PhpConverter\Dto\ExpressionType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpBaseType;
-use Generator;
 
 class DtoTypeTest extends TestCase
 {
