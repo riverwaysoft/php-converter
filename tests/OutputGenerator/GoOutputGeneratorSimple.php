@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Tests;
+namespace App\Tests\OutputGenerator;
 
+use Exception;
 use Riverwaysoft\PhpConverter\Ast\ConverterResult;
 use Riverwaysoft\PhpConverter\Dto\DtoClassProperty;
 use Riverwaysoft\PhpConverter\Dto\DtoList;
@@ -18,7 +19,6 @@ use Riverwaysoft\PhpConverter\OutputGenerator\UnknownTypeResolver\UnknownTypeRes
 use Riverwaysoft\PhpConverter\OutputGenerator\UnsupportedTypeException;
 use Riverwaysoft\PhpConverter\OutputWriter\OutputWriterInterface;
 use Webmozart\Assert\Assert;
-use Exception;
 use function sprintf;
 
 class GoOutputGeneratorSimple implements OutputGeneratorInterface

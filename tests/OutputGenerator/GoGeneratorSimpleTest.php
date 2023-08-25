@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Tests;
+namespace App\Tests\OutputGenerator;
 
 use PHPUnit\Framework\TestCase;
 use Riverwaysoft\PhpConverter\Ast\Converter;

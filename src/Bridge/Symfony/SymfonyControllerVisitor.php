@@ -23,7 +23,6 @@ use function array_key_first;
 use function array_map;
 use function count;
 use function implode;
-use function in_array;
 use function sprintf;
 
 class SymfonyControllerVisitor extends ConverterVisitor
@@ -62,7 +61,7 @@ class SymfonyControllerVisitor extends ConverterVisitor
 
         foreach ($attrGroups as $attrGroup) {
             foreach ($attrGroup->attrs as $attr) {
-                if (in_array(needle: $name, haystack: $attr->name->getParts())) {
+                if ($name === $attr->name->getLast()) {
                     return $attr;
                 }
             }

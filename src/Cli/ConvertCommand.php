@@ -7,7 +7,7 @@ namespace Riverwaysoft\PhpConverter\Cli;
 use Riverwaysoft\PhpConverter\Ast\UsageCollector;
 use Riverwaysoft\PhpConverter\Ast\Converter;
 use Riverwaysoft\PhpConverter\Config\PhpConverterConfig;
-use Riverwaysoft\PhpConverter\OutputDiffCalculator\OutputDiffCalculator;
+use Riverwaysoft\PhpConverter\OutputDiffRenderer\OutputDiffRenderer;
 use Composer\XdebugHandler\XdebugHandler;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -27,7 +27,7 @@ class ConvertCommand extends Command
 
     private UsageCollector $usageCollector;
 
-    private OutputDiffCalculator $diffWriter;
+    private OutputDiffRenderer $diffWriter;
 
     private Filesystem $fileSystem;
 
@@ -35,7 +35,7 @@ class ConvertCommand extends Command
     {
         parent::__construct();
         $this->usageCollector = new UsageCollector();
-        $this->diffWriter = new OutputDiffCalculator();
+        $this->diffWriter = new OutputDiffRenderer();
         $this->fileSystem = new Filesystem();
     }
 

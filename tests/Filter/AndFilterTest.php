@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\PhpConverter\Filter\Combinators;
+namespace App\Tests\Filter;
 
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Enum_;
 use PHPUnit\Framework\TestCase;
+use Riverwaysoft\PhpConverter\Filter\Combinators\AndFilter;
 use Riverwaysoft\PhpConverter\Filter\FilterInterface;
 
 class AndFilterTest extends TestCase

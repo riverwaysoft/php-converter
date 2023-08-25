@@ -2,14 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\PhpConverter\OutputGenerator\Dart;
+namespace App\Tests\OutputGenerator;
 
+use Generator;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Riverwaysoft\PhpConverter\Dto\DtoEnumProperty;
 use Riverwaysoft\PhpConverter\Dto\DtoType;
 use Riverwaysoft\PhpConverter\Dto\ExpressionType;
-use Generator;
+use Riverwaysoft\PhpConverter\OutputGenerator\Dart\DartEnumValidator;
 
 class DartEnumValidatorTest extends TestCase
 {

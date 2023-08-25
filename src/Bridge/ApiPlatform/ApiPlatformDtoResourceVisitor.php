@@ -26,7 +26,6 @@ use Riverwaysoft\PhpConverter\Filter\FilterInterface;
 use function array_key_last;
 use function array_map;
 use function count;
-use function in_array;
 use function ltrim;
 use function rtrim;
 use function sprintf;
@@ -169,7 +168,7 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
             default => ApiEndpointMethod::fromString($classString),
         };
 
-        $maybeInput = $this->getNewExpressionArgumentByName($item->value, 'input');
+        $maybeInput = $this->getAttributeArgumentByName($item->value, 'input');
         $localInputClass = null;
         if ($maybeInput?->value instanceof Node\Expr\ClassConstFetch) {
             $localInputClass = $maybeInput->value->class->getParts()[array_key_last($maybeInput->value->class->getParts())];
@@ -180,7 +179,7 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
             $inputParam = null;
         }
 
-        $maybeOutput = $this->getNewExpressionArgumentByName($item->value, 'output');
+        $maybeOutput = $this->getAttributeArgumentByName($item->value, 'output');
         $localOutputClass = null;
         if ($maybeOutput?->value instanceof Node\Expr\ClassConstFetch) {
             $localOutputClass = $maybeOutput->value->class->getParts()[array_key_last($maybeOutput->value->class->getParts())];
@@ -211,7 +210,7 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
 
         $route = $forcePath;
         if (!$route) {
-            $maybePath = $this->getNewExpressionArgumentByName($item->value, 'uriTemplate');
+            $maybePath = $this->getAttributeArgumentByName($item->value, 'uriTemplate');
             if ($maybePath?->value instanceof Node\Scalar\String_) {
                 $route = $maybePath->value->value;
             }
@@ -368,7 +367,7 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
 
         foreach ($attrGroups as $attrGroup) {
             foreach ($attrGroup->attrs as $attr) {
-                if (in_array(needle: $name, haystack: $attr->name->getParts())) {
+                if ($name === $attr->name->getLast()) {
                     $result[] = $attr;
                 }
             }
@@ -377,18 +376,7 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
         return $result;
     }
 
-    private function getNewExpressionArgumentByName(Node\Expr\New_ $new, string $name): ?Node\Arg
-    {
-        foreach ($new->args as $arg) {
-            if ($arg->name?->name === $name) {
-                return $arg;
-            }
-        }
-
-        return null;
-    }
-
-    private function getAttributeArgumentByName(Attribute $attribute, string $name): ?Node\Arg
+    private function getAttributeArgumentByName(Attribute|Node\Expr\New_ $attribute, string $name): ?Node\Arg
     {
         foreach ($attribute->args as $arg) {
             if ($arg->name?->name === $name) {
