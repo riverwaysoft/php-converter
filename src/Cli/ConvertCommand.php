@@ -7,7 +7,7 @@ namespace Riverwaysoft\PhpConverter\Cli;
 use Riverwaysoft\PhpConverter\Ast\UsageCollector;
 use Riverwaysoft\PhpConverter\Ast\Converter;
 use Riverwaysoft\PhpConverter\Config\PhpConverterConfig;
-use Riverwaysoft\PhpConverter\OutputDiffRenderer\OutputDiffRenderer;
+use Riverwaysoft\PhpConverter\DiffRenderer\DiffRenderer;
 use Composer\XdebugHandler\XdebugHandler;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -27,7 +27,7 @@ class ConvertCommand extends Command
 
     private UsageCollector $usageCollector;
 
-    private OutputDiffRenderer $diffWriter;
+    private DiffRenderer $diffRenderer;
 
     private Filesystem $fileSystem;
 
@@ -35,7 +35,7 @@ class ConvertCommand extends Command
     {
         parent::__construct();
         $this->usageCollector = new UsageCollector();
-        $this->diffWriter = new OutputDiffRenderer();
+        $this->diffRenderer = new DiffRenderer();
         $this->fileSystem = new Filesystem();
     }
 
@@ -45,6 +45,7 @@ class ConvertCommand extends Command
             ->setDescription('Generate TypeScript / Dart from PHP sources')
             ->addOption('from', 'f', InputOption::VALUE_REQUIRED)
             ->addOption('to', 't', InputOption::VALUE_REQUIRED)
+            ->addOption('branch', 'b', InputOption::VALUE_OPTIONAL)
             ->addOption(
                 name: 'config',
                 shortcut: 'c',
@@ -62,18 +63,14 @@ class ConvertCommand extends Command
             $this->turnOffXdebug();
         }
 
-        $from = $input->getOption('from');
-        $to = $input->getOption('to');
-        Assert::directory($to);
-
         $configFile = $input->getOption('config');
         Assert::file($configFile);
         Assert::readable($configFile);
 
-        $config = new PhpConverterConfig();
+        $config = new PhpConverterConfig($input);
         (require_once $configFile)($config);
 
-        $files = $config->getCodeProvider()->getListings($from);
+        $files = $config->getCodeProvider()->getListings();
         if (empty($files)) {
             $output->writeln('No files to convert');
             return Command::SUCCESS;
@@ -88,10 +85,11 @@ class ConvertCommand extends Command
         $outputFiles = $config->getOutputGenerator()->generate($converterResult);
 
         foreach ($outputFiles as $outputFile) {
+            $to = $config->getToDirectory();
             $outputAbsolutePath = sprintf("%s/%s", rtrim($to, '/'), $outputFile->getRelativeName());
             $newFileContent = $outputFile->getContent();
             if ($this->fileSystem->exists($outputAbsolutePath)) {
-                $diff = $this->diffWriter->calculate(file_get_contents($outputAbsolutePath), $newFileContent);
+                $diff = $this->diffRenderer->calculate(file_get_contents($outputAbsolutePath), $newFileContent);
                 if (empty($diff)) {
                     $output->writeln(sprintf("\nNo difference between the old generated file and the new one: %s", $outputFile->getRelativeName()));
                 } else {
