@@ -51,7 +51,10 @@ class PhpConverterConfigTest extends TestCase
 
     public function testGetCodeProviderFromGitLinkWithBranch(): void
     {
-        $input = $this->createInputMock(['from' => 'https://example.com/repo.git', 'branch' => 'main']);
+        $input = $this->createInputMock([
+            'from' => 'https://example.com/repo.git',
+            'branch' => 'main',
+        ]);
         $config = new PhpConverterConfig($input);
 
         $this->assertInstanceOf(RemoteRepositoryCodeProvider::class, $config->getCodeProvider());
@@ -59,7 +62,10 @@ class PhpConverterConfigTest extends TestCase
 
     public function testGetCodeProviderFromGitShhLinkWithBranch(): void
     {
-        $input = $this->createInputMock(['from' => 'git@gitlab.com:riverwaysoft/lepsons_project/lepsons_hub.git', 'branch' => 'main']);
+        $input = $this->createInputMock([
+            'from' => 'git@gitlab.com:test_soft/project/repo.git',
+            'branch' => 'main',
+        ]);
         $config = new PhpConverterConfig($input);
 
         $this->assertInstanceOf(RemoteRepositoryCodeProvider::class, $config->getCodeProvider());
@@ -70,7 +76,10 @@ class PhpConverterConfigTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Option --branch is required when using URL as repository source');
 
-        $input = $this->createInputMock(['from' => 'https://example.com/repo.git', 'branch' => '']);
+        $input = $this->createInputMock([
+            'from' => 'https://example.com/repo.git',
+            'branch' => '',
+        ]);
         $config = new PhpConverterConfig($input);
 
         $config->getCodeProvider();
@@ -80,7 +89,9 @@ class PhpConverterConfigTest extends TestCase
     {
         $this->expectException(Exception::class);
 
-        $input = $this->createInputMock(['from' => 'invalid']);
+        $input = $this->createInputMock([
+            'from' => 'invalid',
+        ]);
         $config = new PhpConverterConfig($input);
 
         $config->getCodeProvider();
@@ -94,7 +105,7 @@ class PhpConverterConfigTest extends TestCase
                 if (isset($values[$argument])) {
                     return $values[$argument];
                 }
-                throw new \Exception('Unknown input mock argument ' . $argument);
+                throw new Exception('Unknown input mock argument ' . $argument);
             });
 
         return $mock;
