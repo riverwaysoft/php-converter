@@ -169,8 +169,8 @@ CODE;
     public function testNormalizationDirectory(): void
     {
         $converter = new Converter([new DtoVisitor()]);
-        $fileProvider = new FileSystemCodeProvider('/\.php$/');
-        $result = $converter->convert($fileProvider->getListings(__DIR__ . '/Fixtures'));
+        $fileProvider = FileSystemCodeProvider::phpFiles(__DIR__ . '/Fixtures');
+        $result = $converter->convert($fileProvider->getListings());
         $this->assertMatchesJsonSnapshot($result->dtoList->getList());
         $results = (new TypeScriptOutputGenerator(
             new SingleFileOutputWriter('generated.ts'),

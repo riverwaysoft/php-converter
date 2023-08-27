@@ -9,17 +9,23 @@ use RecursiveDirectoryIterator;
 use RegexIterator;
 use function file_get_contents;
 
-class FileSystemCodeProvider
+class FileSystemCodeProvider implements CodeProviderInterface
 {
     public function __construct(
         private string $pattern,
+        private string $directory,
     ) {
     }
 
-    /** @return string[] */
-    public function getListings(string $directory): iterable
+    public static function phpFiles(string $directory): self
     {
-        $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory));
+        return new self('/\.php$/', $directory);
+    }
+
+    /** @return string[] */
+    public function getListings(): iterable
+    {
+        $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($this->directory));
         $files = new RegexIterator($files, $this->pattern);
 
         foreach ($files as $file) {

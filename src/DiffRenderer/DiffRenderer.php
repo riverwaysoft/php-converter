@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Riverwaysoft\PhpConverter\OutputDiffRenderer;
+namespace Riverwaysoft\PhpConverter\DiffRenderer;
 
 use Jfcherng\Diff\DiffHelper;
 use Jfcherng\Diff\Renderer\RendererConstant;
 use const JSON_UNESCAPED_SLASHES;
 use const JSON_UNESCAPED_UNICODE;
 
-class OutputDiffRenderer
+class DiffRenderer
 {
     public function __construct(
         private int $context = 3,

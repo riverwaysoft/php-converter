@@ -29,7 +29,8 @@
         "doctrine/inflector": "^2.0",
         "composer/xdebug-handler": "^3.0",
         "symfony/console": "^5.3|^6.3|^6.2|^6.1",
-        "symfony/filesystem": "^5.3|^6.3|^6.2|^6.1"
+        "symfony/filesystem": "^5.3|^6.3|^6.2|^6.1",
+        "symfony/process": "^5.3|^6.3|^6.2|^6.1"
     },
     "license": "GPL-3.0-or-later",
     "autoload": {
