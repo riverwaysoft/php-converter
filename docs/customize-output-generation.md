@@ -4,8 +4,6 @@ You might want to apply some transformations to the resultant file containing ty
 
 ```php
 return static function (PhpConverterConfig $config) {
-    $config->setCodeProvider(new FileSystemCodeProvider('/\.php$/'));
-
     $config->addVisitor(new DtoVisitor(new PhpAttributeFilter(Dto::class)));
 
     $config->setOutputGenerator(new TypeScriptGenerator(
@@ -57,8 +55,6 @@ Then add it to the list:
 
 ```php
 return static function (PhpConverterConfig $config) {
-    $config->setCodeProvider(new FileSystemCodeProvider('/\.php$/'));
-
     $config->addVisitor(new DtoVisitor(new PhpAttributeFilter(Dto::class)));
 
     $config->setOutputGenerator(new TypeScriptGenerator(
@@ -80,8 +76,6 @@ By default, `php-converter` writes all the types into one file. You can configur
 
 ```diff
 return static function (PhpConverterConfig $config) {
-    $config->setCodeProvider(new FileSystemCodeProvider('/\.php$/'));
-
     $config->addVisitor(new DtoVisitor(new PhpAttributeFilter(Dto::class)));
 
 +   $fileNameGenerator = new KebabCaseFileNameGenerator('.ts');

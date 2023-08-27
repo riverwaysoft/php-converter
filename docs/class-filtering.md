@@ -1,9 +1,9 @@
 ## Customize class filtering
 Suppose you don't want to individually mark each DTO with the #[Dto] annotation, but instead, you want to automatically convert all files that end with "Dto":
 
-```php
+```diff
 return static function (PhpConverterConfig $config) {
-    $config->setCodeProvider(new FileSystemCodeProvider('/Dto\.php$/'));
++   $config->setCodeProvider(new FileSystemCodeProvider('/Dto\.php$/', __DIR__ . '/path/to/src'));
     $config->addVisitor(new DtoVisitor());
 
     $config->setOutputGenerator(new TypeScriptGenerator(

@@ -25,8 +25,6 @@ There is also a shortcut to achieve it - use [InlineTypeResolver](https://github
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpBaseType;
 
 return static function (PhpConverterConfig $config) {
-    $config->setCodeProvider(new FileSystemCodeProvider('/\.php$/'));
-
     $config->addVisitor(new DtoVisitor(new PhpAttributeFilter(Dto::class)));
 
     $config->setOutputGenerator(new TypeScriptGenerator(
