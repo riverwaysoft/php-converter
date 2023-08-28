@@ -60,22 +60,25 @@ class PhpConverterConfig
 
     public function getCodeProvider(): CodeProviderInterface
     {
-        if (!$this->defaultCodeProvider && $this->input->hasOption('from')) {
-            $this->defaultCodeProvider = $this->guessCodeProvider($this->input->getOption('from'));
+        if (!$this->defaultCodeProvider && $this->input->getOption('from')) {
+            $this->defaultCodeProvider = $this->guessCodeProvider();
         }
 
         return $this->defaultCodeProvider ?: $this->codeProvider;
     }
 
-    private function guessCodeProvider(string $from): CodeProviderInterface
+    private function guessCodeProvider(): CodeProviderInterface
     {
+        $from = $this->input->getOption('from');
+
         if (is_dir($from)) {
             return FileSystemCodeProvider::phpFiles($from);
         }
 
         if ((str_starts_with(haystack: $from, needle: 'https://') || str_starts_with(haystack: $from, needle: 'git@'))
             && str_ends_with(haystack: $from, needle: '.git')) {
-            if (!$this->input->hasOption('branch')) {
+            $branch = $this->input->getOption('branch');
+            if (!$branch) {
                 throw new InvalidArgumentException('Option --branch is required when using URL as repository source');
             }
 
@@ -87,7 +90,7 @@ class PhpConverterConfig
 
     public function getToDirectory(): string
     {
-        $to = $this->input->hasOption('to') ? $this->input->getOption('to') : $this->toDirectory;
+        $to = $this->input->getOption('to') ?: $this->toDirectory;
 
         Assert::directory($to, sprintf("Either pass --to as CLI argument or set the directory via %s::setToDirectory()", self::class));
 

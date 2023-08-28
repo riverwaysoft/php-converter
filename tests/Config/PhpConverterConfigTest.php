@@ -143,7 +143,7 @@ class PhpConverterConfigTest extends TestCase
                 if (isset($values[$argument])) {
                     return $values[$argument];
                 }
-                throw new Exception('Unknown input mock argument ' . $argument);
+                return null;
             });
 
         $mock->method('hasOption')
