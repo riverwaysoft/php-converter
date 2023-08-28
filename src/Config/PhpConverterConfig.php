@@ -23,6 +23,8 @@ class PhpConverterConfig
 
     private CodeProviderInterface|null $codeProvider = null;
 
+    private CodeProviderInterface|null $defaultCodeProvider = null;
+
     private string|null $toDirectory = null;
 
     public function __construct(
@@ -58,29 +60,26 @@ class PhpConverterConfig
 
     public function getCodeProvider(): CodeProviderInterface
     {
-        if (!$this->codeProvider) {
-            $this->codeProvider = $this->guessCodeProvider();
+        if (!$this->defaultCodeProvider && $this->input->hasOption('from')) {
+            $this->defaultCodeProvider = $this->guessCodeProvider($this->input->getOption('from'));
         }
 
-        return $this->codeProvider;
+        return $this->defaultCodeProvider ?: $this->codeProvider;
     }
 
-    private function guessCodeProvider(): CodeProviderInterface
+    private function guessCodeProvider(string $from): CodeProviderInterface
     {
-        $from = $this->input->getOption('from');
-
         if (is_dir($from)) {
             return FileSystemCodeProvider::phpFiles($from);
         }
 
         if ((str_starts_with(haystack: $from, needle: 'https://') || str_starts_with(haystack: $from, needle: 'git@'))
             && str_ends_with(haystack: $from, needle: '.git')) {
-            $branch = $this->input->getOption('branch');
-            if (!$branch) {
+            if (!$this->input->hasOption('branch')) {
                 throw new InvalidArgumentException('Option --branch is required when using URL as repository source');
             }
 
-            return new RemoteRepositoryCodeProvider(repositoryUrl: $from, branch: $branch);
+            return new RemoteRepositoryCodeProvider(repositoryUrl: $from, branch: $this->input->getOption('branch'));
         }
 
         throw new Exception(sprintf("Either pass --from as CLI argument or set the code provider via %s::setCodeProvider()", self::class));
@@ -88,7 +87,7 @@ class PhpConverterConfig
 
     public function getToDirectory(): string
     {
-        $to = $this->toDirectory ?: $this->input->getOption('to');
+        $to = $this->input->hasOption('to') ? $this->input->getOption('to') : $this->toDirectory;
 
         Assert::directory($to, sprintf("Either pass --to as CLI argument or set the directory via %s::setToDirectory()", self::class));
 

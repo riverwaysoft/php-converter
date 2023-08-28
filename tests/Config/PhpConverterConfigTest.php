@@ -39,6 +39,44 @@ class PhpConverterConfigTest extends TestCase
         $this->assertSame($mockedProvider, $config->getCodeProvider());
     }
 
+    public function argumentFromTakesPrecedenceOverConfig(): void
+    {
+        $config = new PhpConverterConfig($this->createInputMock([
+            'from' => __DIR__,
+        ]));
+
+        $mockedProvider = $this->createMock(CodeProviderInterface::class);
+        $config->setCodeProvider($mockedProvider);
+
+        $this->assertNotEmpty($config->getCodeProvider());
+        $this->assertNotSame($mockedProvider, $config->getCodeProvider());
+    }
+
+    public function argumentToTakesPrecedenceOverConfig(): void
+    {
+        $toFromConfig = __DIR__;
+        $toFromCli = __DIR__ . '/../';
+
+        $config = new PhpConverterConfig($this->createInputMock([
+            'to' => $toFromCli,
+        ]));
+
+        $config->setToDirectory($toFromConfig);
+
+        $this->assertEquals($toFromCli, $config->getToDirectory());
+    }
+
+    public function toFromConfigIsSetWhenThereAreNoCliArgument(): void
+    {
+        $toFromConfig = __DIR__;
+
+        $config = new PhpConverterConfig($this->createInputMock([]));
+
+        $config->setToDirectory($toFromConfig);
+
+        $this->assertEquals($toFromConfig, $config->getToDirectory());
+    }
+
     public function testGetCodeProviderFromDirectory(): void
     {
         $input = $this->createInputMock([
@@ -78,7 +116,6 @@ class PhpConverterConfigTest extends TestCase
 
         $input = $this->createInputMock([
             'from' => 'https://example.com/repo.git',
-            'branch' => '',
         ]);
         $config = new PhpConverterConfig($input);
 
@@ -100,6 +137,7 @@ class PhpConverterConfigTest extends TestCase
     private function createInputMock(mixed $values): InputInterface
     {
         $mock = $this->createMock(InputInterface::class);
+
         $mock->method('getOption')
             ->willReturnCallback(function ($argument) use ($values) {
                 if (isset($values[$argument])) {
@@ -107,6 +145,9 @@ class PhpConverterConfigTest extends TestCase
                 }
                 throw new Exception('Unknown input mock argument ' . $argument);
             });
+
+        $mock->method('hasOption')
+            ->willReturnCallback(fn ($argument) => isset($values[$argument]));
 
         return $mock;
     }
