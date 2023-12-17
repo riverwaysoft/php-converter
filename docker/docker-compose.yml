@@ -1,0 +1,11 @@
+version: '3.8'
+
+name: php-converter
+
+services:
+  php-converter:
+    container_name: php-converter
+    build:
+      context: ./php
+    volumes:
+      - ../.:/var/www/php-converter:cached
