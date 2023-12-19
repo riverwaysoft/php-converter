@@ -39,7 +39,7 @@ final class GoOutputGenerator implements OutputGeneratorInterface
         $dtoList = $converterResult->dtoList;
         foreach ($dtoList->getList() as $dto) {
             $this->outputWriter->writeType(
-                $this->convertToGoType1($dto),
+                $this->convertToGoType($dto),
                 $dto
             );
         }
@@ -48,7 +48,7 @@ final class GoOutputGenerator implements OutputGeneratorInterface
     }
 
     /** @throws UnsupportedTypeException */
-    private function convertToGoType1(DtoType $dto): string
+    private function convertToGoType(DtoType $dto): string
     {
         if ($dto->getExpressionType()->isAnyEnum()) {
             return $this->convertAsEnum($dto);
@@ -57,6 +57,7 @@ final class GoOutputGenerator implements OutputGeneratorInterface
         }
     }
 
+    /** @var array<string, bool> $enumUsedProps */
     private static array $enumUsedProps;
 
     private static function getEnumPropName(
