@@ -9,6 +9,7 @@ use Riverwaysoft\PhpConverter\Ast\Converter;
 use Riverwaysoft\PhpConverter\Config\PhpConverterConfig;
 use Riverwaysoft\PhpConverter\DiffRenderer\DiffRenderer;
 use Composer\XdebugHandler\XdebugHandler;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -21,6 +22,7 @@ use function rtrim;
 use function file_get_contents;
 use function json_encode;
 
+#[AsCommand('riverwaysoft:php_converter:generate')]
 class ConvertCommand extends Command
 {
     protected static $defaultName = 'generate';
