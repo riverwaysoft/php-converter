@@ -95,7 +95,6 @@ CODE;
         $results = (new GoOutputGenerator(
             outputWriter: new SingleFileOutputWriter('generated.go'),
             typeResolver: new GoTypeResolver([]),
-            options: null
         ))->generate($normalized);
         $this->assertCount(1, $results);
         $this->assertMatchesSnapshot(
@@ -177,7 +176,6 @@ CODE;
             outputWriter: new SingleFileOutputWriter('generated.go'),
             typeResolver: new GoTypeResolver([new ClassNameTypeResolver()]),
             propertyNameGenerators: [],
-            options: new GoGeneratorOptions(),
         );
         $results = $typeScriptGenerator->generate($normalized);
         $this->assertCount(1, $results);
