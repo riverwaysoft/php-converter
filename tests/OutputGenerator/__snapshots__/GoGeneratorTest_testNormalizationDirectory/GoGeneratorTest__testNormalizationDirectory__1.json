@@ -1,0 +1,276 @@
+[
+    {
+        "name": "Activity",
+        "expressionType": {
+            "type": "class"
+        },
+        "properties": [
+            {
+                "type": {
+                    "name": "string"
+                },
+                "name": "id"
+            },
+            {
+                "type": {
+                    "name": "string"
+                },
+                "name": "createdAt"
+            }
+        ],
+        "generics": []
+    },
+    {
+        "name": "FullName",
+        "expressionType": {
+            "type": "class"
+        },
+        "properties": [
+            {
+                "type": {
+                    "name": "string"
+                },
+                "name": "firstName"
+            },
+            {
+                "type": {
+                    "name": "string"
+                },
+                "name": "lastName"
+            }
+        ],
+        "generics": []
+    },
+    {
+        "name": "NumberEnum",
+        "expressionType": {
+            "type": "enum-non-standard"
+        },
+        "properties": [
+            {
+                "name": "VIEW",
+                "value": 0
+            },
+            {
+                "name": "EDIT",
+                "value": 1
+            },
+            {
+                "name": "CREATE",
+                "value": 2
+            }
+        ],
+        "generics": []
+    },
+    {
+        "name": "PermissionsEnum",
+        "expressionType": {
+            "type": "enum-non-standard"
+        },
+        "properties": [
+            {
+                "name": "VIEW",
+                "value": "view"
+            },
+            {
+                "name": "EDIT",
+                "value": "edit"
+            }
+        ],
+        "generics": []
+    },
+    {
+        "name": "Profile",
+        "expressionType": {
+            "type": "class"
+        },
+        "properties": [
+            {
+                "type": {
+                    "types": [
+                        {
+                            "name": "FullName",
+                            "context": [],
+                            "generics": []
+                        },
+                        {
+                            "name": "null"
+                        }
+                    ]
+                },
+                "name": "name"
+            },
+            {
+                "type": {
+                    "name": "int"
+                },
+                "name": "age"
+            }
+        ],
+        "generics": []
+    },
+    {
+        "name": "User",
+        "expressionType": {
+            "type": "class"
+        },
+        "properties": [
+            {
+                "type": {
+                    "name": "string"
+                },
+                "name": "id"
+            },
+            {
+                "type": {
+                    "types": [
+                        {
+                            "name": "User",
+                            "context": [],
+                            "generics": []
+                        },
+                        {
+                            "name": "null"
+                        }
+                    ]
+                },
+                "name": "bestFriend"
+            },
+            {
+                "type": {
+                    "array": {
+                        "name": "User",
+                        "context": [],
+                        "generics": []
+                    }
+                },
+                "name": "friends"
+            },
+            {
+                "type": {
+                    "name": "self"
+                },
+                "name": "selfProperty"
+            },
+            {
+                "type": {
+                    "name": "self"
+                },
+                "name": "selfConstructor"
+            }
+        ],
+        "generics": []
+    },
+    {
+        "name": "UserCreate",
+        "expressionType": {
+            "type": "class"
+        },
+        "properties": [
+            {
+                "type": {
+                    "name": "string"
+                },
+                "name": "id"
+            },
+            {
+                "type": {
+                    "name": "PermissionsEnum",
+                    "context": [],
+                    "generics": []
+                },
+                "name": "permissions"
+            },
+            {
+                "type": {
+                    "types": [
+                        {
+                            "name": "Profile",
+                            "context": [],
+                            "generics": []
+                        },
+                        {
+                            "name": "null"
+                        }
+                    ]
+                },
+                "name": "profile"
+            },
+            {
+                "type": {
+                    "name": "int"
+                },
+                "name": "age"
+            },
+            {
+                "type": {
+                    "types": [
+                        {
+                            "name": "string"
+                        },
+                        {
+                            "name": "null"
+                        }
+                    ]
+                },
+                "name": "name"
+            },
+            {
+                "type": {
+                    "name": "float"
+                },
+                "name": "latitude"
+            },
+            {
+                "type": {
+                    "name": "float"
+                },
+                "name": "longitude"
+            },
+            {
+                "type": {
+                    "name": "array"
+                },
+                "name": "achievements"
+            },
+            {
+                "type": {
+                    "array": {
+                        "name": "string"
+                    }
+                },
+                "name": "tags"
+            },
+            {
+                "type": {
+                    "array": {
+                        "name": "Activity",
+                        "context": [],
+                        "generics": []
+                    }
+                },
+                "name": "activities"
+            },
+            {
+                "type": {
+                    "name": "mixed"
+                },
+                "name": "mixed"
+            },
+            {
+                "type": {
+                    "types": [
+                        {
+                            "name": "bool"
+                        },
+                        {
+                            "name": "null"
+                        }
+                    ]
+                },
+                "name": "isApproved"
+            }
+        ],
+        "generics": []
+    }
+]
