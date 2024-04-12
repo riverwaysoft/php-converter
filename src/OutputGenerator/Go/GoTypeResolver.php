@@ -19,7 +19,10 @@ use Riverwaysoft\PhpConverter\OutputGenerator\UnsupportedTypeException;
 class GoTypeResolver
 {
     /** @param UnknownTypeResolverInterface[] $unknownTypeResolvers */
-    public function __construct(private array $unknownTypeResolvers = []) {}
+    public function __construct(
+        private array $unknownTypeResolvers = []
+    ) {
+    }
 
     public function getTypeFromPhp(
         PhpTypeInterface $type,
@@ -27,7 +30,7 @@ class GoTypeResolver
         DtoList $dtoList
     ): string {
         if ($type instanceof PhpUnionType) {
-            $fn = fn(PhpTypeInterface $type) => $this->getTypeFromPhp(
+            $fn = fn (PhpTypeInterface $type) => $this->getTypeFromPhp(
                 $type,
                 $dto,
                 $dtoList
@@ -85,14 +88,14 @@ class GoTypeResolver
             $type->hasGenerics() && (
                 $dtoList->hasDtoWithType($type->getName()) ||
                 !empty(
-                $type->getContext()[PhpUnknownType::GENERIC_IGNORE_NO_RESOLVER]
+                    $type->getContext()[PhpUnknownType::GENERIC_IGNORE_NO_RESOLVER]
                 )
             )
         ) {
             $result = $type->getName();
 
             $generics = array_map(
-                fn(PhpTypeInterface $innerGeneric) => $this->getTypeFromPhp(
+                fn (PhpTypeInterface $innerGeneric) => $this->getTypeFromPhp(
                     $innerGeneric,
                     $dto,
                     $dtoList,

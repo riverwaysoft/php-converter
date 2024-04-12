@@ -11,7 +11,6 @@ use Riverwaysoft\PhpConverter\Ast\Converter;
 use Riverwaysoft\PhpConverter\Ast\DtoVisitor;
 use Riverwaysoft\PhpConverter\CodeProvider\FileSystemCodeProvider;
 use Riverwaysoft\PhpConverter\Filter\PhpAttributeFilter;
-use Riverwaysoft\PhpConverter\OutputGenerator\Go\GoGeneratorOptions;
 use Riverwaysoft\PhpConverter\OutputGenerator\Go\GoOutputGenerator;
 use Riverwaysoft\PhpConverter\OutputGenerator\Go\GoTypeResolver;
 use Riverwaysoft\PhpConverter\OutputGenerator\UnknownTypeResolver\ClassNameTypeResolver;
@@ -19,8 +18,7 @@ use Riverwaysoft\PhpConverter\OutputGenerator\UnknownTypeResolver\DateTimeTypeRe
 use Riverwaysoft\PhpConverter\OutputWriter\SingleFileOutputWriter\SingleFileOutputWriter;
 use Spatie\Snapshots\MatchesSnapshots;
 
-class GoGeneratorTest
-    extends TestCase
+class GoGeneratorTest extends TestCase
 {
     use MatchesSnapshots;
 
@@ -32,8 +30,8 @@ class GoGeneratorTest
             return (
                 dirname(
                     (new ReflectionClass($this))->getFileName()
-                ).
-                DIRECTORY_SEPARATOR.
+                ) .
+                DIRECTORY_SEPARATOR .
                 '__snapshots__'
             );
         }
@@ -41,10 +39,10 @@ class GoGeneratorTest
         return (
             dirname(
                 (new ReflectionClass($this))->getFileName()
-            ).
-            DIRECTORY_SEPARATOR.
-            '__snapshots__'.
-            DIRECTORY_SEPARATOR.
+            ) .
+            DIRECTORY_SEPARATOR .
+            '__snapshots__' .
+            DIRECTORY_SEPARATOR .
             $this->snapshotSubDirectory
         );
     }
@@ -189,7 +187,7 @@ CODE;
     {
         $this->snapshotSubDirectory = 'GoGeneratorTest_testNormalizationDirectory';
         $converter = new Converter([new DtoVisitor()]);
-        $fileProvider = FileSystemCodeProvider::phpFiles(__DIR__.'/Fixtures');
+        $fileProvider = FileSystemCodeProvider::phpFiles(__DIR__ . '/Fixtures');
         $result = $converter->convert($fileProvider->getListings());
         $this->assertMatchesJsonSnapshot($result->dtoList->getList());
         $results = (new GoOutputGenerator(

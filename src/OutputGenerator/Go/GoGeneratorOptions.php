@@ -6,5 +6,7 @@ namespace Riverwaysoft\PhpConverter\OutputGenerator\Go;
 
 class GoGeneratorOptions
 {
-    public function __construct() {}
+    public function __construct()
+    {
+    }
 }
