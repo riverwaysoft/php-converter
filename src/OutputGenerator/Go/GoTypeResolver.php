@@ -13,6 +13,7 @@ use Riverwaysoft\PhpConverter\Dto\PhpType\PhpOptionalType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeInterface;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnionType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
+use Riverwaysoft\PhpConverter\OutputGenerator\UnknownTypeResolver\ClassNameTypeResolver;
 use Riverwaysoft\PhpConverter\OutputGenerator\UnknownTypeResolver\UnknownTypeResolverInterface;
 use Riverwaysoft\PhpConverter\OutputGenerator\UnsupportedTypeException;
 
@@ -34,6 +35,10 @@ class GoTypeResolver
         if (count($types) === 2 && in_array('null', $types)) {
             $types = array_diff($types, ['null']);
 
+            if (str_starts_with($types[0], '*')) {
+                return $types[0]; // If it was resolveUnknown recursion found(dirty fix)
+            }
+
             return "*$types[0]";
         }
         throw new Exception('Unsupported union type: ' . json_encode($type));
@@ -48,6 +53,15 @@ class GoTypeResolver
                 $result = $resolver->resolve($type, $dto, $dtoList);
                 if ($result instanceof PhpTypeInterface) {
                     return $this->resolve($result, $dto, $dtoList);
+                }
+
+                // If it was ClassNameTypeResolver
+                if (
+                    is_string($result) &&
+                    $resolver instanceof ClassNameTypeResolver &&
+                    GoRecursionValidator::isRecursionFound($dto, $dtoList)
+                ) {
+                    return "*$result";
                 }
             }
         }

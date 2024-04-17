@@ -61,6 +61,11 @@ CODE,
 class UserCreate {
     public string $id;
     public ?Profile $profile;
+    public Me $me;
+}
+
+class Me {
+    public UserCreate $request;
 }
 
 class FullName {

@@ -9,6 +9,10 @@ type FullName struct {
   LastName string
 }
 
+type Me struct {
+  Request *UserCreate
+}
+
 type Profile struct {
   Name *FullName
   Age int
@@ -17,4 +21,5 @@ type Profile struct {
 type UserCreate struct {
   Id string
   Profile *Profile
+  Me *Me
 }
