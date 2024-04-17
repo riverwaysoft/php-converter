@@ -18,39 +18,15 @@ use Riverwaysoft\PhpConverter\OutputGenerator\UnknownTypeResolver\DateTimeTypeRe
 use Riverwaysoft\PhpConverter\OutputWriter\SingleFileOutputWriter\SingleFileOutputWriter;
 use Spatie\Snapshots\MatchesSnapshots;
 
-class GoGeneratorTest extends TestCase
+class GoGeneratorTest
+    extends TestCase
 {
     use MatchesSnapshots;
 
     private ?string $snapshotSubDirectory = null;
 
-    protected function getSnapshotDirectory(): string
-    {
-        if ($this->snapshotSubDirectory === null) {
-            return (
-                dirname(
-                    (new ReflectionClass($this))->getFileName()
-                ) .
-                DIRECTORY_SEPARATOR .
-                '__snapshots__'
-            );
-        }
-
-        return (
-            dirname(
-                (new ReflectionClass($this))->getFileName()
-            ) .
-            DIRECTORY_SEPARATOR .
-            '__snapshots__' .
-            DIRECTORY_SEPARATOR .
-            $this->snapshotSubDirectory
-        );
-    }
-
-    public function testNormalizationTsDefault(): void
-    {
-        $this->snapshotSubDirectory = 'GoGeneratorTest_testNormalizationTsDefault';
-        $codeAttribute = <<<'CODE'
+    private const TEMPLATES = [
+        'testNormalization' => <<<'CODE'
 <?php
 
 class UserCreate {
@@ -59,8 +35,8 @@ class UserCreate {
     /** @var int[][] */
     public array $matrix;
     public ?string $name;
-    public string|int|string|null|null $duplicatesInType;
-    public int|string|float $age;
+    public string|string|null|null $duplicatesInType;
+    public int $age;
     public bool|null $isApproved;
     public float $latitude;
     public float $longitude;
@@ -77,34 +53,10 @@ class CloudNotify {
 * @template T
  */
 class Response {
-    /**
-    * @param T $data
-    */
-    public function __construct(
-        public $data,
-    ) {}
+    public function __construct(public mixed $data) {}
 }
-CODE;
-
-        $normalized = (new Converter([new DtoVisitor()]))->convert(
-            [$codeAttribute]
-        );
-        $this->assertMatchesJsonSnapshot($normalized->dtoList->getList());
-        $results = (new GoOutputGenerator(
-            outputWriter: new SingleFileOutputWriter('generated.go'),
-            typeResolver: new GoTypeResolver([]),
-        ))->generate($normalized);
-        $this->assertCount(1, $results);
-        $this->assertMatchesSnapshot(
-            $results[0]->getContent(),
-            new GoSnapshotComparator()
-        );
-    }
-
-    public function testNestedDtoConvert(): void
-    {
-        $this->snapshotSubDirectory = 'GoGeneratorTest_testNestedDtoConvert';
-        $codeNestedDto = <<<'CODE'
+CODE,
+        'nestedDtoConvert' => <<<'CODE'
 <?php
 
 class UserCreate {
@@ -118,31 +70,11 @@ class FullName {
 }
 
 class Profile {
-    public FullName|null|string $name;
+    public FullName|null $name;
     public int $age;
 }
-CODE;
-
-        $normalized = (new Converter([new DtoVisitor()]))->convert(
-            [$codeNestedDto]
-        );
-        $results = (new GoOutputGenerator(
-            outputWriter: new SingleFileOutputWriter('generated.go'),
-            typeResolver: new GoTypeResolver(
-                [new ClassNameTypeResolver()]
-            ),
-        ))->generate($normalized);
-        $this->assertCount(1, $results);
-        $this->assertMatchesSnapshot(
-            $results[0]->getContent(),
-            new GoSnapshotComparator()
-        );
-    }
-
-    public function testUseTypeOverEnumTs(): void
-    {
-        $this->snapshotSubDirectory = 'GoGeneratorTest_testUseTypeOverEnumTs';
-        $code = <<<'CODE'
+CODE,
+        'useTypeEnum' => <<<'CODE'
 <?php
 
 use MyCLabs\Enum\Enum;
@@ -167,44 +99,8 @@ class User
     public ColorEnum $themeColor;
     public RoleEnum $role;
 }
-CODE;
-
-        $normalized = (new Converter([new DtoVisitor()]))->convert([$code]);
-        $typeScriptGenerator = new GoOutputGenerator(
-            outputWriter: new SingleFileOutputWriter('generated.go'),
-            typeResolver: new GoTypeResolver([new ClassNameTypeResolver()]),
-            propertyNameGenerators: [],
-        );
-        $results = $typeScriptGenerator->generate($normalized);
-        $this->assertCount(1, $results);
-        $this->assertMatchesSnapshot(
-            $results[0]->getContent(),
-            new GoSnapshotComparator()
-        );
-    }
-
-    public function testNormalizationDirectory(): void
-    {
-        $this->snapshotSubDirectory = 'GoGeneratorTest_testNormalizationDirectory';
-        $converter = new Converter([new DtoVisitor()]);
-        $fileProvider = FileSystemCodeProvider::phpFiles(__DIR__ . '/Fixtures');
-        $result = $converter->convert($fileProvider->getListings());
-        $this->assertMatchesJsonSnapshot($result->dtoList->getList());
-        $results = (new GoOutputGenerator(
-            outputWriter: new SingleFileOutputWriter('generated.go'),
-            typeResolver: new GoTypeResolver([new ClassNameTypeResolver()]),
-        )
-        )->generate($result);
-        $this->assertCount(1, $results);
-        $this->assertMatchesSnapshot(
-            $results[0]->getContent(),
-            new GoSnapshotComparator()
-        );
-    }
-
-    public function testNormalizationWithCustomTypeResolvers(): void
-    {
-        $codeWithDateTime = <<<'CODE'
+CODE,
+        'useDateTime' => <<<'CODE'
 <?php
 
 class UserCreate
@@ -225,27 +121,8 @@ class UserCreateConstructor
     
     }
 }
-CODE;
-
-        $converter = new Converter([new DtoVisitor()]);
-        $result = $converter->convert([$codeWithDateTime]);
-        $typeScriptGenerator = new GoOutputGenerator(
-            outputWriter: new SingleFileOutputWriter('generated.go'),
-            typeResolver: new GoTypeResolver(
-                [new ClassNameTypeResolver(), new DateTimeTypeResolver()]
-            )
-        );
-        $results = ($typeScriptGenerator)->generate($result);
-        $this->assertCount(1, $results);
-        $this->assertMatchesSnapshot(
-            $results[0]->getContent(),
-            new GoSnapshotComparator()
-        );
-    }
-
-    public function testUnknownTypeThrows(): void
-    {
-        $codeWithDateTime = <<<'CODE'
+CODE,
+        'unknownType' => <<<'CODE'
 <?php
 
 #[\Attribute(\Attribute::TARGET_CLASS)]
@@ -262,28 +139,8 @@ class A
 }
 
 class B {}
-CODE;
-
-        $converter = new Converter(
-            [new DtoVisitor(new PhpAttributeFilter('Dto'))]
-        );
-        $result = $converter->convert([$codeWithDateTime]);
-        $typeScriptGenerator = new GoOutputGenerator(
-            new SingleFileOutputWriter('generated.go'),
-            new GoTypeResolver(
-                [new ClassNameTypeResolver(), new DateTimeTypeResolver()]
-            )
-        );
-
-        $this->expectExceptionMessage(
-            'PHP Type B is not supported. PHP class: A'
-        );
-        $typeScriptGenerator->generate($result);
-    }
-
-    public function testDtoConstantDoesntThrow(): void
-    {
-        $codeWithDateTime = <<<'CODE'
+CODE,
+        'dtoConstant' => <<<'CODE'
 <?php
 
 #[Dto]
@@ -296,36 +153,13 @@ class A
 #[Dto]
 final class GenderEnum extends Enum
 {
-    public const UNKNOWN = null;
+    public const UNKNOWN = 2;
     private const MAN = 0;
     private const WOMAN = 1;
 }
 
-CODE;
-
-        $converter = new Converter(
-            [new DtoVisitor(new PhpAttributeFilter('Dto'))]
-        );
-        $result = $converter->convert([$codeWithDateTime]);
-        $typeScriptGenerator = new GoOutputGenerator(
-            new SingleFileOutputWriter('generated.go'),
-            new GoTypeResolver(
-                [new ClassNameTypeResolver(), new DateTimeTypeResolver()]
-            )
-        );
-
-        $results = $typeScriptGenerator->generate($result);
-
-        $this->assertMatchesSnapshot(
-            $results[0]->getContent(),
-            new GoSnapshotComparator()
-        );
-    }
-
-    public function testPhp81SuccessWhenBacked(): void
-    {
-        $this->snapshotSubDirectory = 'GoGeneratorTest_testPhp81SuccessWhenBacked';
-        $codeWithDateTime = <<<'CODE'
+CODE,
+        'backed' => <<<'CODE'
 <?php
 
 #[\Attribute(\Attribute::TARGET_CLASS)]
@@ -367,24 +201,112 @@ class User {
         return $this->user;
     }
 }
-CODE;
+CODE,
+    ];
+    private GoOutputGenerator $gen1; // Only with ClassNameTypeResolver
+    private GoOutputGenerator $gen2; // Without ClassNameTypeResolver
+    private GoOutputGenerator $gen3; // With DateTimeTypeResolver and ClassNameTypeResolver
 
-        $converter = new Converter(
-            [new DtoVisitor(new PhpAttributeFilter('Dto'))]
+    protected function getSnapshotDirectory(): string
+    {
+        if ($this->snapshotSubDirectory === null) {
+            return (
+                dirname((new ReflectionClass($this))->getFileName()).
+                DIRECTORY_SEPARATOR.'__snapshots__'
+            );
+        }
+
+        return (
+            dirname((new ReflectionClass($this))->getFileName()).
+            DIRECTORY_SEPARATOR.'__snapshots__'.DIRECTORY_SEPARATOR.$this->snapshotSubDirectory
         );
-        $result = $converter->convert([$codeWithDateTime]);
+    }
 
-        $typeScriptGenerator = new GoOutputGenerator(
+    protected function setUp(): void
+    {
+        $this->snapshotSubDirectory = 'GoGeneratorTest/'.$this->name();
+
+        $this->gen1 = new GoOutputGenerator(
             outputWriter: new SingleFileOutputWriter('generated.go'),
-            typeResolver: new GoTypeResolver([
-                new ClassNameTypeResolver(),
-            ]),
+            resolver: new GoTypeResolver([new ClassNameTypeResolver()]),
         );
-        $results = ($typeScriptGenerator)->generate($result);
+
+        $this->gen2 = new GoOutputGenerator(
+            outputWriter: new SingleFileOutputWriter('generated.go'),
+            resolver: new GoTypeResolver([]),
+        );
+
+        $this->gen3 = new GoOutputGenerator(
+            outputWriter: new SingleFileOutputWriter('generated.go'),
+            resolver: new GoTypeResolver([new ClassNameTypeResolver(), new DateTimeTypeResolver()])
+        );
+    }
+
+    public function testNormalization(): void
+    {
+        $converted = (new Converter([new DtoVisitor()]))->convert([self::TEMPLATES['testNormalization']]);
+        $this->assertMatchesJsonSnapshot($converted->dtoList->getList());
+        $results = $this->gen2->generate($converted);
         $this->assertCount(1, $results);
-        $this->assertMatchesSnapshot(
-            $results[0]->getContent(),
-            new GoSnapshotComparator()
-        );
+        $this->assertMatchesSnapshot($results[0]->getContent(), new GoSnapshotComparator());
+    }
+
+    public function testNestedDtoConvert(): void
+    {
+        $converted = (new Converter([new DtoVisitor()]))->convert([self::TEMPLATES['nestedDtoConvert']]);
+        $results = $this->gen1->generate($converted);
+        $this->assertCount(1, $results);
+        $this->assertMatchesSnapshot($results[0]->getContent(), new GoSnapshotComparator());
+    }
+
+    public function testUseTypeEnum(): void
+    {
+        $normalized = (new Converter([new DtoVisitor()]))->convert([self::TEMPLATES['useTypeEnum']]);
+        $results = $this->gen1->generate($normalized);
+        $this->assertCount(1, $results);
+        $this->assertMatchesSnapshot($results[0]->getContent(), new GoSnapshotComparator());
+    }
+
+    public function testNormalizationDirectory(): void
+    {
+        $fileProvider = FileSystemCodeProvider::phpFiles(__DIR__.'/Fixtures');
+        $result = (new Converter([new DtoVisitor()]))->convert($fileProvider->getListings());
+        $this->assertMatchesJsonSnapshot($result->dtoList->getList());
+        $results = $this->gen1->generate($result);
+        $this->assertCount(1, $results);
+        $this->assertMatchesSnapshot($results[0]->getContent(), new GoSnapshotComparator());
+    }
+
+    public function testNormalizationWithCustomTypeResolvers(): void
+    {
+        $converted = (new Converter([new DtoVisitor()]))->convert([self::TEMPLATES['useDateTime']]);
+        $results = $this->gen3->generate($converted);
+        $this->assertCount(1, $results);
+        $this->assertMatchesSnapshot($results[0]->getContent(), new GoSnapshotComparator());
+    }
+
+    public function testUnknownTypeThrows(): void
+    {
+        $visitors = [new DtoVisitor(new PhpAttributeFilter('Dto'))];
+        $result = (new Converter($visitors))->convert([self::TEMPLATES['unknownType']]);
+        $this->expectExceptionMessage('PHP Type B is not supported. PHP class: A');
+        $this->gen3->generate($result);
+    }
+
+    public function testDtoConstantDoesntThrow(): void
+    {
+        $visitors = [new DtoVisitor(new PhpAttributeFilter('Dto'))];
+        $converted = (new Converter($visitors))->convert([self::TEMPLATES['dtoConstant']]);
+        $results = $this->gen3->generate($converted);
+        $this->assertMatchesSnapshot($results[0]->getContent(), new GoSnapshotComparator());
+    }
+
+    public function testPhp81SuccessWhenBacked(): void
+    {
+        $visitors = [new DtoVisitor(new PhpAttributeFilter('Dto'))];
+        $result = (new Converter($visitors))->convert([self::TEMPLATES['backed']]);
+        $results = $this->gen1->generate($result);
+        $this->assertCount(1, $results);
+        $this->assertMatchesSnapshot($results[0]->getContent(), new GoSnapshotComparator());
     }
 }

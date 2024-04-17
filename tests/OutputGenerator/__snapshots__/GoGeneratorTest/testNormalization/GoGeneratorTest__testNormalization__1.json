@@ -35,9 +35,7 @@
         "properties": [
             {
                 "type": {
-                    "name": "T",
-                    "context": [],
-                    "generics": []
+                    "name": "mixed"
                 },
                 "name": "data"
             }
@@ -94,9 +92,6 @@
                             "name": "string"
                         },
                         {
-                            "name": "int"
-                        },
-                        {
                             "name": "null"
                         }
                     ]
@@ -105,17 +100,7 @@
             },
             {
                 "type": {
-                    "types": [
-                        {
-                            "name": "int"
-                        },
-                        {
-                            "name": "string"
-                        },
-                        {
-                            "name": "float"
-                        }
-                    ]
+                    "name": "int"
                 },
                 "name": "age"
             },

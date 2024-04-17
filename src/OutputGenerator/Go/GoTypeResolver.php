@@ -19,115 +19,70 @@ use Riverwaysoft\PhpConverter\OutputGenerator\UnsupportedTypeException;
 class GoTypeResolver
 {
     /** @param UnknownTypeResolverInterface[] $unknownTypeResolvers */
-    public function __construct(
-        private array $unknownTypeResolvers = []
-    ) {
+    public function __construct(private array $unknownTypeResolvers = []) {}
+
+    /** @throws Exception */
+    private function resolveUnion(PhpUnionType $type, ?DtoType $dto, DtoList $dtoList): string
+    {
+        $fn = fn(PhpTypeInterface $type) => $this->resolve($type, $dto, $dtoList);
+        $types = array_map($fn, $type->getTypes());
+
+        // Two args, one of them is null
+        if (count($types) === 2 && in_array('null', $types)) {
+            $types = array_diff($types, ['null']);
+
+            return "*$types[0]";
+        }
+        throw new Exception('Unsupported union type: '.json_encode($type));
     }
 
-    public function getTypeFromPhp(
-        PhpTypeInterface $type,
-        ?DtoType $dto,
-        DtoList $dtoList
-    ): string {
-        if ($type instanceof PhpUnionType) {
-            $fn = fn (PhpTypeInterface $type) => $this->getTypeFromPhp(
-                $type,
-                $dto,
-                $dtoList
-            );
-            $types = array_map($fn, $type->getTypes());
-
-            // Two args, one of them is null
-            if (count($types) === 2 && in_array('null', $types)) {
-                $types = array_diff($types, ['null']);
-
-                return "*$types[0]";
+    /** @throws Exception */
+    private function resolveUnknown(PhpUnknownType $type, ?DtoType $dto, DtoList $dtoList): string
+    {
+        $result = null;
+        foreach ($this->unknownTypeResolvers as $resolver) {
+            if ($resolver->supports($type, $dto, $dtoList)) {
+                $result = $resolver->resolve($type, $dto, $dtoList);
+                if ($result instanceof PhpTypeInterface) {
+                    return $this->resolve($result, $dto, $dtoList);
+                }
             }
-
-            return 'any';
         }
-
-        if ($type instanceof PhpListType) {
-            $listType = $this->getTypeFromPhp($type->getType(), $dto, $dtoList);
-
-            if ($type->getType() instanceof PhpUnionType) {
-                return sprintf('[](%s)', $listType);
-            }
-
-            return sprintf('[]%s', $listType);
-        }
-
-        if ($type instanceof PhpOptionalType) {
-            return $this->getTypeFromPhp($type->getType(), $dto, $dtoList);
-        }
-
-        if ($type instanceof PhpBaseType) {
-            return match (true) {
-                $type->equalsTo(PhpBaseType::int()) => 'int',
-                $type->equalsTo(PhpBaseType::float()) => 'float64',
-                $type->equalsTo(PhpBaseType::string()) => 'string',
-                $type->equalsTo(PhpBaseType::bool()) => 'bool',
-                $type->equalsTo(PhpBaseType::mixed()),
-                $type->equalsTo(PhpBaseType::object()) => 'any',
-                $type->equalsTo(PhpBaseType::array()),
-                $type->equalsTo(PhpBaseType::iterable()) => '[]any',
-                $type->equalsTo(PhpBaseType::null()) => 'null',
-                $type->equalsTo(PhpBaseType::self()) => $dto->getName(),
-                default => throw new Exception(
-                    sprintf("Unknown base PHP type: %s", $type->jsonSerialize())
-                )
-            };
-        }
-
-        if ($type instanceof PhpUnknownType && $dto?->hasGeneric($type)) {
-            return 'any';
-        }
-
-        if (
-            $type instanceof PhpUnknownType &&
-            $type->hasGenerics() && (
-                $dtoList->hasDtoWithType($type->getName()) ||
-                !empty(
-                    $type->getContext()[PhpUnknownType::GENERIC_IGNORE_NO_RESOLVER]
-                )
-            )
-        ) {
-            $result = $type->getName();
-
-            $generics = array_map(
-                fn (PhpTypeInterface $innerGeneric) => $this->getTypeFromPhp(
-                    $innerGeneric,
-                    $dto,
-                    $dtoList,
-                ),
-                $type->getGenerics()
-            );
-
-            $result .= sprintf("<%s>", join(', ', $generics));
-
-            return $result;
-        }
-
-        /** @var PhpUnknownType $type */
-        $result = $this->handleUnknownType($type, $dto, $dtoList);
-        if ($result instanceof PhpTypeInterface) {
-            return $this->getTypeFromPhp($result, $dto, $dtoList);
+        if ($result === null) {
+            throw UnsupportedTypeException::forType($type, $dto?->getName() ?? '');
         }
 
         return $result;
     }
 
-    private function handleUnknownType(
-        PhpUnknownType $type,
-        ?DtoType $dto,
-        DtoList $dtoList
-    ): string|PhpTypeInterface {
-        foreach ($this->unknownTypeResolvers as $unknownTypeResolver) {
-            if ($unknownTypeResolver->supports($type, $dto, $dtoList)) {
-                return $unknownTypeResolver->resolve($type, $dto, $dtoList);
-            }
-        }
+    /** @throws Exception */
+    private function resolveBase(PhpBaseType $type, ?DtoType $dto): string
+    {
+        return match (true) {
+            $type->equalsTo(PhpBaseType::int()) => 'int',
+            $type->equalsTo(PhpBaseType::float()) => 'float64',
+            $type->equalsTo(PhpBaseType::string()) => 'string',
+            $type->equalsTo(PhpBaseType::bool()) => 'bool',
+            $type->equalsTo(PhpBaseType::mixed()),
+            $type->equalsTo(PhpBaseType::object()) => 'interface{}',
+            $type->equalsTo(PhpBaseType::array()),
+            $type->equalsTo(PhpBaseType::iterable()) => '[]interface{}',
+            $type->equalsTo(PhpBaseType::null()) => 'null',
+            $type->equalsTo(PhpBaseType::self()) => "*{$dto->getName()}", // * for prevent recursive definition
+            default => throw new Exception('Unknown base PHP type: %s'.json_encode($type))
+        };
+    }
 
-        throw UnsupportedTypeException::forType($type, $dto?->getName() ?? '');
+    /** @throws Exception */
+    public function resolve(PhpTypeInterface $type, ?DtoType $d, DtoList $dl): string
+    {
+        return match ($type::class) {
+            PhpBaseType::class => $this->resolveBase($type, $d),
+            PhpListType::class => sprintf('[]%s', $this->resolve($type->getType(), $d, $dl)),
+            PhpUnionType::class => $this->resolveUnion($type, $d, $dl),
+            PhpUnknownType::class => $this->resolveUnknown($type, $d, $dl),
+            PhpOptionalType::class => $this->resolve($type->getType(), $d, $dl),
+            default => throw new Exception('Type not implemented: '.get_class($type))
+        };
     }
 }

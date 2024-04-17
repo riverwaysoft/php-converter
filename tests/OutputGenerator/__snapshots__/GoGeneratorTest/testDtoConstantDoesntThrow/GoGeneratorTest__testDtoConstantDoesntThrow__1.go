@@ -4,17 +4,14 @@
 
 package gen
 
-type FullName struct {
-  FirstName string
-  LastName string
+type A struct {
+  CreatedAt string
 }
 
-type Profile struct {
-  Name any
-  Age int
-}
+type GenderEnum int 
 
-type UserCreate struct {
-  Id string
-  Profile *Profile
-}
+const(
+  UNKNOWN GenderEnum = 2
+  MAN GenderEnum = 0
+  WOMAN GenderEnum = 1
+)

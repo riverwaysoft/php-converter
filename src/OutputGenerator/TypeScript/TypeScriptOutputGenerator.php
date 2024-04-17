@@ -47,16 +47,16 @@ class TypeScriptOutputGenerator implements OutputGeneratorInterface
     }
 
     /** @return OutputFile[] */
-    public function generate(ConverterResult $converterResult): array
+    public function generate(ConverterResult $result): array
     {
         $this->outputWriter->reset();
 
-        $dtoList = $converterResult->dtoList;
+        $dtoList = $result->dtoList;
         foreach ($dtoList->getList() as $dto) {
             $this->outputWriter->writeType($this->convertToTypeScriptType($dto, $dtoList), $dto);
         }
 
-        $apiEndpointList = $converterResult->apiEndpointList;
+        $apiEndpointList = $result->apiEndpointList;
         foreach ($apiEndpointList->getList() as $apiEndpoint) {
             $this->outputWriter->writeApiEndpoint($this->apiEndpointGenerator->generate($apiEndpoint, $dtoList), $apiEndpoint);
         }

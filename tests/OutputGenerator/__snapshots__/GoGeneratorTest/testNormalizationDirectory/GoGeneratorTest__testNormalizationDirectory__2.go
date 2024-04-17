@@ -38,8 +38,8 @@ type User struct {
   Id string
   BestFriend *User
   Friends []User
-  SelfProperty User
-  SelfConstructor User
+  SelfProperty *User
+  SelfConstructor *User
 }
 
 type UserCreate struct {
@@ -50,9 +50,9 @@ type UserCreate struct {
   Name *string
   Latitude float64
   Longitude float64
-  Achievements []any
+  Achievements []interface{}
   Tags []string
   Activities []Activity
-  Mixed any
+  Mixed interface{}
   IsApproved *bool
 }
