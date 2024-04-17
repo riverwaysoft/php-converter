@@ -27,7 +27,7 @@ class GoEnumResolver
         } elseif (is_string($firstEnumPropValue)) {
             $type = 'string';
         } else {
-            throw new Exception('Enum property must be int or string, got '.gettype($firstEnumPropValue));
+            throw new Exception('Enum property must be int or string, got ' . gettype($firstEnumPropValue));
         }
         $props = self::convertEnumToGoEnumProperties($dto->getProperties(), $dto->getName());
 
@@ -48,7 +48,7 @@ class GoEnumResolver
                 $const .= $enum;
             }
             if (array_key_exists($const, $this->usedConstantsStore)) {
-                throw new Exception('Please rename constant '.$const);
+                throw new Exception('Please rename constant ' . $const);
             }
             $this->usedConstantsStore[] = $const;
 

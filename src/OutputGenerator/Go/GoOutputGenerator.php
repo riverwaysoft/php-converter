@@ -14,10 +14,10 @@ use Riverwaysoft\PhpConverter\OutputWriter\OutputFile;
 use Riverwaysoft\PhpConverter\OutputWriter\OutputProcessor\OutputFilesProcessor;
 use Riverwaysoft\PhpConverter\OutputWriter\OutputWriterInterface;
 
-class GoOutputGenerator
-    implements OutputGeneratorInterface
+class GoOutputGenerator implements OutputGeneratorInterface
 {
     private OutputFilesProcessor $outputFilesProcessor;
+
     private GoEnumResolver $enumResolver;
 
     public function __construct(
@@ -61,6 +61,6 @@ class GoOutputGenerator
         if ($dto->getExpressionType()->isAnyEnum()) {
             return $this->enumResolver->resolve($dto);
         }
-        throw new Exception('Unknown expression type '.$dto->getExpressionType()->jsonSerialize());
+        throw new Exception('Unknown expression type ' . $dto->getExpressionType()->jsonSerialize());
     }
 }

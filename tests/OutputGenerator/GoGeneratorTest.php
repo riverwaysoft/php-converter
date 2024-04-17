@@ -18,8 +18,7 @@ use Riverwaysoft\PhpConverter\OutputGenerator\UnknownTypeResolver\DateTimeTypeRe
 use Riverwaysoft\PhpConverter\OutputWriter\SingleFileOutputWriter\SingleFileOutputWriter;
 use Spatie\Snapshots\MatchesSnapshots;
 
-class GoGeneratorTest
-    extends TestCase
+class GoGeneratorTest extends TestCase
 {
     use MatchesSnapshots;
 
@@ -203,28 +202,31 @@ class User {
 }
 CODE,
     ];
+
     private GoOutputGenerator $gen1; // Only with ClassNameTypeResolver
+
     private GoOutputGenerator $gen2; // Without ClassNameTypeResolver
+
     private GoOutputGenerator $gen3; // With DateTimeTypeResolver and ClassNameTypeResolver
 
     protected function getSnapshotDirectory(): string
     {
         if ($this->snapshotSubDirectory === null) {
             return (
-                dirname((new ReflectionClass($this))->getFileName()).
-                DIRECTORY_SEPARATOR.'__snapshots__'
+                dirname((new ReflectionClass($this))->getFileName()) .
+                DIRECTORY_SEPARATOR . '__snapshots__'
             );
         }
 
         return (
-            dirname((new ReflectionClass($this))->getFileName()).
-            DIRECTORY_SEPARATOR.'__snapshots__'.DIRECTORY_SEPARATOR.$this->snapshotSubDirectory
+            dirname((new ReflectionClass($this))->getFileName()) .
+            DIRECTORY_SEPARATOR . '__snapshots__' . DIRECTORY_SEPARATOR . $this->snapshotSubDirectory
         );
     }
 
     protected function setUp(): void
     {
-        $this->snapshotSubDirectory = 'GoGeneratorTest/'.$this->name();
+        $this->snapshotSubDirectory = 'GoGeneratorTest/' . $this->name();
 
         $this->gen1 = new GoOutputGenerator(
             outputWriter: new SingleFileOutputWriter('generated.go'),
@@ -269,7 +271,7 @@ CODE,
 
     public function testNormalizationDirectory(): void
     {
-        $fileProvider = FileSystemCodeProvider::phpFiles(__DIR__.'/Fixtures');
+        $fileProvider = FileSystemCodeProvider::phpFiles(__DIR__ . '/Fixtures');
         $result = (new Converter([new DtoVisitor()]))->convert($fileProvider->getListings());
         $this->assertMatchesJsonSnapshot($result->dtoList->getList());
         $results = $this->gen1->generate($result);
