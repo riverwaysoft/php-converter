@@ -4,24 +4,24 @@
 
 package gen
 
-type Color int 
+type Color int
 
-const(
-  RED Color = 0
-  BLUE Color = 1
-  WHITE Color = 2
+const (
+	RED   Color = 0
+	BLUE  Color = 1
+	WHITE Color = 2
 )
 
-type Role string 
+type Role string
 
-const(
-  ADMIN Role = "admin"
-  EDITOR Role = "editor"
-  READER Role = "reader"
+const (
+	ADMIN  Role = "admin"
+	EDITOR Role = "editor"
+	READER Role = "reader"
 )
 
 type User struct {
-  Color Color
-  User int
-  Role Role
+	Color Color
+	User  int
+	Role  Role
 }

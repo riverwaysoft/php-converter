@@ -5,13 +5,13 @@
 package gen
 
 type A struct {
-  CreatedAt string
+	CreatedAt string
 }
 
-type GenderEnum int 
+type GenderEnum int
 
-const(
-  UNKNOWN GenderEnum = 2
-  MAN GenderEnum = 0
-  WOMAN GenderEnum = 1
+const (
+	UNKNOWN GenderEnum = 2
+	MAN     GenderEnum = 0
+	WOMAN   GenderEnum = 1
 )

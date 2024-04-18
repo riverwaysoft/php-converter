@@ -5,22 +5,22 @@
 package gen
 
 type CloudNotify struct {
-  Id string
-  FcmToken *string
+	Id       string
+	FcmToken *string
 }
 
 type Response struct {
-  Data interface{}
+	Data interface{}
 }
 
 type UserCreate struct {
-  Achievements []string
-  Matrix [][]int
-  Name *string
-  DuplicatesInType *string
-  Age int
-  IsApproved *bool
-  Latitude float64
-  Longitude float64
-  Mixed interface{}
+	Achievements     []string
+	Matrix           [][]int
+	Name             *string
+	DuplicatesInType *string
+	Age              int
+	IsApproved       *bool
+	Latitude         float64
+	Longitude        float64
+	Mixed            interface{}
 }

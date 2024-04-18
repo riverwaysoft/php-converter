@@ -31,7 +31,7 @@ class GoEnumResolver
         }
         $props = self::convertEnumToGoEnumProperties($dto->getProperties(), $dto->getName());
 
-        return sprintf("type %s %s \n\nconst(%s\n)", $dto->getName(), $type, $props);
+        return sprintf("type %s %s\n\nconst (%s\n)", $dto->getName(), $type, $props);
     }
 
     /**
@@ -41,6 +41,11 @@ class GoEnumResolver
     private function convertEnumToGoEnumProperties(array $properties, string $enum): string
     {
         $string = '';
+
+        $maxEnumPropNameLength = 0;
+        foreach ($properties as $prop) {
+            $maxEnumPropNameLength = max($maxEnumPropNameLength, strlen($prop->getName()));
+        }
 
         foreach ($properties as $prop) {
             $const = $prop->getName();
@@ -52,8 +57,10 @@ class GoEnumResolver
             }
             $this->usedConstantsStore[] = $const;
 
+            $spaces = str_repeat(' ', $maxEnumPropNameLength - strlen($prop->getName()) + 1);
+
             $value = $prop->isNumeric() ? $prop->getValue() : sprintf('"%s"', $prop->getValue());
-            $string .= sprintf("\n  %s %s = %s", $const, $enum, $value);
+            $string .= sprintf("\n\t%s$spaces%s = %s", $const, $enum, $value);
         }
 
         return $string;

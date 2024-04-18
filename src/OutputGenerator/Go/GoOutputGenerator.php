@@ -14,7 +14,8 @@ use Riverwaysoft\PhpConverter\OutputWriter\OutputFile;
 use Riverwaysoft\PhpConverter\OutputWriter\OutputProcessor\OutputFilesProcessor;
 use Riverwaysoft\PhpConverter\OutputWriter\OutputWriterInterface;
 
-class GoOutputGenerator implements OutputGeneratorInterface
+class GoOutputGenerator
+    implements OutputGeneratorInterface
 {
     private OutputFilesProcessor $outputFilesProcessor;
 
@@ -48,9 +49,15 @@ class GoOutputGenerator implements OutputGeneratorInterface
     {
         if ($dto->getExpressionType()->equals(ExpressionType::class())) {
             $structProps = '';
+            $maxStructPropNameLength = 0;
             foreach ($dto->getProperties() as $prop) {
+                $maxStructPropNameLength = max($maxStructPropNameLength, strlen($prop->getName()));
+            }
+            foreach ($dto->getProperties() as $prop) {
+                $spaces = str_repeat(' ', $maxStructPropNameLength - strlen($prop->getName()) + 1);
+
                 $structProps .= sprintf(
-                    "\n  %s %s",
+                    "\n\t%s$spaces%s",
                     ucfirst($prop->getName()),
                     $this->resolver->resolve($prop->getType(), $dto, $dtoList)
                 );
@@ -61,6 +68,6 @@ class GoOutputGenerator implements OutputGeneratorInterface
         if ($dto->getExpressionType()->isAnyEnum()) {
             return $this->enumResolver->resolve($dto);
         }
-        throw new Exception('Unknown expression type ' . $dto->getExpressionType()->jsonSerialize());
+        throw new Exception('Unknown expression type '.$dto->getExpressionType()->jsonSerialize());
     }
 }

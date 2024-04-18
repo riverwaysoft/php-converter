@@ -5,13 +5,13 @@
 package gen
 
 type UserCreate struct {
-  CreatedAt string
-  UpdatedAt string
-  PromotedAt *string
+	CreatedAt  string
+	UpdatedAt  string
+	PromotedAt *string
 }
 
 type UserCreateConstructor struct {
-  CreatedAt string
-  UpdatedAt string
-  PromotedAt *string
+	CreatedAt  string
+	UpdatedAt  string
+	PromotedAt *string
 }

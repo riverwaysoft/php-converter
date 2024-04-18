@@ -5,21 +5,21 @@
 package gen
 
 type FullName struct {
-  FirstName string
-  LastName string
+	FirstName string
+	LastName  string
 }
 
 type Me struct {
-  Request *UserCreate
+	Request *UserCreate
 }
 
 type Profile struct {
-  Name *FullName
-  Age int
+	Name *FullName
+	Age  int
 }
 
 type UserCreate struct {
-  Id string
-  Profile *Profile
-  Me *Me
+	Id      string
+	Profile *Profile
+	Me      *Me
 }

@@ -5,54 +5,54 @@
 package gen
 
 type Activity struct {
-  Id string
-  CreatedAt string
+	Id        string
+	CreatedAt string
 }
 
 type FullName struct {
-  FirstName string
-  LastName string
+	FirstName string
+	LastName  string
 }
 
-type NumberEnum int 
+type NumberEnum int
 
-const(
-  VIEW NumberEnum = 0
-  EDIT NumberEnum = 1
-  CREATE NumberEnum = 2
+const (
+	VIEW   NumberEnum = 0
+	EDIT   NumberEnum = 1
+	CREATE NumberEnum = 2
 )
 
-type PermissionsEnum string 
+type PermissionsEnum string
 
-const(
-  VIEWPermissionsEnum PermissionsEnum = "view"
-  EDITPermissionsEnum PermissionsEnum = "edit"
+const (
+	VIEWPermissionsEnum PermissionsEnum = "view"
+	EDITPermissionsEnum PermissionsEnum = "edit"
 )
 
 type Profile struct {
-  Name *FullName
-  Age int
+	Name *FullName
+	Age  int
 }
 
 type User struct {
-  Id string
-  BestFriend *User
-  Friends []User
-  SelfProperty *User
-  SelfConstructor *User
+	Id              string
+	BestFriend      *User
+	Friends         []User
+	SelfProperty    *User
+	SelfConstructor *User
 }
 
 type UserCreate struct {
-  Id string
-  Permissions PermissionsEnum
-  Profile *Profile
-  Age int
-  Name *string
-  Latitude float64
-  Longitude float64
-  Achievements []interface{}
-  Tags []string
-  Activities []Activity
-  Mixed interface{}
-  IsApproved *bool
+	Id           string
+	Permissions  PermissionsEnum
+	Profile      *Profile
+	Age          int
+	Name         *string
+	Latitude     float64
+	Longitude    float64
+	Achievements []interface{}
+	Tags         []string
+	Activities   []Activity
+	Mixed        interface{}
+	IsApproved   *bool
 }
