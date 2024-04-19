@@ -25,7 +25,7 @@ use function json_encode;
 #[AsCommand('riverwaysoft:php_converter:generate')]
 class ConvertCommand extends Command
 {
-    protected static string $defaultName = 'generate';
+    protected static $defaultName = 'generate';
 
     private UsageCollector $usageCollector;
 
