@@ -1,0 +1,6 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Property Riverwaysoft\\\\PhpConverter\\\\Cli\\\\ConvertCommand\\:\\:\\$defaultName has no type specified\\.$#"
+			count: 1
+			path: src/Cli/ConvertCommand.php

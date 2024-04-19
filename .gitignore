@@ -8,3 +8,4 @@ node_modules
 .phpunit.cache
 coverage
 build
+.DS_Store

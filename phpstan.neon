@@ -1,3 +1,6 @@
+includes:
+	- phpstan-baseline.neon.php
+
 parameters:
     level: 6
     checkGenericClassInNonGenericObjectType: false
