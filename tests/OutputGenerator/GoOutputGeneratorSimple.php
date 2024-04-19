@@ -30,11 +30,11 @@ class GoOutputGeneratorSimple implements OutputGeneratorInterface
     ) {
     }
 
-    public function generate(ConverterResult $converterResult): array
+    public function generate(ConverterResult $result): array
     {
         $this->outputWriter->reset();
 
-        $dtoList = $converterResult->dtoList;
+        $dtoList = $result->dtoList;
         foreach ($dtoList->getList() as $dto) {
             $this->outputWriter->writeType($this->convertToGoType($dto, $dtoList), $dto);
         }

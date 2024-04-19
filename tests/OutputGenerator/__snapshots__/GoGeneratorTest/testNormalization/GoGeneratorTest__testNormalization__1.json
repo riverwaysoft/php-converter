@@ -1,0 +1,141 @@
+[
+    {
+        "name": "CloudNotify",
+        "expressionType": {
+            "type": "class"
+        },
+        "properties": [
+            {
+                "type": {
+                    "name": "string"
+                },
+                "name": "id"
+            },
+            {
+                "type": {
+                    "types": [
+                        {
+                            "name": "string"
+                        },
+                        {
+                            "name": "null"
+                        }
+                    ]
+                },
+                "name": "fcmToken"
+            }
+        ],
+        "generics": []
+    },
+    {
+        "name": "Response",
+        "expressionType": {
+            "type": "class"
+        },
+        "properties": [
+            {
+                "type": {
+                    "name": "mixed"
+                },
+                "name": "data"
+            }
+        ],
+        "generics": [
+            {
+                "name": "T",
+                "context": [],
+                "generics": []
+            }
+        ]
+    },
+    {
+        "name": "UserCreate",
+        "expressionType": {
+            "type": "class"
+        },
+        "properties": [
+            {
+                "type": {
+                    "array": {
+                        "name": "string"
+                    }
+                },
+                "name": "achievements"
+            },
+            {
+                "type": {
+                    "array": {
+                        "array": {
+                            "name": "int"
+                        }
+                    }
+                },
+                "name": "matrix"
+            },
+            {
+                "type": {
+                    "types": [
+                        {
+                            "name": "string"
+                        },
+                        {
+                            "name": "null"
+                        }
+                    ]
+                },
+                "name": "name"
+            },
+            {
+                "type": {
+                    "types": [
+                        {
+                            "name": "string"
+                        },
+                        {
+                            "name": "null"
+                        }
+                    ]
+                },
+                "name": "duplicatesInType"
+            },
+            {
+                "type": {
+                    "name": "int"
+                },
+                "name": "age"
+            },
+            {
+                "type": {
+                    "types": [
+                        {
+                            "name": "bool"
+                        },
+                        {
+                            "name": "null"
+                        }
+                    ]
+                },
+                "name": "isApproved"
+            },
+            {
+                "type": {
+                    "name": "float"
+                },
+                "name": "latitude"
+            },
+            {
+                "type": {
+                    "name": "float"
+                },
+                "name": "longitude"
+            },
+            {
+                "type": {
+                    "name": "mixed"
+                },
+                "name": "mixed"
+            }
+        ],
+        "generics": []
+    }
+]

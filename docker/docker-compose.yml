@@ -5,7 +5,19 @@ name: php-converter
 services:
   php-converter:
     container_name: php-converter
+    user: app
     build:
-      context: ./php
+      dockerfile: ./docker/Dockerfile
+      context: ../
     volumes:
       - ../.:/var/www/php-converter:cached
+    networks:
+      - php-converter-network
+
+networks:
+  php-converter-network:
+    name: php-converter-network
+    ipam:
+      config:
+        - subnet: 172.18.7.0/24
+          gateway: 172.18.7.1

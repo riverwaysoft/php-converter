@@ -10,5 +10,5 @@ use Riverwaysoft\PhpConverter\OutputWriter\OutputFile;
 interface OutputGeneratorInterface
 {
     /** @return OutputFile[] */
-    public function generate(ConverterResult $converterResult): array;
+    public function generate(ConverterResult $result): array;
 }
