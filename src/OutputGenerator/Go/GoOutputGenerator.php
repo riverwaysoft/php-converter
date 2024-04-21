@@ -49,27 +49,25 @@ class GoOutputGenerator implements OutputGeneratorInterface
     {
         if ($dto->getExpressionType()->equals(ExpressionType::class())) {
             $structProps = '';
-
             $maxStructPropNameLength = 0;
             $maxStructPropNameAndTypeLength = 0;
             foreach ($dto->getProperties() as $prop) {
                 $maxStructPropNameLength = max($maxStructPropNameLength, strlen($prop->getName()));
             }
-
             $normProps = [];
             foreach ($dto->getProperties() as $prop) {
                 $spaces = str_repeat(' ', $maxStructPropNameLength - strlen($prop->getName()) + 1);
 
-                $tagsTemplate = '`json:"%s"`';
-                if ($prop->getType() instanceof PhpOptionalType) {
-                    $tagsTemplate = '`json:"%s,omitempty"`';
-                }
                 $structPropsRow = sprintf(
                     "%s$spaces%s",
                     ucfirst($prop->getName()),
                     $this->resolver->resolve($prop->getType(), $dto, $dtoList)
                 );
                 $maxStructPropNameAndTypeLength = max($maxStructPropNameAndTypeLength, strlen($structPropsRow));
+                $tagsTemplate = '`json:"%s"`';
+                if ($prop->getType() instanceof PhpOptionalType) {
+                    $tagsTemplate = '`json:"%s,omitempty"`';
+                }
                 $normProps[] = [
                     'structPropsRow' => $structPropsRow,
                     'tagsRow' => sprintf($tagsTemplate, $prop->getName()),
