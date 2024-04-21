@@ -5,21 +5,21 @@
 package gen
 
 type FullName struct {
-	FirstName string
-	LastName  string
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
 }
 
 type Me struct {
-	Request *UserCreate
+	Request *UserCreate `json:"request"`
 }
 
 type Profile struct {
-	Name *FullName
-	Age  int
+	Name *FullName `json:"name"`
+	Age  int       `json:"age"`
 }
 
 type UserCreate struct {
-	Id      string
-	Profile *Profile
-	Me      *Me
+	Id      string   `json:"id"`
+	Profile *Profile `json:"profile"`
+	Me      *Me      `json:"me"`
 }

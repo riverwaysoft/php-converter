@@ -21,7 +21,7 @@ const (
 )
 
 type User struct {
-	Id         string
-	ThemeColor ColorEnum
-	Role       RoleEnum
+	Id         string    `json:"id"`
+	ThemeColor ColorEnum `json:"themeColor"`
+	Role       RoleEnum  `json:"role"`
 }

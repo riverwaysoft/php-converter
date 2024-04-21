@@ -5,13 +5,13 @@
 package gen
 
 type Activity struct {
-	Id        string
-	CreatedAt string
+	Id        string `json:"id"`
+	CreatedAt string `json:"createdAt"`
 }
 
 type FullName struct {
-	FirstName string
-	LastName  string
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
 }
 
 type NumberEnum int
@@ -30,29 +30,29 @@ const (
 )
 
 type Profile struct {
-	Name *FullName
-	Age  int
+	Name *FullName `json:"name"`
+	Age  int       `json:"age"`
 }
 
 type User struct {
-	Id              string
-	BestFriend      *User
-	Friends         []User
-	SelfProperty    *User
-	SelfConstructor *User
+	Id              string `json:"id"`
+	BestFriend      *User  `json:"bestFriend"`
+	Friends         []User `json:"friends"`
+	SelfProperty    *User  `json:"selfProperty"`
+	SelfConstructor *User  `json:"selfConstructor"`
 }
 
 type UserCreate struct {
-	Id           string
-	Permissions  PermissionsEnum
-	Profile      *Profile
-	Age          int
-	Name         *string
-	Latitude     float64
-	Longitude    float64
-	Achievements []interface{}
-	Tags         []string
-	Activities   []Activity
-	Mixed        interface{}
-	IsApproved   *bool
+	Id           string          `json:"id"`
+	Permissions  PermissionsEnum `json:"permissions"`
+	Profile      *Profile        `json:"profile"`
+	Age          int             `json:"age"`
+	Name         *string         `json:"name"`
+	Latitude     float64         `json:"latitude"`
+	Longitude    float64         `json:"longitude"`
+	Achievements []interface{}   `json:"achievements"`
+	Tags         []string        `json:"tags"`
+	Activities   []Activity      `json:"activities"`
+	Mixed        interface{}     `json:"mixed"`
+	IsApproved   *bool           `json:"isApproved"`
 }

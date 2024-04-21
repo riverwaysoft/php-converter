@@ -21,7 +21,7 @@ const (
 )
 
 type User struct {
-	Color Color
-	User  int
-	Role  Role
+	Color Color `json:"color"`
+	User  int   `json:"user"`
+	Role  Role  `json:"role"`
 }

@@ -9,6 +9,7 @@ use Riverwaysoft\PhpConverter\Ast\ConverterResult;
 use Riverwaysoft\PhpConverter\Dto\DtoList;
 use Riverwaysoft\PhpConverter\Dto\DtoType;
 use Riverwaysoft\PhpConverter\Dto\ExpressionType;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpOptionalType;
 use Riverwaysoft\PhpConverter\OutputGenerator\OutputGeneratorInterface;
 use Riverwaysoft\PhpConverter\OutputWriter\OutputFile;
 use Riverwaysoft\PhpConverter\OutputWriter\OutputProcessor\OutputFilesProcessor;
@@ -49,17 +50,33 @@ class GoOutputGenerator implements OutputGeneratorInterface
         if ($dto->getExpressionType()->equals(ExpressionType::class())) {
             $structProps = '';
             $maxStructPropNameLength = 0;
+            $maxStructPropNameAndTypeLength = 0;
             foreach ($dto->getProperties() as $prop) {
                 $maxStructPropNameLength = max($maxStructPropNameLength, strlen($prop->getName()));
             }
+            $normProps = [];
             foreach ($dto->getProperties() as $prop) {
                 $spaces = str_repeat(' ', $maxStructPropNameLength - strlen($prop->getName()) + 1);
 
-                $structProps .= sprintf(
-                    "\n\t%s$spaces%s",
+                $structPropsRow = sprintf(
+                    "%s$spaces%s",
                     ucfirst($prop->getName()),
                     $this->resolver->resolve($prop->getType(), $dto, $dtoList)
                 );
+                $maxStructPropNameAndTypeLength = max($maxStructPropNameAndTypeLength, strlen($structPropsRow));
+                $tagsTemplate = '`json:"%s"`';
+                if ($prop->getType() instanceof PhpOptionalType) {
+                    $tagsTemplate = '`json:"%s,omitempty"`';
+                }
+                $normProps[] = [
+                    'prop' => $structPropsRow,
+                    'tags' => sprintf($tagsTemplate, $prop->getName()),
+                ];
+            }
+
+            foreach ($normProps as $prop) {
+                $tagsSpaces = str_repeat(' ', $maxStructPropNameAndTypeLength - strlen($prop['prop']) + 1);
+                $structProps .= sprintf("\n\t%s$tagsSpaces%s", $prop['prop'], $prop['tags']);
             }
 
             return sprintf("type %s struct {%s\n}", $dto->getName(), $structProps);
