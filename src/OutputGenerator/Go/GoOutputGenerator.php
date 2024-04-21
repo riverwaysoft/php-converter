@@ -51,15 +51,15 @@ class GoOutputGenerator
         if ($dto->getExpressionType()->equals(ExpressionType::class())) {
             $structProps = '';
 
-            $maxPropLen = 0;
-            $maxPropRowLen = 0;
+            $maxStructPropNameLength = 0;
+            $maxStructPropNameAndTypeLength = 0;
             foreach ($dto->getProperties() as $prop) {
-                $maxPropLen = max($maxPropLen, strlen($prop->getName()));
+                $maxStructPropNameLength = max($maxStructPropNameLength, strlen($prop->getName()));
             }
 
             $normProps = [];
             foreach ($dto->getProperties() as $prop) {
-                $spaces = str_repeat(' ', $maxPropLen - strlen($prop->getName()) + 1);
+                $spaces = str_repeat(' ', $maxStructPropNameLength - strlen($prop->getName()) + 1);
 
                 $tagsTemplate = '`json:"%s"`';
                 if ($prop->getType() instanceof PhpOptionalType) {
@@ -70,7 +70,7 @@ class GoOutputGenerator
                     ucfirst($prop->getName()),
                     $this->resolver->resolve($prop->getType(), $dto, $dtoList)
                 );
-                $maxPropRowLen = max($maxPropRowLen, strlen($structPropsRow));
+                $maxStructPropNameAndTypeLength = max($maxStructPropNameAndTypeLength, strlen($structPropsRow));
                 $normProps[] = [
                     'structPropsRow' => $structPropsRow,
                     'tagsRow' => sprintf($tagsTemplate, $prop->getName()),
@@ -78,7 +78,7 @@ class GoOutputGenerator
             }
 
             foreach ($normProps as $prop) {
-                $tagsSpaces = str_repeat(' ', $maxPropRowLen - strlen($prop['structPropsRow']) + 1);
+                $tagsSpaces = str_repeat(' ', $maxStructPropNameAndTypeLength - strlen($prop['structPropsRow']) + 1);
                 $structProps .= sprintf("\n\t%s$tagsSpaces%s", $prop['structPropsRow'], $prop['tagsRow']);
             }
 
