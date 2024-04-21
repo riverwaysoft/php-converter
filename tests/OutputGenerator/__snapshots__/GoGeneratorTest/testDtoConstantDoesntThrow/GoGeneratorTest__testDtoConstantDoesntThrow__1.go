@@ -5,7 +5,7 @@
 package gen
 
 type A struct {
-	CreatedAt string
+	CreatedAt string `json:"createdAt"`
 }
 
 type GenderEnum int

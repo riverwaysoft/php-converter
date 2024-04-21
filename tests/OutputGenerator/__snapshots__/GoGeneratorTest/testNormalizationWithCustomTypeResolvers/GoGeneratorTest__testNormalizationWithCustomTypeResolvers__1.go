@@ -5,13 +5,13 @@
 package gen
 
 type UserCreate struct {
-	CreatedAt  string
-	UpdatedAt  string
-	PromotedAt *string
+	CreatedAt  string  `json:"createdAt"`
+	UpdatedAt  string  `json:"updatedAt"`
+	PromotedAt *string `json:"promotedAt"`
 }
 
 type UserCreateConstructor struct {
-	CreatedAt  string
-	UpdatedAt  string
-	PromotedAt *string
+	CreatedAt  string  `json:"createdAt"`
+	UpdatedAt  string  `json:"updatedAt"`
+	PromotedAt *string `json:"promotedAt"`
 }
