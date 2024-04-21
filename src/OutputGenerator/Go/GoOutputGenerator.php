@@ -69,14 +69,14 @@ class GoOutputGenerator implements OutputGeneratorInterface
                     $tagsTemplate = '`json:"%s,omitempty"`';
                 }
                 $normProps[] = [
-                    'structPropsRow' => $structPropsRow,
-                    'tagsRow' => sprintf($tagsTemplate, $prop->getName()),
+                    'prop' => $structPropsRow,
+                    'tags' => sprintf($tagsTemplate, $prop->getName()),
                 ];
             }
 
             foreach ($normProps as $prop) {
-                $tagsSpaces = str_repeat(' ', $maxStructPropNameAndTypeLength - strlen($prop['structPropsRow']) + 1);
-                $structProps .= sprintf("\n\t%s$tagsSpaces%s", $prop['structPropsRow'], $prop['tagsRow']);
+                $tagsSpaces = str_repeat(' ', $maxStructPropNameAndTypeLength - strlen($prop['prop']) + 1);
+                $structProps .= sprintf("\n\t%s$tagsSpaces%s", $prop['prop'], $prop['tags']);
             }
 
             return sprintf("type %s struct {%s\n}", $dto->getName(), $structProps);
