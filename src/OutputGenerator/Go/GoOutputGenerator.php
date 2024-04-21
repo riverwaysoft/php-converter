@@ -51,39 +51,34 @@ class GoOutputGenerator
         if ($dto->getExpressionType()->equals(ExpressionType::class())) {
             $structProps = '';
 
-            $maxStructPropNameLength = 0;
+            $maxPropLen = 0;
+            $maxPropRowLen = 0;
             foreach ($dto->getProperties() as $prop) {
-                $maxStructPropNameLength = max($maxStructPropNameLength, strlen($prop->getName()));
+                $maxPropLen = max($maxPropLen, strlen($prop->getName()));
             }
 
-            $normalizedProperties = [];
+            $normProps = [];
             foreach ($dto->getProperties() as $prop) {
-                $spaces = str_repeat(' ', $maxStructPropNameLength - strlen($prop->getName()) + 1);
+                $spaces = str_repeat(' ', $maxPropLen - strlen($prop->getName()) + 1);
 
                 $tagsTemplate = '`json:"%s"`';
                 if ($prop->getType() instanceof PhpOptionalType) {
                     $tagsTemplate = '`json:"%s,omitempty"`';
                 }
-                $tagsRow = sprintf($tagsTemplate, $prop->getName());
-
                 $structPropsRow = sprintf(
                     "%s$spaces%s",
                     ucfirst($prop->getName()),
                     $this->resolver->resolve($prop->getType(), $dto, $dtoList)
                 );
-
-                $normalizedProperties[] = [
+                $maxPropRowLen = max($maxPropRowLen, strlen($structPropsRow));
+                $normProps[] = [
                     'structPropsRow' => $structPropsRow,
-                    'tagsRow' => $tagsRow,
+                    'tagsRow' => sprintf($tagsTemplate, $prop->getName()),
                 ];
             }
 
-            $maxStructPropLength = 0;
-            foreach ($normalizedProperties as $prop) {
-                $maxStructPropLength = max($maxStructPropLength, strlen($prop['structPropsRow']));
-            }
-            foreach ($normalizedProperties as $prop) {
-                $tagsSpaces = str_repeat(' ', $maxStructPropLength - strlen($prop['structPropsRow']) + 1);
+            foreach ($normProps as $prop) {
+                $tagsSpaces = str_repeat(' ', $maxPropRowLen - strlen($prop['structPropsRow']) + 1);
                 $structProps .= sprintf("\n\t%s$tagsSpaces%s", $prop['structPropsRow'], $prop['tagsRow']);
             }
 
