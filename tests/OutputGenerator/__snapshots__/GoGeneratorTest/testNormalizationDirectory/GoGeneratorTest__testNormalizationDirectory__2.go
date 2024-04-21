@@ -25,8 +25,9 @@ const (
 type PermissionsEnum string
 
 const (
-	VIEWPermissionsEnum PermissionsEnum = "view"
-	EDITPermissionsEnum PermissionsEnum = "edit"
+	VIEWPermissionsEnum     PermissionsEnum = "view"
+	EDITPermissionsEnum     PermissionsEnum = "edit"
+	CREATE_EXTRA_SUPER_FILE PermissionsEnum = "create-extra-super-file"
 )
 
 type Profile struct {
