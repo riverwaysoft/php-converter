@@ -5,13 +5,13 @@
 package gen
 
 type A struct {
-    CreatedAt string `json:"createdAt"`
+	CreatedAt string `json:"createdAt"`
 }
 
 type GenderEnum int
 
 const (
-    UNKNOWN GenderEnum = 2
-    MAN     GenderEnum = 0
-    WOMAN   GenderEnum = 1
+	UNKNOWN GenderEnum = 2
+	MAN     GenderEnum = 0
+	WOMAN   GenderEnum = 1
 )
