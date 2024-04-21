@@ -22,12 +22,13 @@ class GoTypeResolver
     /** @param UnknownTypeResolverInterface[] $unknownTypeResolvers */
     public function __construct(
         private array $unknownTypeResolvers = []
-    ) {}
+    ) {
+    }
 
     /** @throws Exception */
     private function resolveUnion(PhpUnionType $type, ?DtoType $dto, DtoList $dtoList): string
     {
-        $fn = fn(PhpTypeInterface $type) => $this->resolve($type, $dto, $dtoList);
+        $fn = fn (PhpTypeInterface $type) => $this->resolve($type, $dto, $dtoList);
         $types = array_map($fn, $type->getTypes());
 
         // Two args, one of them is null
@@ -40,7 +41,7 @@ class GoTypeResolver
 
             return "*$types[0]";
         }
-        throw new Exception('Unsupported union type: '.json_encode($type));
+        throw new Exception('Unsupported union type: ' . json_encode($type));
     }
 
     /** @throws Exception */
@@ -85,7 +86,7 @@ class GoTypeResolver
             $type->equalsTo(PhpBaseType::iterable()) => 'interface{}',
             $type->equalsTo(PhpBaseType::null()) => 'null',
             $type->equalsTo(PhpBaseType::self()) => "*{$dto->getName()}", // * for prevent recursive definition
-            default => throw new Exception('Unknown base PHP type: %s'.json_encode($type))
+            default => throw new Exception('Unknown base PHP type: %s' . json_encode($type))
         };
     }
 
@@ -98,7 +99,7 @@ class GoTypeResolver
             PhpUnionType::class => $this->resolveUnion($type, $d, $dl),
             PhpUnknownType::class => $this->resolveUnknown($type, $d, $dl),
             PhpOptionalType::class => $this->resolve($type->getType(), $d, $dl),
-            default => throw new Exception('Type not implemented: '.get_class($type))
+            default => throw new Exception('Type not implemented: ' . get_class($type))
         };
     }
 }
