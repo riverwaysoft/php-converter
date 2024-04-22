@@ -9,6 +9,8 @@ final class PermissionsEnum extends Enum
     private const VIEW = 'view';
 
     private const EDIT = 'edit';
+
+    private const CREATE_EXTRA_SUPER_FILE = 'create-extra-super-file';
 }
 
 class FullName

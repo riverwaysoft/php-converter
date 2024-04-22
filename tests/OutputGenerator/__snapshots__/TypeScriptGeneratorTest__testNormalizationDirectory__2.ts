@@ -19,6 +19,7 @@ export enum NumberEnum {
 export enum PermissionsEnum {
   VIEW = 'view',
   EDIT = 'edit',
+  CREATE_EXTRA_SUPER_FILE = 'create-extra-super-file',
 }
 
 export type Profile = {

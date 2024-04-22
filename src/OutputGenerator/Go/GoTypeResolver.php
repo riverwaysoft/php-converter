@@ -81,9 +81,9 @@ class GoTypeResolver
             $type->equalsTo(PhpBaseType::string()) => 'string',
             $type->equalsTo(PhpBaseType::bool()) => 'bool',
             $type->equalsTo(PhpBaseType::mixed()),
-            $type->equalsTo(PhpBaseType::object()) => 'interface{}',
+            $type->equalsTo(PhpBaseType::object()),
             $type->equalsTo(PhpBaseType::array()),
-            $type->equalsTo(PhpBaseType::iterable()) => '[]interface{}',
+            $type->equalsTo(PhpBaseType::iterable()) => 'interface{}',
             $type->equalsTo(PhpBaseType::null()) => 'null',
             $type->equalsTo(PhpBaseType::self()) => "*{$dto->getName()}", // * for prevent recursive definition
             default => throw new Exception('Unknown base PHP type: %s' . json_encode($type))

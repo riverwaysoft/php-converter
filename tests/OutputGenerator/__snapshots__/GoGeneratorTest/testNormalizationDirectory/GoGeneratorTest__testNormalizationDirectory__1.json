@@ -75,6 +75,10 @@
             {
                 "name": "EDIT",
                 "value": "edit"
+            },
+            {
+                "name": "CREATE_EXTRA_SUPER_FILE",
+                "value": "create-extra-super-file"
             }
         ],
         "generics": []

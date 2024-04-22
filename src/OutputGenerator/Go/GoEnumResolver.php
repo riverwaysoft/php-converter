@@ -57,7 +57,7 @@ class GoEnumResolver
             }
             $this->usedConstantsStore[] = $const;
 
-            $spaces = str_repeat(' ', $maxEnumPropNameLength - strlen($prop->getName()) + 1);
+            $spaces = str_repeat(' ', $maxEnumPropNameLength - strlen($const) + 1);
 
             $value = $prop->isNumeric() ? $prop->getValue() : sprintf('"%s"', $prop->getValue());
             $string .= sprintf("\n\t%s$spaces%s = %s", $const, $enum, $value);
