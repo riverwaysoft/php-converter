@@ -88,6 +88,7 @@ final class ColorEnum extends Enum
     private const RED = 0;
     private const GREEN = 1;
     private const BLUE = 2;
+    private const UNIFIED_ENUM_CASE = 111;
 }
 
 final class RoleEnum extends Enum
@@ -95,6 +96,7 @@ final class RoleEnum extends Enum
     private const ADMIN = 'admin';
     private const READER = 'reader';
     private const EDITOR = 'editor';
+    private const UNIFIED_ENUM_CASE = 'one_one_one';
 }
 
 class User

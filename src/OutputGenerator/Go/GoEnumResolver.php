@@ -43,10 +43,7 @@ class GoEnumResolver
         $string = '';
 
         $maxEnumPropNameLength = 0;
-        foreach ($properties as $prop) {
-            $maxEnumPropNameLength = max($maxEnumPropNameLength, strlen($prop->getName()));
-        }
-
+        $normProps = [];
         foreach ($properties as $prop) {
             $const = $prop->getName();
             if (in_array($const, $this->usedConstantsStore)) {
@@ -57,10 +54,16 @@ class GoEnumResolver
             }
             $this->usedConstantsStore[] = $const;
 
-            $spaces = str_repeat(' ', $maxEnumPropNameLength - strlen($const) + 1);
+            $maxEnumPropNameLength = max($maxEnumPropNameLength, strlen($const));
+            $normProps[] = [
+                'const' => $const,
+                'value' => $prop->isNumeric() ? $prop->getValue() : sprintf('"%s"', $prop->getValue()),
+            ];
+        }
 
-            $value = $prop->isNumeric() ? $prop->getValue() : sprintf('"%s"', $prop->getValue());
-            $string .= sprintf("\n\t%s$spaces%s = %s", $const, $enum, $value);
+        foreach ($normProps as $prop) {
+            $spaces = str_repeat(' ', $maxEnumPropNameLength - strlen($prop['const']) + 1);
+            $string .= sprintf("\n\t%s$spaces%s = %s", $prop['const'], $enum, $prop['value']);
         }
 
         return $string;
