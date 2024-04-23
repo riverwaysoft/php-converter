@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Riverwaysoft\PhpConverter\Ast;
 
-// version 0.8.2.39
+// version 0.8.2.40
 class ClassName
 {
     private string|null $short = null;
