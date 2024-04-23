@@ -2,11 +2,18 @@ name: Release
 
 on:
   push:
-    branches: [main]
+    tags:
+      - v*
 
 jobs:
-  hello:
+  build:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v1
+
+      - name: Exit if not on main branch
+        if: endsWith(github.ref, 'main') == false
+        run: exit -1
+
       - name: Hello world
         run: echo "Hello world"
