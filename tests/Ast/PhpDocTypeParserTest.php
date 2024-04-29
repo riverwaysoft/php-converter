@@ -10,6 +10,7 @@ use Riverwaysoft\PhpConverter\Ast\PhpDocTypeParser;
 use Riverwaysoft\PhpConverter\Dto\DtoClassProperty;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpBaseType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpListType;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpOptionalType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeInterface;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnionType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnknownType;
@@ -111,6 +112,15 @@ class PhpDocTypeParserTest extends TestCase
                     PhpBaseType::int(),
                     PhpBaseType::null(),
                 ]),
+            ],
+            [
+                'nullable optional string array',
+                '/** @var ?string[] */',
+                new PhpOptionalType(
+                    new PhpListType(
+                        PhpBaseType::string(),
+                    ),
+                ),
             ],
             [
                 '2d array',
