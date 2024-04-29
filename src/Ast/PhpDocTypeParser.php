@@ -13,6 +13,7 @@ use PHPStan\PhpDocParser\Ast\PhpDoc\VarTagValueNode;
 use PHPStan\PhpDocParser\Ast\Type\ArrayTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\GenericTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\IdentifierTypeNode;
+use PHPStan\PhpDocParser\Ast\Type\NullableTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\TypeNode;
 use PHPStan\PhpDocParser\Ast\Type\UnionTypeNode;
 use PHPStan\PhpDocParser\Lexer\Lexer;
@@ -22,6 +23,7 @@ use PHPStan\PhpDocParser\Parser\TokenIterator;
 use PHPStan\PhpDocParser\Parser\TypeParser;
 use Riverwaysoft\PhpConverter\Dto\DtoClassProperty;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpListType;
+use Riverwaysoft\PhpConverter\Dto\PhpType\PhpOptionalType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeFactory;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpTypeInterface;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpUnionType;
@@ -143,6 +145,9 @@ class PhpDocTypeParser
         }
         if ($node instanceof UnionTypeNode) {
             return new PhpUnionType(array_map(fn (TypeNode $child) => $this->convertToDto($child), $node->types));
+        }
+        if ($node instanceof NullableTypeNode) {
+            return new PhpOptionalType($this->convertToDto($node->type));
         }
         if ($node instanceof GenericTypeNode) {
             return PhpTypeFactory::create($node->type->name, array_map(
