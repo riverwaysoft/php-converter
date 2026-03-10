@@ -6,9 +6,11 @@ namespace Riverwaysoft\PhpConverter\Ast;
 
 use Exception;
 use PhpParser\Node;
+use PhpParser\Modifiers;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Enum_;
 use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitor;
 use Riverwaysoft\PhpConverter\Dto\DtoClassProperty;
 use Riverwaysoft\PhpConverter\Dto\DtoEnumProperty;
 use Riverwaysoft\PhpConverter\Dto\DtoType;
@@ -47,7 +49,7 @@ class DtoVisitor extends ConverterVisitor
 
         $this->createDtoType($node);
 
-        return NodeTraverser::DONT_TRAVERSE_CURRENT_AND_CHILDREN;
+        return NodeVisitor::DONT_TRAVERSE_CURRENT_AND_CHILDREN;
     }
 
     private function createDtoType(Class_|Enum_ $node): void
@@ -64,7 +66,7 @@ class DtoVisitor extends ConverterVisitor
                 $propertyName = $stmt->consts[0]->name->name;
                 /** @var string|number|null $notNullValue */
                 $notNullValue = $stmt->consts[0]->value->value ?? null;
-                $isNullValue = ($stmt->consts[0]->value->name->parts[0] ?? null) === 'null';
+                $isNullValue = ((string) ($stmt->consts[0]->value->name ?? null) === 'null');
                 if ($notNullValue === null && $isNullValue === false) {
                     throw new Exception(sprintf("Property %s of enum is different from number, string and null.", $propertyName));
                 }
@@ -105,7 +107,7 @@ class DtoVisitor extends ConverterVisitor
                 /** @var DtoClassProperty[]|null $classMethodCommentsParsed */
                 $classMethodCommentsParsed = null;
                 foreach ($stmt->params as $param) {
-                    if (!($param->flags & Node\Stmt\Class_::MODIFIER_PUBLIC)) {
+                    if (!($param->flags & Modifiers::PUBLIC)) {
                         continue;
                     }
 
@@ -148,7 +150,7 @@ class DtoVisitor extends ConverterVisitor
             if (!$expr) {
                 throw new Exception(sprintf("Non-backed enums are not supported because they are not serializable. Please use backed enums: %s\n Error in enum: %s", 'https://www.php.net/manual/en/language.enumerations.backed.php', $propertyName));
             }
-            if (!$expr instanceof Node\Scalar\LNumber && !$expr instanceof Node\Scalar\String_) {
+            if (!$expr instanceof Node\Scalar\Int_ && !$expr instanceof Node\Scalar\String_) {
                 throw new Exception(sprintf('A backed enum should be type of int or string, %s given. Error in enum %s', get_class($expr), $propertyName));
             }
             $propertyValue = $expr->value;

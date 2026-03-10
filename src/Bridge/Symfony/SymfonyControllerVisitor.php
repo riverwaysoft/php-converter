@@ -9,6 +9,7 @@ use PhpParser\Node;
 use PhpParser\Node\Attribute;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitor;
 use Riverwaysoft\PhpConverter\Ast\ClassName;
 use Riverwaysoft\PhpConverter\Ast\ConverterResult;
 use Riverwaysoft\PhpConverter\Ast\ConverterVisitor;
@@ -59,7 +60,7 @@ class SymfonyControllerVisitor extends ConverterVisitor
 
         $this->createApiEndpoint($node);
 
-        return NodeTraverser::DONT_TRAVERSE_CURRENT_AND_CHILDREN;
+        return NodeVisitor::DONT_TRAVERSE_CURRENT_AND_CHILDREN;
     }
 
     private function findAttribute(ClassMethod|Node\Param $node, string $name): Attribute|null

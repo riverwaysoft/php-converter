@@ -20,7 +20,7 @@ class Converter
         /** @var ConverterVisitor[] */
         private array $visitors,
     ) {
-        $this->parser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
+        $this->parser = (new ParserFactory())->createForHostVersion();
     }
 
     /** @param string[]|iterable $listings */

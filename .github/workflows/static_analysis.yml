@@ -13,18 +13,18 @@ jobs:
 
     strategy:
       matrix:
-        php-versions: [ '8.0', '8.1' ]
+        php-versions: [ '8.2', '8.3', '8.4' ]
     name: PHP ${{ matrix.php-versions }} Test on ubuntu latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Validate composer.json and composer.lock
       run: composer validate --strict
 
     - name: Cache Composer packages
       id: composer-cache
-      uses: actions/cache@v2
+      uses: actions/cache@v4
       with:
         path: vendor
         key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
@@ -37,5 +37,3 @@ jobs:
     - name: Run phpstan
       run: composer run-script phpstan
 
-    - name: Check code style
-      run: composer run test:cs

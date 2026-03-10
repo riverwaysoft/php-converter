@@ -3,6 +3,7 @@ includes:
 
 parameters:
     level: 6
-    checkGenericClassInNonGenericObjectType: false
     ignoreErrors:
         - '#Constant [a-zA-Z0-9\\_]+::[a-zA-Z_0-9]+ is unused.#'
+        -
+            identifier: missingType.generics

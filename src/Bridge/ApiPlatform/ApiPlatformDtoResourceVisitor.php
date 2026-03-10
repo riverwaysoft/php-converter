@@ -11,6 +11,7 @@ use PhpParser\Node\Attribute;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Enum_;
 use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitor;
 use PhpParser\PrettyPrinter\Standard;
 use Riverwaysoft\PhpConverter\Ast\ConverterResult;
 use Riverwaysoft\PhpConverter\Ast\ConverterVisitor;
@@ -145,11 +146,11 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
             }
         }
 
-        return NodeTraverser::DONT_TRAVERSE_CURRENT_AND_CHILDREN;
+        return NodeVisitor::DONT_TRAVERSE_CURRENT_AND_CHILDREN;
     }
 
     private function createApiEndpoint(
-        Node\Expr\ArrayItem $item,
+        Node\ArrayItem $item,
         Class_ $node,
         string|null $defaultOutput,
         string|null $defaultInput,
@@ -244,7 +245,7 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
     }
 
     private function createApiEndpointFromLegacyCode(
-        Node\Expr\ArrayItem $item,
+        Node\ArrayItem $item,
         bool $isCollection,
         Class_ $node,
         string|null $defaultOutput,
@@ -332,7 +333,7 @@ class ApiPlatformDtoResourceVisitor extends ConverterVisitor
     }
 
     /**
-     * @param Node\Expr\ArrayItem[] $arrayItems
+     * @param Node\ArrayItem[] $arrayItems
      */
     private function findArrayAttributeValueByKey(string $key, array $arrayItems): string|null
     {
