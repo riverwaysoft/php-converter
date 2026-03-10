@@ -38,4 +38,5 @@ jobs:
       run: composer run-script phpstan
 
     - name: Check code style
+      if: matrix.php-versions == '8.1'
       run: composer run test:cs
