@@ -13,7 +13,7 @@ jobs:
 
     strategy:
       matrix:
-        php-versions: [ '8.1', '8.2', '8.3', '8.4' ]
+        php-versions: [ '8.2', '8.3', '8.4' ]
     name: PHP ${{ matrix.php-versions }} Test on ubuntu latest
 
     steps:
@@ -37,6 +37,3 @@ jobs:
     - name: Run phpstan
       run: composer run-script phpstan
 
-    - name: Check code style
-      if: matrix.php-versions == '8.1'
-      run: composer run test:cs

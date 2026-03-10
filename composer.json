@@ -20,7 +20,7 @@
         "php-parser-dump": "vendor/bin/php-parse tests/Fixtures/NestedDto.php"
     },
     "require": {
-        "php": ">=8.0",
+        "php": ">=8.1",
         "nikic/php-parser": "^4.16|^5.0",
         "webmozart/assert": "^1.10",
         "jfcherng/php-diff": "^6.10",
