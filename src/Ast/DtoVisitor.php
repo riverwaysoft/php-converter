@@ -148,7 +148,7 @@ class DtoVisitor extends ConverterVisitor
             if (!$expr) {
                 throw new Exception(sprintf("Non-backed enums are not supported because they are not serializable. Please use backed enums: %s\n Error in enum: %s", 'https://www.php.net/manual/en/language.enumerations.backed.php', $propertyName));
             }
-            if (!$expr instanceof Node\Scalar\LNumber && !$expr instanceof Node\Scalar\String_) {
+            if (!$expr instanceof Node\Scalar\Int_ && !$expr instanceof Node\Scalar\String_) {
                 throw new Exception(sprintf('A backed enum should be type of int or string, %s given. Error in enum %s', get_class($expr), $propertyName));
             }
             $propertyValue = $expr->value;

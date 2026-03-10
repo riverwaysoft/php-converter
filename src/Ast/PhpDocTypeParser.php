@@ -21,6 +21,7 @@ use PHPStan\PhpDocParser\Parser\ConstExprParser;
 use PHPStan\PhpDocParser\Parser\PhpDocParser;
 use PHPStan\PhpDocParser\Parser\TokenIterator;
 use PHPStan\PhpDocParser\Parser\TypeParser;
+use PHPStan\PhpDocParser\ParserConfig;
 use Riverwaysoft\PhpConverter\Dto\DtoClassProperty;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpListType;
 use Riverwaysoft\PhpConverter\Dto\PhpType\PhpOptionalType;
@@ -38,10 +39,11 @@ class PhpDocTypeParser
 
     public function __construct()
     {
-        $this->lexer = new Lexer();
-        $constExprParser = new ConstExprParser();
-        $typeParser = new TypeParser($constExprParser);
-        $this->phpDocParser = new PhpDocParser($typeParser, $constExprParser);
+        $config = new ParserConfig([]);
+        $this->lexer = new Lexer($config);
+        $constExprParser = new ConstExprParser($config);
+        $typeParser = new TypeParser($config, $constExprParser);
+        $this->phpDocParser = new PhpDocParser($config, $typeParser, $constExprParser);
     }
 
     /** @return DtoClassProperty[] */
