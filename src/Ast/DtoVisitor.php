@@ -6,9 +6,11 @@ namespace Riverwaysoft\PhpConverter\Ast;
 
 use Exception;
 use PhpParser\Node;
+use PhpParser\Modifiers;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Enum_;
 use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitor;
 use Riverwaysoft\PhpConverter\Dto\DtoClassProperty;
 use Riverwaysoft\PhpConverter\Dto\DtoEnumProperty;
 use Riverwaysoft\PhpConverter\Dto\DtoType;
@@ -47,7 +49,7 @@ class DtoVisitor extends ConverterVisitor
 
         $this->createDtoType($node);
 
-        return NodeTraverser::DONT_TRAVERSE_CURRENT_AND_CHILDREN;
+        return NodeVisitor::DONT_TRAVERSE_CURRENT_AND_CHILDREN;
     }
 
     private function createDtoType(Class_|Enum_ $node): void
@@ -105,7 +107,7 @@ class DtoVisitor extends ConverterVisitor
                 /** @var DtoClassProperty[]|null $classMethodCommentsParsed */
                 $classMethodCommentsParsed = null;
                 foreach ($stmt->params as $param) {
-                    if (!($param->flags & Node\Stmt\Class_::MODIFIER_PUBLIC)) {
+                    if (!($param->flags & Modifiers::PUBLIC)) {
                         continue;
                     }
 
