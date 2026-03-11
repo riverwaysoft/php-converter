@@ -37,15 +37,24 @@ class SymfonyControllerVisitor extends ConverterVisitor
 
     private ClassName $requestBodyAttributeName;
 
+    /** @var string[] */
+    private array $routeAttributeNames;
+
     public function __construct(
         private ?FilterInterface $filter,
         string|null $queryStringAttributeName = 'Query',
         string|null $requestBodyAttributeName = 'Input',
+        string|array|null $routeAttributeName = null,
     ) {
         $this->converterResult = new ConverterResult();
         $this->phpDocTypeParser = new PhpDocTypeParser();
         $this->queryStringAttributeName = new ClassName($queryStringAttributeName);
         $this->requestBodyAttributeName = new ClassName($requestBodyAttributeName);
+        $this->routeAttributeNames = match (true) {
+            $routeAttributeName === null => ['Route'],
+            is_string($routeAttributeName) => [$routeAttributeName],
+            default => $routeAttributeName,
+        };
     }
 
     public function enterNode(Node $node)
@@ -91,10 +100,19 @@ class SymfonyControllerVisitor extends ConverterVisitor
 
     private function createApiEndpoint(ClassMethod $node): void
     {
-        $routeAttribute = $this->findAttribute($node, 'Route');
+        $routeAttribute = null;
+        foreach ($this->routeAttributeNames as $routeAttributeName) {
+            $routeAttribute = $this->findAttribute($node, $routeAttributeName);
+            if ($routeAttribute) {
+                break;
+            }
+        }
 
         if (!$routeAttribute) {
-            throw new Exception('The method was marked as generated but it does not have #[Route] attribute');
+            throw new Exception(sprintf(
+                'The method was marked as generated but it does not have #[%s] attribute',
+                implode('] or #[', $this->routeAttributeNames),
+            ));
         }
 
         $route = null;
